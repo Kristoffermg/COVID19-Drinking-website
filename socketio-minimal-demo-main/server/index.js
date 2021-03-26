@@ -1,10 +1,18 @@
+//UwUbuntu
+
 const { DH_UNABLE_TO_CHECK_GENERATOR } = require('constants');
 
-const http = require('http').createServer();
+const http = require('http');
+const express = require('express');
+const app = express();
+const server = http.createServer(app);
+const io = require('socket.io')(server);
 
-const io = require('socket.io')(http, {
-    cors: { origin: "*" }
-});
+const path = `${__dirname}`;
+console.log(path);
+
+app.use(express.static(path));
+
 
 io.on('connection', (socket) => {
     
@@ -50,4 +58,4 @@ io.on('connection', (socket) => {
     });
 });
 
-http.listen(3000, () => console.log('listening on http://localhost:3000') );
+server.listen(3000, () => console.log('listening on http://localhost:3000') );
