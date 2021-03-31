@@ -6,6 +6,7 @@ const http = require('http');
 const express = require('express');
 const app = express();
 const server = http.createServer(app);
+const pathApi = require('path');
 
 const io = require('socket.io')(server, {
     cors: {
@@ -16,10 +17,15 @@ const io = require('socket.io')(server, {
 const hostname = '127.0.0.1';
 const port = 3100;
 
-const path = `${__dirname}/PublicResources/html`;
+const path = `${__dirname}/PublicResources`;
 console.log(path);
 
 app.use(express.static(path));
+
+app.get('/', function(req, res) {
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    //res.sendFile(pathApi.join(__dirname + '/PublicResources/css/style.css'));
+});
 
     io.on("ping", () => {
         console.log('ping');
