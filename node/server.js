@@ -24,12 +24,7 @@ app.use(express.static(path));
 
 app.get('/', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
-    //res.sendFile(pathApi.join(__dirname + '/PublicResources/css/style.css'));
 });
-
-    io.on("ping", () => {
-        console.log('ping');
-    });
 
 
 io.on('connect_error', (err) => {
@@ -50,10 +45,7 @@ let dontTouchTwo;
 let idArr = [];
 
 io.on('connection', (socket) => {
-
-
     console.log(socket.userName + " has connected.");
-    io.emit('message', `${socket.userName} has connected`);
 
     socket.leave(socket.id);
 
@@ -61,11 +53,6 @@ io.on('connection', (socket) => {
     if(dontTouchTwo == dontTouch){
         dontTouchTwo = socket.rooms;
     }
-
-    socket.on('message', (message) =>     {
-        console.log(message);
-        io.emit('message', `${socket.userName} said: ${message}` );   
-    });
 
     socket.on('changeName', name => {
         let oldName = socket.userName;
@@ -87,78 +74,74 @@ io.on('connection', (socket) => {
     });
 
     socket.on('randomRoom', () => {
-	let id;
+        let id;
 
-	do {
-	    let i = Math.random();
-	    id = Buffer.from(`${i}`).toString('base64');
-	} while (idArr.includes(id));
-	
-	let room = new idObj(id, 0, socket.id);
-	//room.roomId = id;
-	room.amountConnected++;
+        do {
+            let i = Math.random();
+            id = Buffer.from(`${i}`).toString('base64');
+        } while (idArr.includes(id));
+        
+        let room = new idObj(id, 0, socket.id);
+        room.amountConnected++;
 
         idArr.push(room);
-	socket.join(room.roomId);
-	
-	/*let clients_in_the_room = io.sockets.adapter.rooms[id];
-	console.log(clients_in_the_room); 
-	for (let clientId in clients_in_the_room ) {
-  	    console.log('client: %s', clientId); //Seeing is believing 
-  	    let client_socket = io.sockets.connected[clientId]; //Do whatever you want with this
-	}*/
+        socket.join(room.roomId);
 
-	console.log("roomId: " + room.roomId);
-	console.log("Amount of users in room: " + room.amountConnected);
-	console.log("Connected users: " + room.userIdArr);
+
+        console.log("roomId: " + room.roomId);
+        console.log("Amount of users in room: " + room.amountConnected);
+        console.log("Connected users: " + room.userIdArr);
 
         console.log("User " + socket.userName + " joined room " + id);
     });
 
-    socket.on('checkRooms', () => {
+    socket.on('debug', () => {
         console.log(idArr);
     });
 
     socket.on('disconnectRoom', (roomId) => {
         socket.leave(roomId);
         console.log("User left room " + roomId);
+        disconnectHandler(socket);
     });
 
     socket.on('disconnect', () => {
         console.log(socket.userName + " has disconnected.");
         io.emit('message', `${socket.userName} has disconnected`);
+        disconnectHandler(socket);
+    });
+});
 
-	
-        if(socket.rooms !== dontTouchTwo){
+function disconnectHandler (socket) {
+    if(socket.rooms !== dontTouchTwo){
 	    for(let i = 0; i < idArr.length; i++){
 	        for(let j = 0; j < idArr[i].userIdArr.length; j++) {
 	            if (idArr[i].userIdArr[j] == socket.id) {
-		        idArr[i].amountConnected--;
-		        idArr[i].userIdArr[j] = "";
-		        console.log("Fetus has been deletus");
-		    }
+                    idArr[i].amountConnected--;
+                    idArr[i].userIdArr[j] = "";
+                    console.log("Fetus has been deletus");
+		        }
 	        }
 	        if(idArr[i].amountConnected == 0){
-		    delete idArr[i];
-		    pushArray(idArr, i);
-		    break;
+                delete idArr[i];
+                pushArray(idArr, i);
+                break;
 	        }
 	    }
 	}
-    });
-});
+}
 
 function pushArray (arr, index) {
     let SENTINAL = true;
 
     while (SENTINAL) {
-	arr[index] = arr[index + 1];
-	if (arr[index] == dontTouch) {
-	    
+        arr[index] = arr[index + 1];
+        if (arr[index] == dontTouch) {  
             SENTINAL = false;
-	}
-	index++;
+        }
+        index++;
     }
+    
     console.log("Post push: " + arr);
 }
 
