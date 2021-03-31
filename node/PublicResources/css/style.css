@@ -3,7 +3,7 @@
 
 body {
   background-color: white;
-  background-image:url("donuts.jpg") ; 
+  background-image:url("../img/donuts.jpg") ; 
   background-size:center; 
   padding: 0mm;
 }
@@ -13,7 +13,8 @@ h1{
   padding: 69mm;
   text-align: center;
 }
- 
+
+
 /*Navbar*/
 * {
   box-sizing: border-box;
@@ -208,6 +209,21 @@ h1{
     transform: translateY(-8px) rotate(-45deg);
   }
 }
+.card{
+  height: 4rem;
+  width: 4rem;
+  position:fixed ;
+  top: 1rem;
+  float: right;
+}
+
+.card__logo{
+  height: 100%;
+  width: 100%;
+  image-resolution: 100px 100px;
+  object-fit: cover;
+}
+
 
 /* */
 a.home{
@@ -652,6 +668,7 @@ a.p4 {
   .footer{
     font-size: 10px;
   }
+  
 }
 
 
