@@ -1,78 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link rel="stylesheet" href="css/style.css" />
-  <head>
-    <title>BarGames.dk</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/style.css" />
+
+    <head>
+        <title>BarGames.dk</title>
 
 
-  </head>
-  <body>
-    <nav class="navbar">
-      <div class="navbar__container">
-        <a href="html/home.html" id="navbar__logo">Bar_games</a>
-        <div class="navbar__toggle" id="mobile-menu">
-          <span class="bar"></span> <span class="bar"></span>
-          <span class="bar"></span>
-        </div>
-        <ul class="navbar__menu">
-          <li class="navbar__item">
-            <a href="html/index.html" class="navbar__links" id="home-page">Home</a>
-          </li>
-          <li class="navbar__item">
-            <a href="html/gamesAndRules.html" class="navbar__links" id="Games rules">Game rules</a>
-          </li>
-          <!--<li class="navbar__btn">
+    </head>
+
+    <body>
+        <nav class="navbar">
+            <div class="navbar__container">
+                <a href="/" id="navbar__logo">Bar_games</a>
+                <div class="navbar__toggle" id="mobile-menu">
+                    <span class="bar"></span> <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+                <ul class="navbar__menu">
+                    <li class="navbar__item">
+                        <a href="/" class="navbar__links" id="home-page">Home</a>
+                    </li>
+                    <li class="navbar__item">
+                        <a href="gamesAndRules.html" class="navbar__links" id="Games rules">Game rules</a>
+                    </li>
+                    <!--<li class="navbar__btn">
             <a href="#sign-up" class="button" id="signup">Contact</a>
           </li>-->
-        </ul>
-      </div>
-    </nav>
+                </ul>
+            </div>
+        </nav>
 
-    <div class="settingstab">
-        <h2 class="Settingh">Settings</h2>
+        <div class="settingstab">
+            <h2 class="Settingh">Settings</h2>
 
-        <label class="games">Choose a game:</label>
-        <select class="gameselect" form="gameform">
+            <label class="games">Choose a game:</label>
+            <select class="gameselect" form="gameform">
             <option value="select">select</option>
             <option value="promt">Promt</option>
             <option value="dice">Dice</option>
             <option value="card">Card</option>
         </select>
-        <br>
-        <label class="rounds">Choose rounds:</label>
-        <select  class="roundselect" form="gameform">
+            <br>
+            <label class="rounds">Choose rounds:</label>
+            <select class="roundselect" form="gameform">
             <option value="select">select</option>
             <option value="promt">1</option>
             <option value="dice">2</option>
             <option value="card">3</option>
         </select>
-        <br>
+            <br>
 
 
-    </div>
-  
-    <div class="footer">
-      <p> Contact Terms of Service Credits </p>
-      <p> The owner of this site is not responsible for any user generated content (messages, usernames) </p>
-    </div>
-    
+        </div>
 
-    
+        <div class="footer">
+            <p> Contact Terms of Service Credits </p>
+            <p> The owner of this site is not responsible for any user generated content (messages, usernames) </p>
+        </div>
 
-  </body>
-  <footer>
-    <div class="footer">
-      <p> Contact Terms of Service Credits </p>
-      <p> The owner of this site is not responsible for any user generated content (messages, usernames) </p>
-    </div>
-  </footer>
-      
-  <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
-  <script defer src="js/app.js"></script>
+
+
+
+    </body>
+    <footer>
+        <div class="footer">
+            <p> Contact Terms of Service Credits </p>
+            <p> The owner of this site is not responsible for any user generated content (messages, usernames) </p>
+        </div>
+    </footer>
+
+    <script defer src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script defer src="../js/app.js"></script>
 </head>
 </body>
+
 </html>
