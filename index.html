@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Test</title>
+    <!-- <script src="https://cdn.socket.io/socket.io-3.0.0.js"></script> -->
+    <script src="node_modules/socket.io/client-dist/socket.io.js"></script>
+    <script defer src="app.js"></script>
+    
+</head>
+<body>
+
+    <ul id="list">
+        
+    </ul>
+    <input id="clientName" placeholder="Input name">
+    <button id="changeNameButton">Change Name</button>
+    <br>
+    <input id="roomInput" placeholder="join room id">
+    <button id="roomButton">Join Room</button>
+    <button id="disRoomButton">Disconnect from Room</button>
+    <br>
+    <button id="randomRoom">Join random room</button>
+    <button id="disconnect">Disconnect</button>
+    <br>
+    <input id="sendRoomInput" placeholder="room id to send message">
+    <br>
+    <input id="messageInput" placeholder="message">
+    <button id="sendMessage">Send</button>
+    <br>
+    <br>
+    <button id="checkRooms">Check Rooms</button>
+
+</body>
+</html>
