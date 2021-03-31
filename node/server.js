@@ -16,7 +16,7 @@ const io = require('socket.io')(server, {
 const hostname = '127.0.0.1';
 const port = 3100;
 
-const path = `${__dirname}/PublicResources/html/home.html`;
+const path = `${__dirname}/PublicResources/html`;
 console.log(path);
 
 app.use(express.static(path));
