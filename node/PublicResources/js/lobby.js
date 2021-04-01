@@ -1,1 +1,1 @@
-console.log(document.URL);
+console.log(document.URL.split("/Lobby/")[1]);
