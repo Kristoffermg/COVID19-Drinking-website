@@ -32,7 +32,7 @@ app.get('/Lobby', function(req, res) {
 
 app.get('/Lobby/:lobbyId', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-    console.log(lobbyId);
+    console.log(req);
 });
 
 io.on('connect_error', (err) => {
