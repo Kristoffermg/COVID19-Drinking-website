@@ -79,30 +79,16 @@ io.on('connection', (socket) => {
     });
 
     socket.on('joinRoom', (roomId) => {
-        socket.join(roomId);
-        console.log("User joined room " + roomId);
+        if (roomId == null) {
+            randomRoom(socket);
+        } else {
+            socket.join(roomId);
+            console.log("User joined room " + roomId);
+        }
     });
 
     socket.on('randomRoom', () => {
-        let id;
 
-        do {
-            let i = Math.random();
-            id = Buffer.from(`${i}`).toString('base64');
-        } while (idArr.includes(id));
-        
-        let room = new idObj(id, 0, socket.id);
-        room.amountConnected++;
-
-        idArr.push(room);
-        socket.join(room.roomId);
-
-
-        console.log("roomId: " + room.roomId);
-        console.log("Amount of users in room: " + room.amountConnected);
-        console.log("Connected users: " + room.userIdArr);
-
-        console.log("User " + socket.userName + " joined room " + id);
     });
 
     socket.on('debug', () => {
@@ -139,6 +125,28 @@ function disconnectHandler (socket) {
 	        }
 	    }
 	}
+}
+
+function randomRoom(socket) {
+    let id;
+
+    do {
+        let i = Math.random();
+        id = Buffer.from(`${i}`).toString('base64');
+    } while (idArr.includes(id));
+    
+    let room = new idObj(id, 0, socket.id);
+    room.amountConnected++;
+
+    idArr.push(room);
+    socket.join(room.roomId);
+
+
+    console.log("roomId: " + room.roomId);
+    console.log("Amount of users in room: " + room.amountConnected);
+    console.log("Connected users: " + room.userIdArr);
+
+    console.log("User " + socket.userName + " joined room " + id);
 }
 
 function pushArray (arr, index) {
