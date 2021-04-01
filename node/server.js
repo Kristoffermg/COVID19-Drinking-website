@@ -36,7 +36,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     // console.log(str);
     // res.send(str);
     // res.send(req.params);
-    res.render(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'), req.params);
+    res.render(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
 
 io.on('connect_error', (err) => {
