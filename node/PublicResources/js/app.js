@@ -10,6 +10,8 @@ createLobbybutton.addEventListener("click", () => {
     socket.emit("randomRoom");
 });
 
+console.log(document.URL);
+
 
 
 // Display Mobile Menu

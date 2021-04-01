@@ -26,21 +26,13 @@ app.get('/', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
 });
 
-// app.get('/Lobby', function(req, res) {
-//     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-// });
+app.get('/Lobby', function(req, res) {
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+});
 
 app.get('/Lobby/:lobbyId', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
-
-// app.route('/Lobby/:lobbyId')
-//     .get(function(req, res) {
-//         res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-//     })
-//     .post(function(req, res) {
-//         res.send(req.params);
-//     })
 
 
 
