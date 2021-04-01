@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('joinRoom', (roomId) => {
-        if (roomId == null) {
+        if (roomId == "") {
             randomRoom(socket);
         } else {
             socket.join(roomId);
