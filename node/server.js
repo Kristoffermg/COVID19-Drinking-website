@@ -30,6 +30,11 @@ app.get('/Lobby', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
 
+app.get('/Lobby/:lobbyId', function(req, res) {
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    console.log(req.params());
+});
+
 io.on('connect_error', (err) => {
     console.log(err);
     console.log('brr');
