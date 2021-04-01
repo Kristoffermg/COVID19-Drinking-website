@@ -92,7 +92,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('debug', () => {
-        console.log(idArr);
+        console.log(socket.rooms);
     });
 
     socket.on('disconnectRoom', (roomId) => {
