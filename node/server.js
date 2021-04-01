@@ -121,6 +121,7 @@ function disconnectHandler (socket) {
 	        if(idArr[i].amountConnected == 0){
                 delete idArr[i];
                 pushArray(idArr, i);
+                idArr.pop();
                 break;
 	        }
 	    }
