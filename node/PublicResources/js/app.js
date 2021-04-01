@@ -1,5 +1,3 @@
-const socket = io({path:'/node0/socket.io', transports: ["polling"]});
-
 const menu = document.querySelector('#mobile-menu');
 const menuLinks = document.querySelector('.navbar__menu');
 const navLogo = document.querySelector('#navbar__logo');
