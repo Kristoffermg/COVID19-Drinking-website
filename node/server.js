@@ -31,12 +31,12 @@ app.get('/Lobby', function(req, res) {
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
-    // res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
     // let str = req.path.slice(7,req.path.length);
     // console.log(str);
     // res.send(str);
-    // res.send(req.params);
-    res.render(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    res.send(req.params);
+    // res.render(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
 
 io.on('connect_error', (err) => {
