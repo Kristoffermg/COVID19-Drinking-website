@@ -30,15 +30,27 @@ app.get('/Lobby', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
 
-app.get('/Lobby/:lobbyId', function(req, res) {
-    res.send(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-    // let str = req.path.slice(7,req.path.length);
-    // console.log(str);
-    // res.send(str);
-    //res.send(req.params);
-    // res.render(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-});
+// app.route('/Lobby/:lobbyId', function(req, res) {
+//     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+//     // let str = req.path.slice(7,req.path.length);
+//     // console.log(str);
+//     // res.send(str);
+//     res.
+//     res.send(req.params);
+//     // res.render(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+// });
 
+app.route('/Lobby/:lobbyId')
+    .get(function(req, res) {
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    })
+    .post(function(req, res) {
+        res.send(req.params);
+    })
+
+
+
+    
 io.on('connect_error', (err) => {
     console.log(err);
     console.log('brr');
