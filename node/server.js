@@ -26,6 +26,9 @@ app.get('/', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
 });
 
+app.get('/Lobby', function(req, res) {
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+});
 
 io.on('connect_error', (err) => {
     console.log(err);
