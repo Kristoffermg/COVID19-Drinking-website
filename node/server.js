@@ -2,6 +2,7 @@
 
 const { DH_UNABLE_TO_CHECK_GENERATOR } = require('constants');
 
+//server setup
 const http = require('http');
 const express = require('express');
 const app = express();
@@ -17,6 +18,7 @@ const io = require('socket.io')(server, {
 const hostname = '127.0.0.1';
 const port = 3100;
 
+//Handling af HTML filer
 const path = `${__dirname}/PublicResources`;
 console.log(path);
 
@@ -41,19 +43,20 @@ io.on('connect_error', (err) => {
     console.log(err);
     console.log('brr');
 });
-
+//object til at holde står på rum
 function idObj(roomId, amountConnected, userIdArr) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
     this.userIdArr.push(userIdArr);
 }
-
+//Don't Touch :)
 let dontTouch;
 let dontTouchTwo;
 
 let idArr = [];
 
+//Alle socket funktioner
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
 
@@ -78,6 +81,7 @@ io.on('connection', (socket) => {
         io.to(id).emit('message', `${socket.userName} said: ${msg}` );
     });
 
+    //joiner et rum eller laver et, alt efter URL
     socket.on('joinRoom', (roomId) => {
         if (roomId == "") {
             randomRoom(socket);
@@ -108,6 +112,7 @@ io.on('connection', (socket) => {
     });
 });
 
+//Ændre i idArr og fjerne rum hvis nødvendigt
 function disconnectHandler (socket) {
     if(socket.rooms !== dontTouchTwo){
 	    for(let i = 0; i < idArr.length; i++){
@@ -128,6 +133,7 @@ function disconnectHandler (socket) {
 	}
 }
 
+//laver nyt rum
 function randomRoom(socket) {
     let id;
 
@@ -150,6 +156,7 @@ function randomRoom(socket) {
     console.log("User " + socket.userName + " joined room " + id);
 }
 
+//fjerner et element i array
 function pushArray (arr, index) {
     let SENTINAL = true;
 
