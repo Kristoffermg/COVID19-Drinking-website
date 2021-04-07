@@ -6,6 +6,7 @@ const copyURL = document.getElementById("copyURL");
 const usernameInput = document.getElementById("username");
 const setUsername = document.getElementById("setUsername");
 
+let trueId = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 
 const videoGrid = document.getElementById('video-grid')
@@ -68,8 +69,8 @@ function addVideoStream(video, stream) {
 
 socket.emit("randomRoom");
 
-socket.emit("joinRoom", id);
-console.log(id);
+socket.emit("joinRoom", trueId);
+console.log(trueId);
 
 function copyURLtest() {
     console.log("hell nah");
