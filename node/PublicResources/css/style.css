@@ -220,6 +220,8 @@ h1{
 .card__logo{
   height: 100%;
   width: 100%;
+  position: absolute;
+  left: 55px;
   image-resolution: 100px 100px;
   object-fit: cover;
 }
@@ -359,7 +361,7 @@ a.link{
   height: 100%;
 }
 
-a.createLobby{
+.createLobby {
   color: white;
   font-size: large;
   padding: 1cm 2cm;
@@ -377,6 +379,12 @@ a.createLobby{
   transform: translate(-50%, -50%);
   text-decoration: none;
 }  
+
+.createLobby:hover,
+.createLobby:focus {
+    box-shadow: 0.5em 0.5em 0.5em -0.4em #ffffff;
+}
+
 /*
 .bottomtext{
   position: relative;
@@ -684,7 +692,7 @@ a.p4 {
   text-align: center;
 }
 
-.settingstab{
+.settingstab {
   background-color: rgb(129, 224, 193);
   padding: 4rem 8rem;
   position: absolute;
@@ -697,27 +705,54 @@ a.p4 {
   border-radius: 1rem;
 }
 
+#usernameInput {
+  position: absolute;
+  background-color: rgb(129, 224, 193);
+  top: 29%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border: .2rem solid black;   
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+}
+
+#videos {
+  position: absolute;
+  top: 70%;
+  border: 3px solid black;
+  width: 100%;
+  height: 16%;
+}
+
+#video-grid {
+  display: inline-block;
+  grid-template-colums: repeat(auto-fill, 300px);
+  grid-auto-rows: 300px;
+}
+
+video {
+  outline-style: groove;
+  outline-color: rgb(129, 224, 193);
+  width: 200px;
+  height: 200px%;
+  object-fit: cover;
+}
+
 .Settingh {
   position: relative;
   padding: 8px 12px;
-  right: 50%;
+  right: 30%;
   top: -2.2rem;
 }
 
-.games {
+.games__and__rounds {
   font-size: 20px;
+  padding: 8px 12px;
   size: 4rem 6rem;
   position: relative;
-  right: 70%;
+  right: 30%;
   top: -1.2rem;
-}
-
-.rounds{
-  font-size: 20px;
-  size: 4rem 6rem;
-  position: relative;
-  right: 70%;
-  top: -2.5rem;
 }
 
 .gameselect{
@@ -729,8 +764,8 @@ a.p4 {
   cursor: pointer;
   border-radius: 5px;
   position: relative;
-  right: -60%;
-  top: -3.5rem;
+  right: 20%;
+  top: -1.2rem;
 }
 
 .roundselect{
@@ -742,6 +777,6 @@ a.p4 {
   cursor: pointer;
   border-radius: 5px;
   position: relative;
-  right: -60%;
-  top: -4.5rem;
+  right: -85%;
+  top: -3.85rem;
 }

@@ -18,27 +18,24 @@ const io = require('socket.io')(server, {
 const hostname = '127.0.0.1';
 const port = 3100;
 
-//Handling af HTML filer
-const path = `${__dirname}/PublicResources`;
-console.log(path);
+    //Handling af HTML filer
+    const path = `${__dirname}/PublicResources`;
+    console.log(path);
 
-app.use(express.static(path));
+    app.use(express.static(path));
 
-app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
-});
+    app.get('/', function(req, res) {
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    });
 
-app.get('/Lobby', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-});
+    app.get('/Lobby', function(req, res) {
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    });
 
-app.get('/Lobby/:lobbyId', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
-});
+    app.get('/Lobby/:lobbyId', function(req, res) {
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    });
 
-
-
-    
 io.on('connect_error', (err) => {
     console.log(err);
     console.log('brr');
@@ -54,9 +51,8 @@ function idObj(roomId, amountConnected, userIdArr) {
 let dontTouch;
 let dontTouchTwo;
 
-let idArr = [];
+let idArr = []
 
-//Alle socket funktioner
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
 
@@ -91,6 +87,15 @@ io.on('connection', (socket) => {
         }
     });
 
+    /*ÆNDRE FRONTEND PLS*/
+    socket.on('joinVideo', (roomId, userId) => {
+        socket.join(roomId);
+        socket.to(roomId).broadcast.emit("user-connected", userId);
+        socket.on('disconnect', () => {
+            socket.to(roomId).broadcast.emit('user-disconnected', userId);
+        });
+    });
+
     socket.on('randomRoom', () => {
 
     });
@@ -110,6 +115,7 @@ io.on('connection', (socket) => {
         io.emit('message', `${socket.userName} has disconnected`);
         disconnectHandler(socket);
     });
+
 });
 
 //Ændre i idArr og fjerne rum hvis nødvendigt
