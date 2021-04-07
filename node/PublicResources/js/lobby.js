@@ -40,7 +40,7 @@ socket.on('user-disconnected', userId => {
 
 myPeer.on('open', id => {
     let trueId = document.URL.split("/Lobby/")[1];
-    socket.emit('joinVideo', trueId, socket.id, id);
+    socket.emit('joinVideo', trueId, id);
 })
 
 // Calls the other peers
@@ -68,8 +68,8 @@ function addVideoStream(video, stream) {
 
 socket.emit("randomRoom");
 
-// socket.emit("joinRoom", id);
-// console.log(id);
+socket.emit("joinRoom", id);
+console.log(id);
 
 function copyURLtest() {
     console.log("hell nah");
