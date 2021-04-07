@@ -40,7 +40,7 @@ socket.on('user-disconnected', userId => {
 })
 
 myPeer.on('open', id => {
-    socket.emit('joinVideo', ROOM_ID, id) 
+    socket.emit('joinVideo', id, socket.id) 
 })
 
 // Calls the other peers
@@ -66,7 +66,6 @@ function addVideoStream(video, stream) {
     videoGrid.append(video)
 } 
 
-console.log("hej");
 socket.emit("randomRoom");
 
 socket.emit("joinRoom", id);

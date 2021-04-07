@@ -79,18 +79,22 @@ io.on('connection', (socket) => {
 
     //joiner et rum eller laver et, alt efter URL
     socket.on('joinRoom', (roomId) => {
+        // if (roomId == "") {
+        //     randomRoom(socket);
+        // } else {
+        //     socket.join(roomId);
+        //     console.log("User joined room " + roomId);
+        // }
+    });
+
+    socket.on('joinVideo', (roomId, userId) => {
         if (roomId == "") {
             randomRoom(socket);
         } else {
             socket.join(roomId);
+            socket.to(roomId).broadcast.emit("user-connected", userId);
             console.log("User joined room " + roomId);
         }
-    });
-
-    /*ÆNDRE FRONTEND PLS*/
-    socket.on('joinVideo', (roomId, userId) => {
-        socket.join(roomId);
-        socket.to(roomId).broadcast.emit("user-connected", userId);
         socket.on('disconnect', () => {
             socket.to(roomId).broadcast.emit('user-disconnected', userId);
         });
