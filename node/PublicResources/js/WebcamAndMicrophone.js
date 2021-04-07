@@ -30,7 +30,7 @@ socket.on('user-disconnected', userId => {
 })
 
 myPeer.on('open', id => {
-    socket.emit('join-room', ROOM_ID, id) 
+    socket.emit('joinVideo', ROOM_ID, id) 
 })
 
 // Calls the other peers
