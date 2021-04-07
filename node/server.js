@@ -96,6 +96,7 @@ io.on('connection', (socket) => {
             socket.join(roomId);
             for (let i = 0; i < idArr.length; i++) {
                 if (idArr[i].roomId == roomId) {
+                    console.lop("videoId: " + idArr[i].videoId);
                     socket.join(idArr[i].videoId);
                     idArr[i].amountConnected++;
                     socket.to(idArr.videoId).broadcast.emit("user-connected", userId);
@@ -174,6 +175,7 @@ function randomRoom(socket, videoId) {
 
 
     console.log("roomId: " + room.roomId);
+    console.log("videoId: "+ room.videoId);
     console.log("Amount of users in room: " + room.amountConnected);
     console.log("Connected users: " + room.userIdArr);
 
