@@ -6,7 +6,6 @@ const copyURL = document.getElementById("copyURL");
 const usernameInput = document.getElementById("username");
 const setUsername = document.getElementById("setUsername");
 
-let id = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 
 const videoGrid = document.getElementById('video-grid')
@@ -40,6 +39,7 @@ socket.on('user-disconnected', userId => {
 })
 
 myPeer.on('open', id => {
+    let id = document.URL.split("/Lobby/")[1];
     socket.emit('joinVideo', id, socket.id) 
 })
 
