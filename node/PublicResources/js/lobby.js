@@ -72,6 +72,10 @@ socket.emit("randomRoom");
 socket.emit("joinRoom", trueId);
 console.log(trueId);
 
+myPeer.on("error", err =>{
+    console.log(err);
+});
+
 function copyURLtest() {
     console.log("hell nah");
     lobbyURL.select();
