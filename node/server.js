@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
                     console.log("videoId: " + idArr[i].videoId);
                     socket.join(idArr[i].videoId);
                     idArr[i].amountConnected++;
-                    socket.to(idArr.videoId).broadcast.emit("user-connected", userId);
+                    socket.to(idArr.videoId).broadcast.emit("user-connected", videoId);
                 }
             }
            // socket.to(roomId).broadcast.emit("user-connected", userId);
@@ -109,7 +109,7 @@ io.on('connection', (socket) => {
             //socket.to(roomId).broadcast.emit('user-disconnected', userId);
             for (let i = 0; i < idArr.length; i++) {
                 if (idArr[i].roomId == roomId) {
-                    socket.to(idArr[i].videoId).broadcast.emit('user-disconnected', userId);
+                    socket.to(idArr[i].videoId).broadcast.emit('user-disconnected', videoId);
                 }
             }
         });
