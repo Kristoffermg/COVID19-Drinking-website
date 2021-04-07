@@ -66,6 +66,8 @@ function addVideoStream(video, stream) {
     videoGrid.append(video)
 } 
 
+socket.emit("randomRoom");
+
 socket.emit("joinRoom", id);
 console.log(id);
 

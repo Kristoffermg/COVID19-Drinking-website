@@ -1,5 +1,5 @@
-const createLobbybutton = document.getElementById("createLobby");
+// const createLobbybutton = document.getElementById("createLobby");
 
-createLobbybutton.addEventListener("click", () => {
-    socket.emit("randomRoom");
-});
+// createLobbybutton.addEventListener("click", () => {
+//     socket.emit("randomRoom");
+// });
