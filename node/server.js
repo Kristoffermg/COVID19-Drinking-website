@@ -172,6 +172,7 @@ function randomRoom(socket, videoId) {
 
     idArr.push(room);
     socket.join(room.roomId);
+    socket.join(room.videoId);
 
 
     console.log("roomId: " + room.roomId);
