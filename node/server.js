@@ -41,8 +41,9 @@ io.on('connect_error', (err) => {
     console.log('brr');
 });
 //object til at holde står på rum
-function idObj(roomId, amountConnected, userIdArr) {
+function idObj(roomId, amountConnected, userIdArr, videoId) {
     this.roomId = roomId;
+    this.videoId = videoId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
     this.userIdArr.push(userIdArr);
@@ -89,24 +90,27 @@ io.on('connection', (socket) => {
 
     socket.on('joinVideo', (roomId, userId, videoId) => {
         console.log("Room id i start af funktion: " + roomId);
-        console.log("videoId: " + videoId);
         if (roomId == "") {
-            randomRoom(socket);
+            randomRoom(socket, videoId);
         } else {
             socket.join(roomId);
-            socket.join(videoId);
             for (let i = 0; i < idArr.length; i++) {
                 if (idArr[i].roomId == roomId) {
+                    socket.join(idArr[i].videoId);
                     idArr[i].amountConnected++;
+                    socket.to(idArr.videoId).broadcast.emit("user-connected", userId);
                 }
             }
             socket.to(roomId).broadcast.emit("user-connected", userId);
-            socket.to(videoId).broadcast.emit("user-connected", userId);
             console.log("User joined room " + roomId);
         }
         socket.on('disconnect', () => {
             socket.to(roomId).broadcast.emit('user-disconnected', userId);
-            socket.to(videoId).broadcast.emit('user-disconnected', userId);
+            for (let i = 0; i < idArr.length; i++) {
+                if (idArr[i].roomId == roomId) {
+                    socket.to(idArr[i].videoId).broadcast.emit('user-disconnected', userId);
+                }
+            }
         });
     });
 
@@ -154,7 +158,7 @@ function disconnectHandler (socket) {
 }
 
 //laver nyt rum
-function randomRoom(socket) {
+function randomRoom(socket, videoId) {
     let id;
 
     do {
@@ -162,7 +166,7 @@ function randomRoom(socket) {
         id = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(id));
     
-    let room = new idObj(id, 0, socket.id);
+    let room = new idObj(id, 0, socket.id, videoId);
     room.amountConnected++;
 
     idArr.push(room);
