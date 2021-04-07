@@ -67,6 +67,7 @@ function addVideoStream(video, stream) {
 } 
 
 socket.emit("joinRoom", id);
+console.log(id);
 
 function copyURLtest() {
     console.log("hell nah");
