@@ -93,6 +93,11 @@ io.on('connection', (socket) => {
             randomRoom(socket);
         } else {
             socket.join(roomId);
+            for (let i = 0; i < idArr.length; i++) {
+                if (idArr[i].roomId == roomId) {
+                    idArr[i].amountConnected++;
+                }
+            }
             socket.to(roomId).broadcast.emit("user-connected", userId);
             console.log("User joined room " + roomId);
         }
