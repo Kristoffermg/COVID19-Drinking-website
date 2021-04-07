@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
             socket.join(roomId);
             for (let i = 0; i < idArr.length; i++) {
                 if (idArr[i].roomId == roomId) {
-                    console.lop("videoId: " + idArr[i].videoId);
+                    console.log("videoId: " + idArr[i].videoId);
                     socket.join(idArr[i].videoId);
                     idArr[i].amountConnected++;
                     socket.to(idArr.videoId).broadcast.emit("user-connected", userId);
