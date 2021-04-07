@@ -87,22 +87,25 @@ io.on('connection', (socket) => {
         // }
     });
 
-    socket.on('joinVideo', (roomId, userId) => {
+    socket.on('joinVideo', (roomId, userId, videoId) => {
         console.log("Room id i start af funktion: " + roomId);
         if (roomId == "") {
             randomRoom(socket);
         } else {
             socket.join(roomId);
+            socket.join(videoId);
             for (let i = 0; i < idArr.length; i++) {
                 if (idArr[i].roomId == roomId) {
                     idArr[i].amountConnected++;
                 }
             }
             socket.to(roomId).broadcast.emit("user-connected", userId);
+            socket.to(videoId).broadcast.emit("user-connected", userId);
             console.log("User joined room " + roomId);
         }
         socket.on('disconnect', () => {
             socket.to(roomId).broadcast.emit('user-disconnected', userId);
+            socket.to(videoId).broadcast.emit('user-disconnected', userId);
         });
     });
 

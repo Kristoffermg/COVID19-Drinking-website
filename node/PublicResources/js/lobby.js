@@ -40,7 +40,7 @@ socket.on('user-disconnected', userId => {
 
 myPeer.on('open', id => {
     let trueId = document.URL.split("/Lobby/")[1];
-    socket.emit('joinVideo', trueId, socket.id) 
+    socket.emit('joinVideo', trueId, socket.id, id);
 })
 
 // Calls the other peers
