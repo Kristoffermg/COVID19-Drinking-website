@@ -102,11 +102,11 @@ io.on('connection', (socket) => {
                     socket.to(idArr.videoId).broadcast.emit("user-connected", userId);
                 }
             }
-            socket.to(roomId).broadcast.emit("user-connected", userId);
+           // socket.to(roomId).broadcast.emit("user-connected", userId);
             console.log("User joined room " + roomId);
         }
         socket.on('disconnect', () => {
-            socket.to(roomId).broadcast.emit('user-disconnected', userId);
+            //socket.to(roomId).broadcast.emit('user-disconnected', userId);
             for (let i = 0; i < idArr.length; i++) {
                 if (idArr[i].roomId == roomId) {
                     socket.to(idArr[i].videoId).broadcast.emit('user-disconnected', userId);
