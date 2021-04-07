@@ -3,8 +3,8 @@
 
 body {
   background-color: white;
-  background-image:url("../img/donuts.jpg") ; 
-  background-size:center; 
+  background-image:url("../img/unknown.png") ; /*Boomer image looool* I did thi:)*/
+  background-size: cover;
   padding: 0mm;
 }
 
@@ -14,6 +14,9 @@ h1{
   text-align: center;
 }
 
+h3 {
+  text-align: center;
+}
 
 /*Navbar*/
 * {
@@ -534,15 +537,40 @@ a.p4 {
   border-style: solid;
 }
 */
+
+.section_container {
+  margin: 0px, 0px, 60px, 60px;
+}
+
+.title {
+  margin-top: 40px;
+  padding: 0px;
+  background: transparent;
+  color: #fff;
+  font-weight: bolder;
+  font-size: 55px;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: black;
+}
+
+.Underline_text {
+  color:#fff;
+  font-size: 30px;
+  margin-top: 10px;
+  -webkit-text-stroke-width: 1.7px;
+  -webkit-text-stroke-color: black;
+}
+
 /* Services Section */
 .services {
   background: transparent;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   align-items: center;
   height: 200%;
   padding: 5px;
+
 }
 
 .services h1 {
@@ -555,6 +583,11 @@ a.p4 {
   -moz-text-fill-color: transparent;
   margin-bottom: 1rem;
   font-size: 2.5rem;
+
+}
+
+.services h2 {
+  top: 30px;
 }
 
 .services__wrapper {
@@ -562,12 +595,13 @@ a.p4 {
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr;
   position: relative;
-  top: 2rem;
+  top: 0rem;
   bottom: 9rem;
+  justify-content: space-evenly;
 }
 
 .services__card {
-  margin: 40px;
+  margin: 30px;
   height: 425px;
   width: 420px;
   border-radius: 10px;
@@ -576,12 +610,13 @@ a.p4 {
   border-color: white ;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-evenly;
   color: #fff;
   background: -webkit-linear-gradient(to left, #cc5333, #23074d);  /* Chrome 10-25, Safari 5.1-6 */
   background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-  transition: 0.3s ease-in;
+  transition: 0.4s ease-in;
 }
+
 /*
 .services__card:nth-child(2) {
   background: #1fa2ff;  
@@ -744,4 +779,13 @@ a.p4 {
   position: relative;
   right: -60%;
   top: -4.5rem;
+}
+
+.Rule_list {
+border-top: 2px;
+border-top-style: solid;
+margin-top: 50px;
+padding-top: 20px; padding-bottom: 20px; padding-left: 30px; padding-right: 30px;
+height: 425px;
+overflow: auto;
 }
