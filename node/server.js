@@ -88,6 +88,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('joinVideo', (roomId, userId) => {
+        console.log(roomId);
         if (roomId == "") {
             randomRoom(socket);
         } else {
