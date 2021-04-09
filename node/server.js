@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
 
     //joiner et rum eller laver et, alt efter URL
     socket.on('joinRoom', (roomId, userId) => {
-        if (roomId == "") {
+        if (roomId == "" || roomId == dontTouch) {
             randomRoom(socket);
         } else {
             socket.join(roomId);
