@@ -65,9 +65,9 @@ socket.on('roomId', (roomId) => {
     console.log('idxd ' + idxd);
 
     if(idxd == "" || idxd == dontTouch){
-        ROOM_ID = idxd;
-    }else{
         ROOM_ID = roomId;
+    }else{
+        ROOM_ID = idxd;
     }
 
     console.log('ROOOOOOOM ' + ROOM_ID);
