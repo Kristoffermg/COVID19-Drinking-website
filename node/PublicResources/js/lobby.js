@@ -61,11 +61,16 @@ function addVideoStream(video, stream) {
 
 socket.on('roomId', (roomId) => {
 
+    console.log('backend roomid ' + roomId);
+    console.log('idxd ' + idxd);
+
     if(idxd == "" || idxd == dontTouch){
         ROOM_ID = idxd;
     }else{
         ROOM_ID = roomId;
     }
+
+    console.log('ROOOOOOOM ' + ROOM_ID);
 
     //ROOM_ID = roomId;
 });
