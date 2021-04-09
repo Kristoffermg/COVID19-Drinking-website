@@ -34,6 +34,7 @@ socket.on('user-disconnected', userId => {
 });
 
 myPeer.on('open', id => {
+    console.log('ja det er scuffed');
     socket.emit('joinRoom', ROOM_ID, id);
 });
 
