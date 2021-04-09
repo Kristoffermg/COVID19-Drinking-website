@@ -6,6 +6,7 @@ const localVideo = document.createElement('video');
 localVideo.muted = true; 
 const peers = {};
 
+let dontTouch;
 let ROOM_ID;
 
 navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
@@ -59,7 +60,14 @@ function addVideoStream(video, stream) {
 
 
 socket.on('roomId', (roomId) => {
-    ROOM_ID = roomId;
+
+    if(idxd == "" || idxd == dontTouch){
+        ROOM_ID = idxd;
+    }else{
+        ROOM_ID = roomId;
+    }
+
+    //ROOM_ID = roomId;
 });
 
 
