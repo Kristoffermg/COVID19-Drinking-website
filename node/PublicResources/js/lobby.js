@@ -1,7 +1,7 @@
 const socket = io({path:'/node0/socket.io', transports: ["polling"]});
 
 const videoGrid = document.getElementById('video-grid');
-const myPeer = new Peer({path:''});
+const myPeer = new Peer();
 const localVideo = document.createElement('video');
 localVideo.muted = true; 
 const peers = {};
