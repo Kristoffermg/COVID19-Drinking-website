@@ -54,6 +54,8 @@ function idObj(roomId, amountConnected, userIdArr) {
 let dontTouch;
 let dontTouchTwo;
 
+let idBase;
+
 let idArr = [];
 
 //Alle socket funktioner
@@ -67,6 +69,11 @@ io.on('connection', (socket) => {
         dontTouchTwo = socket.rooms;
     }
 
+    do {
+        let i = Math.random();
+        idBase = Buffer.from(`${i}`).toString('base64');
+    } while (idArr.includes(idBase));
+    socket.emit('roomId', idBase);
 
     socket.on('changeName', name => {
         let oldName = socket.userName;
@@ -85,7 +92,7 @@ io.on('connection', (socket) => {
     //joiner et rum eller laver et, alt efter URL
     socket.on('joinRoom', (roomId, userId) => {
         if (roomId == "" || roomId == dontTouch) {
-            randomRoom(socket);
+            randomRoom(socket, roomId);
         } else {
             socket.join(roomId);
             console.log("User joined room " + roomId);
@@ -140,20 +147,20 @@ function disconnectHandler (socket) {
 }
 
 //laver nyt rum
-function randomRoom(socket) {
-    let id;
-
+function randomRoom(socket, id) {
+    //let id;
+    /*
     do {
         let i = Math.random();
         id = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(id));
-    
+    */
     let room = new idObj(id, 0, socket.id);
     room.amountConnected++;
 
     idArr.push(room);
     socket.join(room.roomId);
-    socket.emit('roomId', room.roomId);
+    //socket.emit('roomId', room.roomId);
 
     console.log("roomId: " + room.roomId);
     console.log("Amount of users in room: " + room.amountConnected);
