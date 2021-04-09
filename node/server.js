@@ -90,8 +90,8 @@ io.on('connection', (socket) => {
     });
 
     //joiner et rum eller laver et, alt efter URL
-    socket.on('joinRoom', (roomId, userId) => {
-        if (roomId == "" || roomId == dontTouch) {
+    socket.on('joinRoom', (roomId, userId, idFlag) => {
+        if (idFlag) {
             randomRoom(socket, roomId);
         } else {
             socket.join(roomId);

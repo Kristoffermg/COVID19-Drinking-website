@@ -8,6 +8,7 @@ const peers = {};
 
 let dontTouch;
 let ROOM_ID;
+let idFlag;
 
 navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
     video: true,
@@ -35,7 +36,7 @@ socket.on('user-disconnected', userId => {
 
 myPeer.on('open', id => {
     console.log('ja det er scuffed');
-    socket.emit('joinRoom', ROOM_ID, id);
+    socket.emit('joinRoom', ROOM_ID, id, idFlag);
 });
 
 function connectToNewUser(userId, stream) {
@@ -67,8 +68,10 @@ socket.on('roomId', (roomId) => {
 
     if(idxd == "" || idxd == dontTouch){
         ROOM_ID = roomId;
+        idFlag = true;
     }else{
         ROOM_ID = idxd;
+        idFlag = false;
     }
 
     console.log('ROOOOOOOM ' + ROOM_ID);
