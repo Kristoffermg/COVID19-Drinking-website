@@ -67,6 +67,7 @@ io.on('connection', (socket) => {
         dontTouchTwo = socket.rooms;
     }
 
+
     socket.on('changeName', name => {
         let oldName = socket.userName;
         socket.userName = name;
@@ -82,13 +83,18 @@ io.on('connection', (socket) => {
     });
 
     //joiner et rum eller laver et, alt efter URL
-    socket.on('joinRoom', (roomId) => {
+    socket.on('joinRoom', (roomId, userId) => {
         if (roomId == "") {
             randomRoom(socket);
         } else {
             socket.join(roomId);
             console.log("User joined room " + roomId);
         }
+
+        socket.to(roomId).broadcast.emit("user-connected", userId);
+        socket.on('disconnect', () => {
+            socket.to(roomId).broadcast.emit('user-disconnected', userId);
+        });
     });
 
     socket.on('randomRoom', () => {
@@ -147,7 +153,7 @@ function randomRoom(socket) {
 
     idArr.push(room);
     socket.join(room.roomId);
-
+    socket.emit('roomId', room.roomId);
 
     console.log("roomId: " + room.roomId);
     console.log("Amount of users in room: " + room.amountConnected);
