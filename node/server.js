@@ -99,7 +99,7 @@ io.on('connection', (socket) => {
         } else {
             socket.join(roomId);
             socket.room = roomId;
-            console.log("User joined room " + socket.roomId);
+            console.log("User joined room " + socket.room);
         }
 
         socket.to(roomId).broadcast.emit("user-connected", userId);
