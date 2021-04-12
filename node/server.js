@@ -35,12 +35,14 @@ app.get('/Lobby', function(req, res) {
         //console.log(data);
         res.send(data);
     });
-
-    //res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+        if (err) throw err;
+        //console.log(data);
+        res.send(data);
+    });
 });
     
 io.on('connect_error', (err) => {
