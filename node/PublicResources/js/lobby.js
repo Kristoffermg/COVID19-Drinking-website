@@ -93,6 +93,7 @@ socket.on('roomId', (roomId) => {
 
 let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
+const usernameButton = document.getElementById("setUsername");
 
 //socket.emit("joinRoom", idxd);
 
@@ -104,3 +105,10 @@ socket.on('changeName', name =>{
 logo.addEventListener("click", () => {
     socket.emit("debug");
 });
+
+usernameButton.addEventListener("click", () => {
+    let newUserName = document.getElementById("username");
+    newUserName = newUserName.innerText;
+    console.log("username: " + newUserName);
+    //socket.emit("changeName", );
+})
