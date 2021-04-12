@@ -2,7 +2,7 @@ const socket = io({path:'/node0/socket.io', transports: ["polling"], autoConnect
 console.log("socket connected" + socket.connected);
 if (!socket.connected) {
     console.log("Entered weirdass if statement");
-    socket.connect;
+    socket.connect();
 }
 
 const videoGrid = document.getElementById('video-grid');
