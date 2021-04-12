@@ -98,7 +98,8 @@ io.on('connection', (socket) => {
             randomRoom(socket, roomId);
         } else {
             socket.join(roomId);
-            console.log("User joined room " + roomId);
+            socket.room = roomId;
+            console.log("User joined room " + socket.roomId);
         }
 
         socket.to(roomId).broadcast.emit("user-connected", userId);
@@ -163,7 +164,8 @@ function randomRoom(socket, id) {
 
     idArr.push(room);
     socket.join(room.roomId);
-    console.log("Det er den her du skal kigge på: " + socket.room);
+    socket.room = room.roomId;
+    console.log("Det her burde være roomId: " + socket.room);
     //socket.emit('roomId', room.roomId);
 
     console.log("roomId: " + room.roomId);
