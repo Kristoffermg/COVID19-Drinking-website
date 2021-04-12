@@ -79,7 +79,7 @@ io.on('connection', (socket) => {
         let oldName = socket.userName;
         socket.userName = name;
         
-        io.to()
+        io.to(socket.room).emit('changeName', socket.userName);
         
         io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);

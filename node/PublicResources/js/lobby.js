@@ -97,7 +97,9 @@ let logo = document.getElementById("navbar__logo");
 //socket.emit("joinRoom", idxd);
 
 
-
+socket.on('changeName', name =>{
+    console.log("Username: " + socket.userName);
+})
 
 logo.addEventListener("click", () => {
     socket.emit("debug");
