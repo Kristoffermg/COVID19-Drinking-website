@@ -109,6 +109,6 @@ logo.addEventListener("click", () => {
 
 usernameButton.addEventListener("click", () => {
     let newUserName = document.getElementById("username").value;
-    console.log("username: " + newUserName);
-    //socket.emit("changeName", );
+    //console.log("username: " + newUserName);
+    socket.emit("changeName", newUserName);
 })
