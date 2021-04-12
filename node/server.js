@@ -30,7 +30,13 @@ app.get('/', function(req, res) {
 });
 
 app.get('/Lobby', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
+    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+        if (err) throw err;
+        //console.log(data);
+        res.send(data);
+    });
+
+    //res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
@@ -55,11 +61,6 @@ let dontTouchTwo;
 let idBase;
 
 let idArr = [];
-
-fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
-    if (err) throw err;
-    console.log(data);
-});
 
 //Alle socket funktioner
 io.on('connection', (socket) => {
