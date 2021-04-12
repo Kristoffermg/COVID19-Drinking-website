@@ -94,7 +94,7 @@ socket.on('roomId', (roomId) => {
 let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 const usernameButton = document.getElementById("setUsername");
-console.log(usernameButton);
+//console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
 
@@ -109,7 +109,7 @@ logo.addEventListener("click", () => {
 
 usernameButton.addEventListener("click", () => {
     let newUserName = document.getElementById("username");
-    newUserName = newUserName.innerText;
+    newUserName = newUserName.innerHTML;
     console.log("username: " + newUserName);
     //socket.emit("changeName", );
 })
