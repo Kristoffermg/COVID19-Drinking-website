@@ -8,6 +8,7 @@ const express = require('express');
 const app = express();
 const server = http.createServer(app);
 const pathApi = require('path');
+const fs = require('fs');
 
 const io = require('socket.io')(server, {
     cors: {
@@ -35,9 +36,6 @@ app.get('/Lobby', function(req, res) {
 app.get('/Lobby/:lobbyId', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/createlobby.html'));
 });
-
-
-
     
 io.on('connect_error', (err) => {
     console.log(err);
@@ -57,6 +55,11 @@ let dontTouchTwo;
 let idBase;
 
 let idArr = [];
+
+fs.readFile(__dirname + '/PublicResources/html/createlobby.html', utf8, function(err, data) {
+    if (err) throw err;
+    console.log(data);
+});
 
 //Alle socket funktioner
 io.on('connection', (socket) => {
