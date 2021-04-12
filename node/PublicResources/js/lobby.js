@@ -1,7 +1,6 @@
-import { io } from "socket.io-client";
-
-if (!io.connected) {
-    const socket = io({path:'/node0/socket.io', transports: ["polling"]});    
+const socket = io({path:'/node0/socket.io', transports: ["polling"], autoConnect: false});  
+if (!socket.connected) {
+      socket.connect;
 }
 
 const videoGrid = document.getElementById('video-grid');
