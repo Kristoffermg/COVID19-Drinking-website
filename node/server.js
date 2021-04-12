@@ -78,6 +78,9 @@ io.on('connection', (socket) => {
     socket.on('changeName', name => {
         let oldName = socket.userName;
         socket.userName = name;
+        
+        io.to()
+        
         io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);
     });
@@ -160,6 +163,7 @@ function randomRoom(socket, id) {
 
     idArr.push(room);
     socket.join(room.roomId);
+    console.log("Det er den her du skal kigge på: " + socket.room);
     //socket.emit('roomId', room.roomId);
 
     console.log("roomId: " + room.roomId);
