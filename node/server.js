@@ -16,7 +16,7 @@ const io = require('socket.io')(server, {
 });
 
 const hostname = '127.0.0.1';
-const port = 3100;
+const port = 3101;
 
 //Handling af HTML filer
 const path = `${__dirname}/PublicResources`;
