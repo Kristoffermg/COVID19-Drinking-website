@@ -1,4 +1,4 @@
-if (socket.connected) {
+if (!socket.connected) {
     const socket = io({path:'/node0/socket.io', transports: ["polling"]});    
 }
 
