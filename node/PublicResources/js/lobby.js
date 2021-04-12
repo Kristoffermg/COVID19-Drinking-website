@@ -1,4 +1,4 @@
-const io = require('socket.io-client');
+import { io } from "socket.io-client";
 
 if (!io.connected) {
     const socket = io({path:'/node0/socket.io', transports: ["polling"]});    
