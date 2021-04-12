@@ -94,6 +94,7 @@ socket.on('roomId', (roomId) => {
 let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 const usernameButton = document.getElementById("setUsername");
+console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
 
