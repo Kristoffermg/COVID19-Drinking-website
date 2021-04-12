@@ -56,7 +56,7 @@ let idBase;
 
 let idArr = [];
 
-fs.readFile(__dirname + '/PublicResources/html/createlobby.html', utf8, function(err, data) {
+fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
     if (err) throw err;
     console.log(data);
 });
