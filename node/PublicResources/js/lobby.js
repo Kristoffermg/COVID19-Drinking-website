@@ -1,6 +1,7 @@
 const socket = io({path:'/node0/socket.io', transports: ["polling"], autoConnect: false});  
 if (!socket.connected) {
-      socket.connect;
+    console.log("Entered weirdass if statement");
+    socket.connect;
 }
 
 const videoGrid = document.getElementById('video-grid');
