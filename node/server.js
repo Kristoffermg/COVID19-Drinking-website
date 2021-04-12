@@ -96,7 +96,7 @@ io.on('connection', (socket) => {
         fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
             if (err) throw err;
             console.log(data);
-            io.to(socket.room).emit('debugMeme', meme);
+            io.to(socket.room).emit('debugMeme', data);
         });
     });
 
