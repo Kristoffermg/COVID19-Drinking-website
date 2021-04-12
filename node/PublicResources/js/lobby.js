@@ -99,14 +99,22 @@ socket.on('roomId', (roomId) => {
 let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 const usernameButton = document.getElementById("setUsername");
+let debugMeme = document.getElementById("debugMeme");
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
 
+debugMeme.addEventListener("click", () => {
+    socket.emit('debugMeme');
+});
+
+socket.on('debugMeme', meme => {
+    console.log(meme);
+});
 
 socket.on('changeName', name =>{
     console.log("Username: " + socket.userName);
-})
+});
 
 logo.addEventListener("click", () => {
     socket.emit("debug");

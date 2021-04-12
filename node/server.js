@@ -9,6 +9,7 @@ const app = express();
 const server = http.createServer(app);
 const pathApi = require('path');
 const fs = require('fs');
+const { debug } = require('console');
 
 const io = require('socket.io')(server, {
     cors: {
@@ -89,6 +90,14 @@ io.on('connection', (socket) => {
         
         io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);
+    });
+
+    socket.on('debugMeme', () => {
+        fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+            if (err) throw err;
+            console.log(data);
+            io.to(socket.room).emit('debugMeme', meme);
+        });
     });
 
     socket.on('newMessage', ({msg, id}) => {
