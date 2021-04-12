@@ -114,6 +114,26 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('startGame', gameType => {
+        switch (gameType) {
+            case 'prompt':
+                //Throw prompt html
+                break;
+            
+            case 'card':
+                //Throw card html
+                break;
+
+            case 'dice':
+                //Throw dice html
+                break;      
+
+            default:
+                console.log("shit broke");
+                break;
+        }
+    });
+
     socket.on('randomRoom', () => {
 
     });

@@ -1,4 +1,6 @@
-const socket = io({path:'/node0/socket.io', transports: ["polling"]});
+if (socket.connected) {
+    const socket = io({path:'/node0/socket.io', transports: ["polling"]});    
+}
 
 const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
