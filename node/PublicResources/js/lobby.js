@@ -1,6 +1,8 @@
 let dontTouch;
 
-if (videoGrid != dontTouch) const videoGrid = document.getElementById('video-grid');
+if (videoGrid != dontTouch){
+    const videoGrid = document.getElementById('video-grid');
+} 
 const myPeer = new Peer({
     config: {'iceServers': [
       { url: 'stun:stun.l.google.com:19302'},
