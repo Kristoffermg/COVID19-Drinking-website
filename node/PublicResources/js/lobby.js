@@ -102,7 +102,6 @@ let usernameinput = document.getElementById("usernameInput")
 let testerino = document.getElementById("testerino")
 
 startGaming.addEventListener("click", () => {
-    console.log("ja hallo2")
     settingsTab.style.display="none"
     usernameinput.style.display="none"
     startGaming.style.display="none"
