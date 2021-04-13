@@ -7,3 +7,5 @@ let logo;
 const usernameButton;
 let debugMeme;
 let copyUrl;
+
+let debugMeme2;
