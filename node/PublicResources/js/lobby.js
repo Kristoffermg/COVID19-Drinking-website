@@ -109,8 +109,16 @@ debugMeme.addEventListener("click", () => {
 });
 
 socket.on('debugMeme', meme => {
+    let body = document.getElementById("body");
+    let head = document.getElementById("head");
     let splitMeme = meme.split("<body>")[1];
     splitMeme = splitMeme.split("</body>")[0];
+    
+    body.remove();
+    let newBody = document.createElement("body");
+    newBody.innerHTML = splitMeme;
+    head.after(newBody);
+
     console.log(splitMeme);
 });
 
