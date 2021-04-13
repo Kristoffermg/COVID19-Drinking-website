@@ -2,16 +2,27 @@
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
 body {
-  background-color: white;
+  background-color: rgb(255, 255, 255);
   background-image:url("../img/unknown.png") ; /*Boomer image looool* I did thi:)*/
   background-size: cover;
   padding: 0mm;
 }
 
 h1{
-  background-color: white;
-  padding: 69mm;
   text-align: center;
+  color: #fff;
+  font-size: 50px;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: black;
+  margin-top: 60px;
+}
+
+h2 {
+  text-align: center;
+  color: #fff;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: black;
+  margin-top: 10px;
 }
 
 h3 {
@@ -28,8 +39,7 @@ h3 {
 }
 
 .navbar {
-  background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);  
-  background: linear-gradient(to right, #2c3e50, #bdc3c7); 
+  background: #2c3e50;
   height: 80px;
   display: flex;
   justify-content: center;
@@ -227,6 +237,7 @@ h3 {
   left: 55px;
   image-resolution: 100px 100px;
   object-fit: cover;
+  padding-bottom: 5px;
 }
 
 
@@ -717,11 +728,35 @@ a.p4 {
   text-align: center;
 }
 
-.settingstab {
-  background-color: rgb(129, 224, 193);
-  padding: 4rem 8rem;
+#settingstab {
+  background-color: rgb(129, 224, 224);
+  margin: auto;
+  margin-top: 30px;
+  border-style: solid;
+  border-width: .5rem;
+  border-radius: 1rem;
+  width: 700px;
+  padding-bottom: 20px;
+  text-align: center;
+}
+
+.Settingh {
+  margin-bottom: 40px;
+  /*padding: 8px 12px;
+  right: 30%;
+  top: -2.2rem;*/
+  -webkit-text-stroke-width: 0px;
+  color: black;
+  font-weight: bold;
+}
+
+#testerino {
+  background-color: rgb(129, 224, 224);
+  padding: 1rem 9rem 2rem 9rem;
+  width: 60%;
+  height: 50%;
   position: absolute;
-  top: 50%; 
+  top: 40%; 
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
@@ -731,28 +766,36 @@ a.p4 {
 }
 
 #usernameInput {
-  position: absolute;
-  background-color: rgb(129, 224, 193);
-  top: 29%;
-  left: 50%;
-  -ms-transform: translate(-50%, -50%);
-  transform: translate(-50%, -50%);
+  background-color: rgb(129, 224, 224);
   border: .2rem solid black;   
-  padding: 1rem 2rem;
   border-radius: 1rem;
+  text-align: center;
+  font-weight: bold;
+  margin: auto;
+  margin-top: 50px;
+  padding: 10px;
+  width: 400px;
+}
+
+#usernameLabel {
+  position: relative;
+  font-weight: normal;
+  font-weight: 500;
+  font-size: 17px;
+  top: 0.1rem;
 }
 
 #videos {
   position: absolute;
   top: 70%;
+  left: 20%;
   border: 3px solid black;
-  width: 100%;
-  height: 16%;
+  width: 60%;
+  height: 200px;
 }
 
 #video-grid {
   display: inline-block;
-  grid-template-colums: repeat(auto-fill, 300px);
   grid-auto-rows: 300px;
 }
 
@@ -760,15 +803,8 @@ video {
   outline-style: groove;
   outline-color: rgb(129, 224, 193);
   width: 200px;
-  height: 200px%;
+  height: 200px;
   object-fit: cover;
-}
-
-.Settingh {
-  position: relative;
-  padding: 8px 12px;
-  right: 30%;
-  top: -2.2rem;
 }
 
 .games__and__rounds {
@@ -776,7 +812,6 @@ video {
   padding: 8px 12px;
   size: 4rem 6rem;
   position: relative;
-  right: 30%;
   top: -1.2rem;
 }
 
@@ -789,7 +824,6 @@ video {
   cursor: pointer;
   border-radius: 5px;
   position: relative;
-  right: 20%;
   top: -1.2rem;
 }
 
@@ -806,6 +840,38 @@ video {
   top: -4.5rem;
 }
 
+#startGame, #copyURL, #setUsername {
+  background-color: white;
+  color: black;
+  border: solid 1px;
+  padding: 5px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#startGame:hover, #copyURL:hover, #setUsername:hover {
+  background-color: rgb(0, 204, 255);
+  box-shadow: 2px 2px rgb(0, 0, 0);
+  transform: translateY(-2%);
+}
+
+#startGame {
+  margin: auto;
+  margin-top: 50px;
+  padding: 25px 40px 25px 40px;
+  border: solid 3px black;
+  border-radius: 20px;
+  font-weight: bolder;
+  font-size: 20px;
+  color: rgb(255, 255, 255);
+  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+
+.url-div {
+  padding-top: 1rem;
+}
+
 .Rule_list {
 border-top: 2px;
 border-top-style: solid;
@@ -814,3 +880,11 @@ padding-top: 20px; padding-bottom: 20px; padding-left: 30px; padding-right: 30px
 height: 425px;
 overflow: auto;
 }
+
+.contentSection {
+  margin: auto;
+  text-align: center;
+  justify-content: center;
+  width: 900px;
+}
+

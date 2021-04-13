@@ -96,8 +96,18 @@ let logo = document.getElementById("navbar__logo");
 
 //socket.emit("joinRoom", idxd);
 
+let startGaming = document.getElementById("startGame")
+let settingsTab = document.getElementById("settingstab")
+let usernameinput = document.getElementById("usernameInput")
+let testerino = document.getElementById("testerino")
 
-
+startGaming.addEventListener("click", () => {
+    console.log("ja hallo2")
+    settingsTab.style.display="none"
+    usernameinput.style.display="none"
+    startGaming.style.display="none"
+    testerino.style.display="block"
+})
 
 logo.addEventListener("click", () => {
     socket.emit("debug");
