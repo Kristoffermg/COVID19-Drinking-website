@@ -129,12 +129,22 @@ socket.on('changeHTML', meme => {
     videoPlacement.after(videos);
 
     let scriptPlaceholder = document.getElementById("pageScript");
-    let pageScript = document.createElement("script");
-    pageScript = scriptPlaceholder;
-    console.log("placeholder: " + scriptPlaceholder.value);
-    console.log("script: " + pageScript.innerHTML.value);
-    scriptPlaceholder.remove();
-    document.body.appendChild(pageScript);
+    let src = scriptPlaceholder.getAttribute("src");
+    console.log(src);
+    // let pageScript = document.createElement("script");
+    // pageScript = scriptPlaceholder;
+    // // console.log("placeholder: " + scriptPlaceholder.value);
+    // // console.log("script: " + pageScript.innerHTML.value);
+    // scriptPlaceholder.remove();
+    // document.body.appendChild(pageScript);
+
+    // let scriptPlaceholder = document.getElementById("pageScript");
+    // let pageScript = document.createElement("script");
+    // pageScript = scriptPlaceholder;
+    // // console.log("placeholder: " + scriptPlaceholder.value);
+    // // console.log("script: " + pageScript.innerHTML.value);
+    // scriptPlaceholder.remove();
+    // document.body.appendChild(pageScript);
 
 
 
