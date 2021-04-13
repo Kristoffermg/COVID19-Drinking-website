@@ -112,7 +112,7 @@ socket.on('debugMeme', meme => {
     let body = document.getElementById("body");
     let head = document.getElementById("head");
     newMeme = String(meme);
-    let splitMeme = newMeme.split("<body>")[1];
+    let splitMeme = newMeme.split('<body id="body">')[1];
     //splitMeme = splitMeme.split("</body>")[0];
     console.log(splitMeme);
     //splitMeme = splitMeme.split("</body>")[0];
