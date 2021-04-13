@@ -116,7 +116,7 @@ socket.on('debugMeme', meme => {
     splitMeme = splitMeme.split("</body>")[0];
     
     let videos = document.createElement("div");
-    videos = documet.getElementById("videos");
+    videos = document.getElementById("videos");
     body.remove();
     let newBody = document.createElement("body");
     newBody.innerHTML = splitMeme;
