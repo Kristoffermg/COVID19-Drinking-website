@@ -1,7 +1,3 @@
-let dontTouch;
-let ROOM_ID;
-let idFlag;
-
 socket.on('roomId', (roomId) => {
     let lobbyUrl = document.getElementById("lobbyurl");
     
@@ -26,11 +22,11 @@ socket.on('roomId', (roomId) => {
 
 
 
-let idxd = document.URL.split("/Lobby/")[1];
-let logo = document.getElementById("navbar__logo");
-const usernameButton = document.getElementById("setUsername");
-let debugMeme = document.getElementById("debugMeme");
-let copyUrl = document.getElementById("copyURL");
+idxd = document.URL.split("/Lobby/")[1];
+logo = document.getElementById("navbar__logo");
+usernameButton = document.getElementById("setUsername");
+debugMeme = document.getElementById("debugMeme");
+copyUrl = document.getElementById("copyURL");
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
