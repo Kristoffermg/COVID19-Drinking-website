@@ -122,7 +122,7 @@ socket.on('debugMeme', meme => {
     newBody.innerHTML = splitMeme;
     head.after(newBody);
     let videoPlacement = document.getElementById("usernameInput");
-    videoPlacement.after(video);
+    videoPlacement.after(videos);
 
 
     // console.log(splitMeme);
