@@ -110,7 +110,6 @@ copyUrl.addEventListener("click", () => {
     let lobbyUrl = document.getElementById("lobbyurl");
     lobbyUrl.select();
     document.execCommand("copy");
-    lobbyUrl.deselect();
 });
 
 socket.on('debugMeme', meme => {
