@@ -1,3 +1,4 @@
+//Establishes socket connection, using the Socket.IO API
 const socket = io({path:'/node0/socket.io', transports: ["polling"], autoConnect: false});  
 console.log("socket connected" + socket.connected);
 if (!socket.connected) {
@@ -5,6 +6,7 @@ if (!socket.connected) {
     socket.connect();
 }
 
+//Setup for the videochat
 const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
     config: {'iceServers': [
@@ -16,12 +18,14 @@ const localVideo = document.createElement('video');
 localVideo.muted = true; 
 const peers = {};
 
+//Creates a video and audio stream
 navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
     video: true,
     audio: true
 }).then(stream => { // Sets up the peer to peer connection and video streams
     addVideoStream(localVideo, stream)
 
+    //Establishes connection between clients, when getting called
     myPeer.on('call', call => {
         console.log('getting called...');
         call.answer(stream);
@@ -31,24 +35,29 @@ navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permissio
         });
     });
 
+    //Connects user to each other
     socket.on('user-connected', userId => {
         connectToNewUser(userId, stream);
     });
 });
 
+//Disconnects users from each other
 socket.on('user-disconnected', userId => {
     if (peers[userId]) peers[userId].close();
 });
 
+//Error cather
 myPeer.on('error', err =>{
     console.log('myPeer error: ' + err);
 });
 
+//Connects players to the right lobby
 myPeer.on('open', id => {
     console.log('ja det er scuffed');
     socket.emit('joinRoom', ROOM_ID, id, idFlag);
 });
 
+//The helper function for connecting to new users
 function connectToNewUser(userId, stream) {
     console.log('calling. ring ring ring');
     const call = myPeer.call(userId, stream);
@@ -63,6 +72,7 @@ function connectToNewUser(userId, stream) {
     peers[userId] = call;
 }
 
+//Creates videostream html element
 function addVideoStream(video, stream) {
     video.srcObject = stream;
     video.addEventListener('loadedmetadata', () => {
@@ -71,6 +81,7 @@ function addVideoStream(video, stream) {
     videoGrid.append(video);
 } 
 
+//Changes the html page dynamically
 socket.on('changeHTML', meme => {
     //Getting body and head elements
     let body = document.body;

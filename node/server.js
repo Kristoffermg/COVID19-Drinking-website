@@ -2,7 +2,7 @@
 
 const { DH_UNABLE_TO_CHECK_GENERATOR } = require('constants');
 
-//server setup
+//Server setup
 const http = require('http');
 const express = require('express');
 const app = express();
@@ -20,7 +20,7 @@ const io = require('socket.io')(server, {
 const hostname = '127.0.0.1';
 const port = 3100;
 
-//Handling af HTML filer
+//Handling of HTML files
 const path = `${__dirname}/PublicResources`;
 console.log(path);
 
@@ -50,13 +50,15 @@ io.on('connect_error', (err) => {
     console.log(err);
     console.log('brr');
 });
-//object til at holde står på rum
+
+//Constructer function for room objects
 function idObj(roomId, amountConnected, userIdArr) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
     this.userIdArr.push(userIdArr);
 }
+
 //Don't Touch :)
 let dontTouch;
 let dontTouchTwo;
@@ -65,23 +67,27 @@ let idBase;
 
 let idArr = [];
 
-//Alle socket funktioner
+//All the socket functions
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
 
+    //Leaves own id-room
     socket.leave(socket.id);
-
     console.log(socket.rooms);
+
+    //Jeg ander ikk hvad der sker her, men det er nok vigtigt
     if(dontTouchTwo == dontTouch){
         dontTouchTwo = socket.rooms;
     }
 
+    //Generates a random base64 string, which is used as the room id
     do {
         let i = Math.random();
         idBase = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(idBase));
     socket.emit('roomId', idBase);
 
+    //Changes the username of the user who requested it
     socket.on('changeName', name => {
         let oldName = socket.userName;
         socket.userName = name;
@@ -92,6 +98,7 @@ io.on('connection', (socket) => {
         console.log("succesfully changed to the name " + socket.userName);
     });
 
+    //haha debug go brr
     socket.on('debugMeme', () => {
         fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
@@ -99,6 +106,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    //Chat function
     socket.on('newMessage', ({msg, id}) => {
         console.log("message: " + msg);
         console.log("room id: " + id);
@@ -106,7 +114,7 @@ io.on('connection', (socket) => {
         io.to(id).emit('message', `${socket.userName} said: ${msg}` );
     });
 
-    //joiner et rum eller laver et, alt efter URL
+    //Joins an existing room based on the url, or creates one if nessesary
     socket.on('joinRoom', (roomId, userId, idFlag) => {
         if (idFlag) {
             randomRoom(socket, roomId);
@@ -122,6 +130,7 @@ io.on('connection', (socket) => {
         });
     });
 
+    //Decides what html page the send to dynamically send to the frontend, based on user input 
     socket.on('startGame', gameType => {
         let htmlPath;
         
@@ -151,26 +160,31 @@ io.on('connection', (socket) => {
                 break;
         }
 
+        //Reads the relevent html file, and sends it to the frontend
         fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('changeHTML', data);
         });
     });
 
+    //Actually does nothing, but i am too scared to deletus this fetus
     socket.on('randomRoom', () => {
 
     });
 
+    //Hihi debug go brr
     socket.on('debug', () => {
         console.log(socket.rooms);
     });
 
+    //Runs when socket disconnects from a room
     socket.on('disconnectRoom', (roomId) => {
         socket.leave(roomId);
         console.log("User left room " + roomId);
         disconnectHandler(socket);
     });
 
+    //runs when socket disconnects from server
     socket.on('disconnect', () => {
         console.log(socket.userName + " has disconnected.");
         io.emit('message', `${socket.userName} has disconnected`);
@@ -178,7 +192,7 @@ io.on('connection', (socket) => {
     });
 });
 
-//Ændre i idArr og fjerne rum hvis nødvendigt
+//Changes the idArr and removes a room object, if it has no user in it
 function disconnectHandler (socket) {
     if(socket.rooms !== dontTouchTwo){
 	    for(let i = 0; i < idArr.length; i++){
@@ -199,7 +213,7 @@ function disconnectHandler (socket) {
 	}
 }
 
-//laver nyt rum
+//Creates a new random room
 function randomRoom(socket, id) {
     //let id;
     /*
@@ -224,7 +238,7 @@ function randomRoom(socket, id) {
     console.log("User " + socket.userName + " joined room " + id);
 }
 
-//fjerner et element i array
+//Removes "holes" in the array
 function pushArray (arr, index) {
     let SENTINAL = true;
 
@@ -239,6 +253,7 @@ function pushArray (arr, index) {
     console.log("Post push: " + arr);
 }
 
+//starts the server
 server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
 
 var d = new Date();
