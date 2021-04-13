@@ -123,6 +123,8 @@ io.on('connection', (socket) => {
     });
 
     socket.on('startGame', gameType => {
+        let htmlPath;
+        
         switch (gameType) {
             case 'prompt':
                 //Throw prompt html
@@ -134,12 +136,21 @@ io.on('connection', (socket) => {
 
             case 'dice':
                 //Throw dice html
-                break;      
+                break;
+            
+            case 'test':
+                htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                break;
 
             default:
                 console.log("shit broke");
                 break;
         }
+
+        fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
+            if (err) throw err;
+            io.to(socket.room).emit('changeHTML', data);
+        });
     });
 
     socket.on('randomRoom', () => {
