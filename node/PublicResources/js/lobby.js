@@ -20,9 +20,6 @@ socket.on('roomId', (roomId) => {
     //ROOM_ID = roomId;
 });
 
-lobbyUrl = document.getElementById("lobbyurl");
-lobbyUrl.value = document.URL + ROOM_ID;
-
 idxd = document.URL.split("/Lobby/")[1];
 logo = document.getElementById("navbar__logo");
 usernameButton = document.getElementById("setUsername");
