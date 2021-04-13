@@ -6,10 +6,10 @@ if (!socket.connected) {
 }
 
 socket.on('changeHTML', meme => {
-    let body = document.getElementById("body");
+    let body = document.body;
     let head = document.getElementById("head");
     newMeme = String(meme);
-    let splitMeme = newMeme.split('<body id="body">')[1];
+    let splitMeme = newMeme.split('<body>')[1];
     splitMeme = splitMeme.split("</body>")[0];
     
     let videos = document.createElement("div");
