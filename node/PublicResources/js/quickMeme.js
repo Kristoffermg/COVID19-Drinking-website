@@ -1,4 +1,4 @@
-console.log("oh no");
+console.log("quickMeme executed");
 
 debugMeme = document.getElementById("debugMeme");
 

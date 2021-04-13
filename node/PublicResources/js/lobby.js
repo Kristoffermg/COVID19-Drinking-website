@@ -1,3 +1,5 @@
+console.log("lobby executed");
+
 socket.on('roomId', (roomId) => {
     let lobbyUrl = document.getElementById("lobbyurl");
     
