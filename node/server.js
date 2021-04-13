@@ -139,7 +139,7 @@ io.on('connection', (socket) => {
                 break;
             
             case 'test1':
-                htmlPath = '/PublicResources/html/index.html';
+                htmlPath = '/PublicResources/html/createlobbyMeme.html';
                 break;
             
             case 'test2':
