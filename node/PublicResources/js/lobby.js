@@ -111,9 +111,9 @@ debugMeme.addEventListener("click", () => {
 socket.on('debugMeme', meme => {
     let body = document.getElementById("body");
     let head = document.getElementById("head");
-    let splitMeme = meme.split("<body>")[1];
-    console.log(splitMeme);
-    splitMeme = splitMeme.split("</body>")[0];
+    meme.split("<body>")[1];
+    console.log(Meme);
+    //splitMeme = splitMeme.split("</body>")[0];
     
     body.remove();
     let newBody = document.createElement("body");
