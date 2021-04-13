@@ -70,16 +70,20 @@ function addVideoStream(video, stream) {
 
 
 socket.on('roomId', (roomId) => {
-
+    let lobbyUrl = document.getElementById("lobbyurl");
+    
     console.log('backend roomid ' + roomId);
     console.log('idxd ' + idxd);
 
     if(idxd == "" || idxd == dontTouch){
         ROOM_ID = roomId;
         idFlag = true;
+        lobbyUrl.value = document.URL + ROOM_ID;
+                
     }else{
         ROOM_ID = idxd;
         idFlag = false;
+        lobbyUrl.value = document.URL;
     }
 
     console.log('ROOOOOOOM ' + ROOM_ID);
@@ -93,8 +97,6 @@ let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 const usernameButton = document.getElementById("setUsername");
 let debugMeme = document.getElementById("debugMeme");
-let lobbyUrl = document.getElementById("lobbyurl");
-lobbyUrl.value = document.URL + ROOM_ID;
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
