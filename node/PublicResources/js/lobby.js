@@ -103,7 +103,7 @@ let copyUrl = document.getElementById("copyURL");
 //socket.emit("joinRoom", idxd);
 
 debugMeme.addEventListener("click", () => {
-    socket.emit('startGame', 'test');
+    socket.emit('startGame', 'test1');
 });
 
 copyUrl.addEventListener("click", () => {

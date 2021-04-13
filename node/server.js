@@ -138,8 +138,12 @@ io.on('connection', (socket) => {
                 //Throw dice html
                 break;
             
-            case 'test':
+            case 'test1':
                 htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                break;
+            
+            case 'test2':
+                htmlPath = '/PublicResources/html/createlobby.html';
                 break;
 
             default:
