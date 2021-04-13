@@ -5,7 +5,7 @@ let idFlag;
 
 let idxd;
 let logo;
-const usernameButton;
+let usernameButton;
 let debugMeme;
 let copyUrl;
 
