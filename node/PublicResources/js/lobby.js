@@ -111,16 +111,17 @@ debugMeme.addEventListener("click", () => {
 socket.on('debugMeme', meme => {
     let body = document.getElementById("body");
     let head = document.getElementById("head");
-    meme.split("<body>")[1];
-    console.log(meme);
+    let splitMeme = meme.split("<body>")[1];
+    splitMeme = splitMeme.split("</body>")[0];
+    console.log(splitMeme);
     //splitMeme = splitMeme.split("</body>")[0];
     
-    body.remove();
-    let newBody = document.createElement("body");
-    newBody.innerHTML = splitMeme;
-    head.after(newBody);
+    // body.remove();
+    // let newBody = document.createElement("body");
+    // newBody.innerHTML = splitMeme;
+    // head.after(newBody);
 
-    console.log(splitMeme);
+    // console.log(splitMeme);
 });
 
 socket.on('changeName', name =>{
