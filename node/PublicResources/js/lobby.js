@@ -135,18 +135,6 @@ socket.on('changeHTML', meme => {
     pageScript.src = src;
     scriptPlaceholder.remove();
     document.body.appendChild(pageScript);
-
-    // let scriptPlaceholder = document.getElementById("pageScript");
-    // let pageScript = document.createElement("script");
-    // pageScript = scriptPlaceholder;
-    // // console.log("placeholder: " + scriptPlaceholder.value);
-    // // console.log("script: " + pageScript.innerHTML.value);
-    // scriptPlaceholder.remove();
-    // document.body.appendChild(pageScript);
-
-
-
-    // console.log(splitMeme);
 });
 
 socket.on('changeName', name =>{
