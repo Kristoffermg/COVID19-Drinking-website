@@ -1,3 +1,5 @@
+console.log("lobby was executed");
+
 socket.on('roomId', (roomId) => {
     let lobbyUrl = document.getElementById("lobbyurl");
     
@@ -19,7 +21,6 @@ socket.on('roomId', (roomId) => {
 
     //ROOM_ID = roomId;
 });
-
 
 
 idxd = document.URL.split("/Lobby/")[1];
