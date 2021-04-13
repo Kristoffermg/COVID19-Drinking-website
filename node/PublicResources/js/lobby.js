@@ -97,12 +97,19 @@ let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 const usernameButton = document.getElementById("setUsername");
 let debugMeme = document.getElementById("debugMeme");
+let copyUrl = document.getElementById("copyURL");
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
 
 debugMeme.addEventListener("click", () => {
     socket.emit('debugMeme');
+});
+
+copyUrl.addEventListener("click", () => {
+    let lobbyUrl = document.getElementById("lobbyurl");
+    lobbyUrl.select();
+    document.execCommand("copy");
 });
 
 socket.on('debugMeme', meme => {
