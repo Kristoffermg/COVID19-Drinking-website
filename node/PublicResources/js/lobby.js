@@ -128,6 +128,13 @@ socket.on('changeHTML', meme => {
     let videoPlacement = document.getElementById("usernameInput");
     videoPlacement.after(videos);
 
+    let scriptPlaceholder = document.getElementById("pageScript");
+    let pageScript = document.createElement("script");
+    pageScript = scriptPlaceholder;
+    scriptPlaceholder.remove();
+    document.body.appendChild(pageScript);
+
+
 
     // console.log(splitMeme);
 });
