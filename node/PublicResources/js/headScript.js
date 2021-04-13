@@ -72,26 +72,36 @@ function addVideoStream(video, stream) {
 } 
 
 socket.on('changeHTML', meme => {
+    //Getting body and head elements
     let body = document.body;
     let head = document.getElementById("head");
+    //Converts incomming data to a string, and splits it up, so it only has the contents of the body tag
     newMeme = String(meme);
     let splitMeme = newMeme.split('<body>')[1];
     splitMeme = splitMeme.split("</body>")[0];
     
+    //Creates a copy of the video feed, so it isn't lost
     let videos = document.createElement("div");
     videos = document.getElementById("videos");
+    //Removes the body
     body.remove();
+    //Constructs new body based on the incomming data
     let newBody = document.createElement("body");
     newBody.innerHTML = splitMeme;
     head.after(newBody);
+    //Inserts the videofeed
     let videoPlacement = document.getElementById("usernameInput");
     videoPlacement.after(videos);
 
+    //Gets the src of the script in the body tag
     let scriptPlaceholder = document.getElementById("pageScript");
     let src = scriptPlaceholder.getAttribute("src");
     
+    //Creates a new script identical to the one in the body tag, and removes the old one
+    //This is done because else the script won't be executed
     let pageScript = document.createElement("script");
     pageScript.src = src;
+    pageScript.defer = true;
     scriptPlaceholder.remove();
     document.body.appendChild(pageScript);
 });
