@@ -1,4 +1,6 @@
-const videoGrid = document.getElementById('video-grid');
+let dontTouch;
+
+if (videoGrid != dontTouch) const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
     config: {'iceServers': [
       { url: 'stun:stun.l.google.com:19302'},
@@ -9,7 +11,6 @@ const localVideo = document.createElement('video');
 localVideo.muted = true; 
 const peers = {};
 
-let dontTouch;
 let ROOM_ID;
 let idFlag;
 
