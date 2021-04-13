@@ -131,8 +131,10 @@ socket.on('changeHTML', meme => {
     let scriptPlaceholder = document.getElementById("pageScript");
     let pageScript = document.createElement("script");
     pageScript = scriptPlaceholder;
+    console.log("placeholder: " + scriptPlaceholder);
+    console.log("script: " + pageScript);
     scriptPlaceholder.remove();
-    //document.body.appendChild(pageScript);
+    document.body.appendChild(pageScript);
 
 
 
