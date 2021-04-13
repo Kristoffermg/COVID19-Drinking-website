@@ -115,10 +115,15 @@ socket.on('debugMeme', meme => {
     let splitMeme = newMeme.split('<body id="body">')[1];
     splitMeme = splitMeme.split("</body>")[0];
     
+    let videos = document.createElement("div");
+    videos = documet.getElementById("videos");
     body.remove();
     let newBody = document.createElement("body");
     newBody.innerHTML = splitMeme;
     head.after(newBody);
+    let videoPlacement = document.getElementById("usernameInput");
+    videoPlacement.after(video);
+
 
     // console.log(splitMeme);
 });
