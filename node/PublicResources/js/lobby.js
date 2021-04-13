@@ -93,6 +93,8 @@ let idxd = document.URL.split("/Lobby/")[1];
 let logo = document.getElementById("navbar__logo");
 const usernameButton = document.getElementById("setUsername");
 let debugMeme = document.getElementById("debugMeme");
+let lobbyUrl = document.getElementById("lobbyurl");
+lobbyUrl.value = document.URL + ROOM_ID;
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
