@@ -40,7 +40,7 @@ debugMeme.addEventListener("click", () => {
 });
 
 startGame.addEventListener("click", () => {
-    let gameSelect = getElementById("gameSelect");
+    let gameSelect = document.getElementById("gameSelect");
     socket.emit('startGame', gameSelect);
 })
 
