@@ -101,7 +101,7 @@ socket.on('changeHTML', meme => {
     newBody.innerHTML = splitMeme;
     head.after(newBody);
     //Inserts the videofeed
-    let videoPlacement = document.getElementById("usernameInput");
+    let videoPlacement = document.getElementById("videoPlacement");
     videoPlacement.after(videos);
 
     //Gets the src of the script in the body tag
