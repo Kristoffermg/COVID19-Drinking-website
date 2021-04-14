@@ -133,40 +133,44 @@ io.on('connection', (socket) => {
     //Decides what html page the send to dynamically send to the frontend, based on user input 
     socket.on('startGame', gameType => {
         let htmlPath;
-
-        console.log("type: " + gameType);
         
-        // switch (gameType) {
-        //     case 'prompt':
-        //         //Throw prompt html
-        //         break;
+        switch (gameType) {
+            case 'prompt':
+                console.log("Prompt game chosen");
+                //Throw prompt html
+                htmlPath = '/PublicResources/html/never.html';
+                break;
             
-        //     case 'card':
-        //         //Throw card html
-        //         break;
+            case 'card':
+                console.log("Card game chosen");
+                //Throw card html
+                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                break;
 
-        //     case 'dice':
-        //         //Throw dice html
-        //         break;
+            case 'dice':
+                console.log("Dice game chosen");
+                //Throw dice html
+                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                break;
             
-        //     case 'test1':
-        //         htmlPath = '/PublicResources/html/createlobbyMeme.html';
-        //         break;
+            case 'test1':
+                htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                break;
             
-        //     case 'test2':
-        //         htmlPath = '/PublicResources/html/createlobby.html';
-        //         break;
+            case 'test2':
+                htmlPath = '/PublicResources/html/createlobby.html';
+                break;
 
-        //     default:
-        //         console.log("shit broke");
-        //         break;
-        // }
+            default:
+                console.log("shit broke");
+                break;
+        }
 
-        // //Reads the relevent html file, and sends it to the frontend
-        // fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
-        //     if (err) throw err;
-        //     io.to(socket.room).emit('changeHTML', data);
-        // });
+        //Reads the relevent html file, and sends it to the frontend
+        fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
+            if (err) throw err;
+            io.to(socket.room).emit('changeHTML', data);
+        });
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
