@@ -41,7 +41,7 @@ debugMeme.addEventListener("click", () => {
 
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
-    socket.emit('startGame', String(gameSelect));
+    socket.emit('startGame', gameSelect.value);
 })
 
 
