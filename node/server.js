@@ -45,6 +45,14 @@ app.get('/Lobby/:lobbyId', function(req, res) {
         res.send(data);
     });
 });
+
+app.get('/GamesAndRules', function(req, res) {
+    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
+        if (err) throw err;
+        //console.log(data);
+        res.send(data);
+    });
+});
     
 io.on('connect_error', (err) => {
     console.log(err);
