@@ -49,6 +49,8 @@ function unusedPromptsLeft() {
   return true
 }
 
+/* Below this*/ 
+/* Do we agree that his does nothing? and isn't used and won't be used?*/ 
 
 function showTextNode(textNodeIndex) { /* https://www.youtube.com/watch?v=R1S_NhKkvGA "borrowed" from here */
   const textNode = textNodes.find(textNode => textNode.id === textNodeIndex)  
@@ -75,6 +77,8 @@ function selectOption(option) {
   }
 }
 
+/* Do we agree that his does nothing? and isn't used and won't be used?*/ 
+/* Above this */
 
 // //The goal of the below function is to display the prompts, allow answers, count answers, and give next prompt
 // const textNodes = [
