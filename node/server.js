@@ -133,7 +133,7 @@ io.on('connection', (socket) => {
     //Decides what html page the send to dynamically send to the frontend, based on user input 
     socket.on('startGame', gameType => {
         let htmlPath;
-        
+        console.log(gameType);
         switch (gameType) {
             case 'prompt':
                 console.log("Prompt game chosen");
