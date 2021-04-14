@@ -101,11 +101,20 @@ let settingsTab = document.getElementById("settingstab")
 let usernameinput = document.getElementById("usernameInput")
 let testerino = document.getElementById("testerino")
 
+
 startGaming.addEventListener("click", () => {
+<<<<<<< Updated upstream
     settingsTab.style.display="none"
     usernameinput.style.display="none"
     startGaming.style.display="none"
     testerino.style.display="block"
+=======
+    // settingsTab.style.display="none"
+    // usernameinput.style.display="none"
+    // startGaming.style.display="none"
+    // testerino.style.display="block"
+    location.replace("never.html")
+>>>>>>> Stashed changes
 })
 
 logo.addEventListener("click", () => {
