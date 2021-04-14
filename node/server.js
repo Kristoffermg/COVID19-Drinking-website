@@ -72,6 +72,7 @@ let dontTouch;
 let dontTouchTwo;
 
 let idBase;
+var d = new Date();
 
 let idArr = [];
 
@@ -124,6 +125,7 @@ io.on('connection', (socket) => {
 
     //Joins an existing room based on the url, or creates one if nessesary
     socket.on('joinRoom', (roomId, userId, idFlag) => {
+        console.log(d.toLocaleTimeString() + '  ' + d.toLocaleDateString());
         if (idFlag) {
             randomRoom(socket, roomId);
         } else {
@@ -270,5 +272,4 @@ function pushArray (arr, index) {
 //starts the server
 server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
 
-var d = new Date();
 console.log(d.toLocaleTimeString() + '  ' + d.toLocaleDateString());
