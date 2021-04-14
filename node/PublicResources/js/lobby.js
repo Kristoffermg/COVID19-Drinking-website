@@ -29,6 +29,7 @@ logo = document.getElementById("navbar__logo");
 usernameButton = document.getElementById("setUsername");
 debugMeme = document.getElementById("debugMeme");
 copyUrl = document.getElementById("copyURL");
+startGame = document.getElementById("startGame");
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
@@ -37,6 +38,12 @@ copyUrl = document.getElementById("copyURL");
 debugMeme.addEventListener("click", () => {
     socket.emit('startGame', 'test1');
 });
+
+startGame.addEventListener("click", () => {
+    let gameSelect = getElementById("gameSelect");
+    socket.emit('startGame', gameSelect);
+})
+
 
 //Adds the lobby URL to the clipboard
 copyUrl.addEventListener("click", () => {

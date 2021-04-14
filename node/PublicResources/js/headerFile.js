@@ -8,5 +8,6 @@ let logo;
 let usernameButton;
 let debugMeme;
 let copyUrl;
+let startGame;
 
 let lobbyUrl;
