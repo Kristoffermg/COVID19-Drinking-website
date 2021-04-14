@@ -79,19 +79,15 @@ function selectOption(option) {
 // //The goal of the below function is to display the prompts, allow answers, count answers, and give next prompt
 // const textNodes = [
 //   {
-//     id: 1, //id is a remnant of "borrowed" code, not sure what to replace it with
-//     text: 'Never Have I Ever' + neverhaveIEverPrompts[0] , //Here 0 should be replaced with a random number, from the array, which hasn't already been used
 //     options: [
 //       {
 //         text: 'Yes I have\'t',
 //         ++answerYes,
-//         nextText: Math.floor(Math.random() * arr.length(neverHaveIEverPrompts)), //Find a way to make it select a random track, which has not been selected before from the array "neverHaveIEverPrompts"
 //       }, 
 //       {
 //         text: 'No, I haven\'t',
 //         ++answerNo,
-//         nextText: Math.floor(Math.random() * arr.length(neverHaveIEverPrompts)) // Should take a random number from 0-length of array neverhaveIEverPrompts
-//       }                                                                         // But how is it ensured that it is one which is yet to be used?
+//       }                                                                
 //       ]                                                                          
 //     }                                                                            
 // ]
