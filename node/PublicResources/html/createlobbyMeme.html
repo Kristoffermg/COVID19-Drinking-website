@@ -38,52 +38,47 @@
     </nav>
 
     <div class="settingstab">
-        <h2 class="Settingh" id="debugMeme">Settings</h2>
+        <h2 class="Settingh" id="debugMeme">Settings go brrr</h2>
 
-      <div class="card">
-        <a href="index.html"><img class="card__logo" src="../img/Logo.png"></a>
-      </div>
+        <label class="games__and__rounds">Choose a game and rounds lmao:</label>
+        <select class="gameselect" form="gameform">
+            <option value="promt">Promterino</option>
+            <option value="dice">Dicerino</option>
+            <option value="card">Carderino</option>
+        </select>
+        <br>
+        <select  class="roundselect" form="gameform">
+            <option value="promt">69</option>
+            <option value="dice">420</option>
+            <option value="card">69420</option>
+        </select>
+        <br>
+	<form>
+	    <label for="username">Lobby URL go brr:</label><br>
+	    <input type="text" id="lobbyurl" name="lobbyurl" readonly="readonly">
+            <script>
+		const lobbyURL = document.getElementById("lobbyurl")
+		lobbyURL.value = window.location
+            </script>
 
-            <input type="button" value="Copy URL" id="copyURL" name="copyURL">
+            <input type="button" value="Copy URL" id="copyURL" name="copyURL" onclick="copyURLtest();">
 	</form>
     </div>
-  </nav>
-
-  <section class="contentSection">
     <div id="usernameInput">
-      <form>
-          <label for="username">Username</label><br>
-          <input type="text" id="username" name="username">
-                <input type="button" value="Set Username" id="setUsername" name="setUsername">
-      </form>
+	<form>
+	    <label for="username">Username:</label><br>
+	    <input type="text" id="username" name="username">
+            <input type="button" value="Set Username" id="setUsername" name="setUsername">
+	</form>
     </div>
-
-    <div id="settingstab">
-      <h2 class="Settingh">Settings</h2>
-      <form class="game_settings_form">
-        <label class="games__and__rounds">Choose a game:</label> 
-        <select class="gameselect" form="gameform">
-          <option value="promt">Promt</option>
-          <option value="dice">Dice</option>
-          <option value="card">Card</option>
-        </select><br>
-      </form>
-      
-      <div class="url-div">
-        <label id="usernameLabel" for="lobbyurl">Lobby URL:</label>
-        <input type="text" id="lobbyurl" name="lobbyurl" readonly="readonly">
-        <script>
-          const lobbyURL = document.getElementById("lobbyurl")
-          lobbyURL.value = window.location
-        </script>
-        <input type="button" value="Copy URL" id="copyURL" name="copyURL" onclick="copyURLtest();">
-      </div>
+    <div id="videos">
+        <div id="video-grid"></div>
     </div>
-    <input type="button" value="Start game" id="startGame" name="startGame" onclick="never-have-i-ever.html">
-
-    <div id="testerino" style="display:none">
-      <h1>this is where the epic gaming happens 😎😎😎😎</h1>
+    <div class="footer">
+      <p> Contact Terms of Service Credits </p>
+      <p> The owner of this site is not responsible for any user generated content (messages, usernames) </p>
     </div>
+    
 
   
   <footer>
@@ -92,6 +87,6 @@
       <p> The owner of this site is not responsible for any user generated content (messages, usernames) </p>
     </div>
   </footer>
-  <script defer src="../js/lobby.js" id="pageScript"></script>
+  <script src="../js/quickMeme.js" id="pageScript"></script>
 </body>
 </html>

@@ -1,87 +1,21 @@
-const socket = io({path:'/node0/socket.io', transports: ["polling"]});
+console.log("lobby executed");
 
-const videoGrid = document.getElementById('video-grid');
-const myPeer = new Peer({
-    config: {'iceServers': [
-      { url: 'stun:stun.l.google.com:19302'},
-      { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
-    ]} /* Sample servers, please use appropriate ones */
-  });
-const localVideo = document.createElement('video');
-localVideo.muted = true; 
-const peers = {};
-
-let dontTouch;
-let ROOM_ID;
-let idFlag;
-
-navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
-    video: true,
-    audio: true
-}).then(stream => { // Sets up the peer to peer connection and video streams
-    addVideoStream(localVideo, stream)
-
-    myPeer.on('call', call => {
-        console.log('getting called...');
-        call.answer(stream);
-        const video = document.createElement('video');
-        call.on('stream', userVideoStream => {
-            addVideoStream(video, userVideoStream);
-        });
-    });
-
-    socket.on('user-connected', userId => {
-        connectToNewUser(userId, stream);
-    });
-});
-
-socket.on('user-disconnected', userId => {
-    if (peers[userId]) peers[userId].close();
-});
-
-myPeer.on('error', err =>{
-    console.log('myPeer error: ' + err);
-});
-
-myPeer.on('open', id => {
-    console.log('ja det er scuffed');
-    socket.emit('joinRoom', ROOM_ID, id, idFlag);
-});
-
-function connectToNewUser(userId, stream) {
-    console.log('calling. ring ring ring');
-    const call = myPeer.call(userId, stream);
-    const video = document.createElement('video');
-    call.on('stream', userVideoStream => {
-        addVideoStream(video, userVideoStream);
-    });
-    call.on('close', () => {
-        video.remove();
-    });
-
-    peers[userId] = call;
-}
-
-function addVideoStream(video, stream) {
-    video.srcObject = stream;
-    video.addEventListener('loadedmetadata', () => {
-        video.play();
-    });
-    videoGrid.append(video);
-} 
-
-
+//Gets the roomID from the backend
 socket.on('roomId', (roomId) => {
-
+    let lobbyUrl = document.getElementById("lobbyurl");
+    
     console.log('backend roomid ' + roomId);
     console.log('idxd ' + idxd);
 
     if(idxd == "" || idxd == dontTouch){
         ROOM_ID = roomId;
         idFlag = true;
+        lobbyUrl.value = document.URL + ROOM_ID;
+                
     }else{
         ROOM_ID = idxd;
         idFlag = false;
+        lobbyUrl.value = document.URL;
     }
 
     console.log('ROOOOOOOM ' + ROOM_ID);
@@ -89,26 +23,41 @@ socket.on('roomId', (roomId) => {
     //ROOM_ID = roomId;
 });
 
-
-
-let idxd = document.URL.split("/Lobby/")[1];
-let logo = document.getElementById("navbar__logo");
+//Sets different variables
+idxd = document.URL.split("/Lobby/")[1];
+logo = document.getElementById("navbar__logo");
+usernameButton = document.getElementById("setUsername");
+debugMeme = document.getElementById("debugMeme");
+copyUrl = document.getElementById("copyURL");
+//console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
 
-let startGaming = document.getElementById("startGame")
-let settingsTab = document.getElementById("settingstab")
-let usernameinput = document.getElementById("usernameInput")
-let testerino = document.getElementById("testerino")
+//Debug funktion (runs when clicking on the Settings header)
+debugMeme.addEventListener("click", () => {
+    socket.emit('startGame', 'test1');
+});
 
+//Adds the lobby URL to the clipboard
+copyUrl.addEventListener("click", () => {
+    let lobbyUrl = document.getElementById("lobbyurl");
+    lobbyUrl.select();
+    document.execCommand("copy");
+});
 
-startGaming.addEventListener("click", () => {
-    settingsTab.style.display="none"
-    usernameinput.style.display="none"
-    startGaming.style.display="none"
-    testerino.style.display="block"
-})
-
+//Debug meme der ikke bliver brugt lmao
 logo.addEventListener("click", () => {
     socket.emit("debug");
+});
+
+//Changes the username
+usernameButton.addEventListener("click", () => {
+    let newUserName = document.getElementById("username").value;
+    //console.log("username: " + newUserName);
+    socket.emit("changeName", newUserName);
+})
+
+//Get's username from backend, so it can be updated on the site
+socket.on('changeName', name =>{
+    console.log("Username: " + socket.userName);
 });
