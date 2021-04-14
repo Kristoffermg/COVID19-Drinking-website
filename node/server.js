@@ -125,6 +125,7 @@ io.on('connection', (socket) => {
     //Joins an existing room based on the url, or creates one if nessesary
     socket.on('joinRoom', (roomId, userId, idFlag) => {
         var d2 = new Date();
+        console.log("");
         console.log(d2.toLocaleTimeString() + '  ' + d2.toLocaleDateString());
         if (idFlag) {
             randomRoom(socket, roomId);
