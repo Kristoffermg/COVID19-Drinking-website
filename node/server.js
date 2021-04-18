@@ -10,6 +10,7 @@ const server = http.createServer(app);
 const pathApi = require('path');
 const fs = require('fs');
 const { debug } = require('console');
+const { CLOSING } = require('ws');
 
 const io = require('socket.io')(server, {
     cors: {
@@ -70,6 +71,11 @@ function idObj(roomId, amountConnected, userIdArr) {
 //Don't Touch :)
 let dontTouch;
 let dontTouchTwo;
+
+//Never have I ever variables
+let neverHaveIEverPrompts;
+let usedPrompts;
+let counter;
 
 let idBase;
 
@@ -150,6 +156,8 @@ io.on('connection', (socket) => {
                 console.log("Prompt game chosen");
                 //Throw prompt html
                 htmlPath = '/PublicResources/html/never.html';
+                //Initialize 'Never have I ever' variables
+                initNeverVar();
                 break;
             
             case 'card':
@@ -182,6 +190,22 @@ io.on('connection', (socket) => {
             if (err) throw err;
             io.to(socket.room).emit('changeHTML', data);
         });
+    });
+
+    //Handles 'Never have I ever' logic
+    socket.on('neverLogic', () => {
+        let randomPromptIndex;
+        if (usedPrompts.length != neverHaveIEverPrompts.length) {
+            do {
+                randomPromptIndex = Math.floor(Math.random() * neverHaveIEverPrompts.length);
+            } while (usedPrompts.includes(randomPromptIndex));
+            usedPrompts[counter] = randomPromptIndex;
+            counter++;
+            console.log("Prompt to send: '" + neverHaveIEverPrompts[randomPromptIndex] + "'");
+            io.to(socket.room).emit("nextPrompt", neverHaveIEverPrompts[randomPromptIndex]);
+        } else {
+            io.to(socket.room).emit("gameOver");
+        }
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
@@ -269,6 +293,15 @@ function pushArray (arr, index) {
     
     console.log("Post push: " + arr);
 }
+
+function initNeverVar() {
+    neverHaveIEverPrompts = ["had a talk with the police.","shat myself.","had too much to drink, according to myself.",
+    "jay-walked.","cheated on a diet.","sneaked food into a cinema.","driven more than 20% above the speed limit.","clogged a friend's toilet.","peed in the sink.","slept for more than 12 hours.",
+    "not been able to find my way home.","been awake for more than 36 hours.","spent way too much money on something which wasn't worth it.","been scared of heights.","been outside Europe.",
+    "had 3 jobs at the same time.","had a surname ending in \"sen\""];
+    usedPrompts = [];
+    counter = 0;
+};
 
 //starts the server
 server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
