@@ -158,12 +158,14 @@ io.on('connection', (socket) => {
                 //Throw prompt html
                 htmlPath = '/PublicResources/html/never.html';
                 //Initialize 'Never have I ever' variables
-                console.log("idArr: " + idArr[0].roomId);
-                console.log("socket: " + socket.room);
                 for (let i = 0; i < idArr.length; i++) {
                     if (idArr[i].roomId == socket.room) {
-                        let neverHaveIEverPrompts = initNeverVar();
-                        idArr[i].neverGame(neverHaveIEverPrompts);   
+                        fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
+                            if (err) throw err;
+                            //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
+                            let neverHaveIEverPrompts = data.split(/\r?\n/);
+                            idArr[i].neverGame(neverHaveIEverPrompts);
+                        });
                         console.log("pog");                     
                     }
                 }
@@ -173,9 +175,6 @@ io.on('connection', (socket) => {
                 console.log("Card game chosen");
                 //Throw card html
                 htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
-                let neverHaveIEverPrompts = initNeverVar();
-                idArr[0].neverGame(neverHaveIEverPrompts);
-                console.log(idArr[0]);
                 break;
 
             case 'dice':
@@ -310,13 +309,6 @@ function pushArray (arr, index) {
     
     console.log("Post push: " + arr);
 }
-
-function initNeverVar() {
-    return neverHaveIEverPrompts = ["had a talk with the police.","shat myself.","had too much to drink, according to myself.",
-    "jay-walked.","cheated on a diet.","sneaked food into a cinema.","driven more than 20% above the speed limit.","clogged a friend's toilet.","peed in the sink.","slept for more than 12 hours.",
-    "not been able to find my way home.","been awake for more than 36 hours.","spent way too much money on something which wasn't worth it.","been scared of heights.","been outside Europe.",
-    "had 3 jobs at the same time.","had a surname ending in \"sen\""];
-};
 
 //starts the server
 server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
