@@ -28,11 +28,11 @@ console.log(path);
 app.use(express.static(path));
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -40,7 +40,7 @@ app.get('/Lobby', function(req, res) {
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -48,7 +48,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -66,16 +66,17 @@ function idObj(roomId, amountConnected, userIdArr) {
     this.amountConnected = amountConnected;
     this.userIdArr = [];
     this.userIdArr.push(userIdArr);
+
+    this.neverGame = function NeverObj(neverPrompts) {
+        this.neverHaveIEverPrompts = neverPrompts;
+        this.usedPrompts = [];
+        this.counter = 0;
+    }
 }
 
 //Don't Touch :)
 let dontTouch;
 let dontTouchTwo;
-
-//Never have I ever variables
-let neverHaveIEverPrompts;
-let usedPrompts;
-let counter;
 
 let idBase;
 
@@ -114,7 +115,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -155,29 +156,40 @@ io.on('connection', (socket) => {
             case 'prompt':
                 console.log("Prompt game chosen");
                 //Throw prompt html
-                htmlPath = '/PublicResources/html/never.html';
+                htmlPath = '/PublicResources/htmlLocal/never.html';
                 //Initialize 'Never have I ever' variables
-                initNeverVar();
+                console.log("idArr: " + idArr[0].roomId);
+                console.log("socket: " + socket.room);
+                for (let i = 0; i < idArr.length; i++) {
+                    if (idArr[i].roomId == socket.room) {
+                        let neverHaveIEverPrompts = initNeverVar();
+                        idArr[i].neverGame(neverHaveIEverPrompts);   
+                        console.log("pog");                     
+                    }
+                }
                 break;
             
             case 'card':
                 console.log("Card game chosen");
                 //Throw card html
-                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                let neverHaveIEverPrompts = initNeverVar();
+                idArr[0].neverGame(neverHaveIEverPrompts);
+                console.log(idArr[0]);
                 break;
 
             case 'dice':
                 console.log("Dice game chosen");
                 //Throw dice html
-                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                 break;
             
             case 'test1':
-                htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
                 break;
             
             case 'test2':
-                htmlPath = '/PublicResources/html/createlobby.html';
+                htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                 break;
 
             default:
@@ -194,17 +206,22 @@ io.on('connection', (socket) => {
 
     //Handles 'Never have I ever' logic
     socket.on('neverLogic', () => {
-        let randomPromptIndex;
-        if (usedPrompts.length != neverHaveIEverPrompts.length) {
-            do {
-                randomPromptIndex = Math.floor(Math.random() * neverHaveIEverPrompts.length);
-            } while (usedPrompts.includes(randomPromptIndex));
-            usedPrompts[counter] = randomPromptIndex;
-            counter++;
-            console.log("Prompt to send: '" + neverHaveIEverPrompts[randomPromptIndex] + "'");
-            io.to(socket.room).emit("nextPrompt", neverHaveIEverPrompts[randomPromptIndex]);
-        } else {
-            io.to(socket.room).emit("gameOver");
+        for (let i = 0; i < idArr.length; i++) {
+            if (idArr[i].roomId == socket.room) {
+                console.log("counter for room " + idArr[i].roomId + ": " + idArr[i].counter);
+                let randomPromptIndex;
+                if (idArr[i].usedPrompts.length != idArr[i].neverHaveIEverPrompts.length) {
+                    do {
+                        randomPromptIndex = Math.floor(Math.random() * idArr[i].neverHaveIEverPrompts.length);
+                    } while (idArr[i].usedPrompts.includes(randomPromptIndex));
+                    idArr[i].usedPrompts[idArr[i].counter] = randomPromptIndex;
+                    idArr[i].counter++;
+                    console.log("Prompt to send: '" + idArr[i].neverHaveIEverPrompts[randomPromptIndex] + "'");
+                    io.to(socket.room).emit("nextPrompt", idArr[i].neverHaveIEverPrompts[randomPromptIndex]);
+                } else {
+                    io.to(socket.room).emit("gameOver");
+                }       
+            }
         }
     });
 
@@ -295,12 +312,10 @@ function pushArray (arr, index) {
 }
 
 function initNeverVar() {
-    neverHaveIEverPrompts = ["had a talk with the police.","shat myself.","had too much to drink, according to myself.",
+    return neverHaveIEverPrompts = ["had a talk with the police.","shat myself.","had too much to drink, according to myself.",
     "jay-walked.","cheated on a diet.","sneaked food into a cinema.","driven more than 20% above the speed limit.","clogged a friend's toilet.","peed in the sink.","slept for more than 12 hours.",
     "not been able to find my way home.","been awake for more than 36 hours.","spent way too much money on something which wasn't worth it.","been scared of heights.","been outside Europe.",
     "had 3 jobs at the same time.","had a surname ending in \"sen\""];
-    usedPrompts = [];
-    counter = 0;
 };
 
 //starts the server
