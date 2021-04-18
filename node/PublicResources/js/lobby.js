@@ -30,6 +30,8 @@ usernameButton = document.getElementById("setUsername");
 debugMeme = document.getElementById("debugMeme");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
+camera_enabled = document.getElementById("camera-enabled")
+camera_disabled = document.getElementById("camera-disabled")
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
@@ -63,6 +65,20 @@ usernameButton.addEventListener("click", () => {
     //console.log("username: " + newUserName);
     socket.emit("changeName", newUserName);
 })
+
+camera_disabled.addEventListener("click", () => {
+    camera_disabled.style.display = "none"
+    camera_enabled.style.display = "block"
+    enableCamera()
+})
+
+camera_enabled.addEventListener("click", () => {
+    camera_enabled.style.display = "none"
+    camera_disabled.style.display = "block"
+    disableCamera()
+})
+
+
 
 //Get's username from backend, so it can be updated on the site
 socket.on('changeName', name =>{

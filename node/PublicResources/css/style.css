@@ -807,6 +807,14 @@ video {
   object-fit: cover;
 }
 
+#camera-enabled, #camera-disabled {
+  position: relative;
+  width: 10%;
+  height: 10%;
+  transform: translate(600px, -70px);
+  cursor: pointer;
+}
+
 .games__and__rounds {
   font-size: 20px;
   padding: 8px 12px;

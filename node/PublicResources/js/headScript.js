@@ -19,27 +19,34 @@ localVideo.muted = true;
 const peers = {};
 
 //Creates a video and audio stream
-navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
-    video: true,
-    audio: true
-}).then(stream => { // Sets up the peer to peer connection and video streams
-    addVideoStream(localVideo, stream)
 
-    //Establishes connection between clients, when getting called
-    myPeer.on('call', call => {
-        console.log('getting called...');
-        call.answer(stream);
-        const video = document.createElement('video');
-        call.on('stream', userVideoStream => {
-            addVideoStream(video, userVideoStream);
+function enableCamera() {
+    navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
+        video: true,
+        audio: true
+    }).then(stream => { // Sets up the peer to peer connection and video streams
+        addVideoStream(localVideo, stream)
+    
+        //Establishes connection between clients, when getting called
+        myPeer.on('call', call => {
+            console.log('getting called...');
+            call.answer(stream);
+            const video = document.createElement('video');
+            call.on('stream', userVideoStream => {
+                addVideoStream(video, userVideoStream);
+            });
+        });
+    
+        //Connects user to each other
+        socket.on('user-connected', userId => {
+            connectToNewUser(userId, stream);
         });
     });
+}
 
-    //Connects user to each other
-    socket.on('user-connected', userId => {
-        connectToNewUser(userId, stream);
-    });
-});
+function disableCamera() {
+    localVideo.remove()
+}
 
 //Disconnects users from each other
 socket.on('user-disconnected', userId => {

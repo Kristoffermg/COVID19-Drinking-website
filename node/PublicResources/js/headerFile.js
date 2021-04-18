@@ -9,5 +9,7 @@ let usernameButton;
 let debugMeme;
 let copyUrl;
 let startGame;
+let camera_enabled;
+let camera_disabled;
 
 let lobbyUrl;
