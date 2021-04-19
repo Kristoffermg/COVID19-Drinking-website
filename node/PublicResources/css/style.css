@@ -791,7 +791,7 @@ a.p4 {
   margin-bottom: 100px;
   border: 3px solid black;
   width: 80%;
-  height: 200px;
+  height: fit-content;
 }
 
 #video-grid {
@@ -885,7 +885,7 @@ overflow: auto;
   margin: auto;
   text-align: center;
   justify-content: center;
-  width: 900px;
+  width: 50%;
 }
 
 .container {
@@ -893,29 +893,82 @@ overflow: auto;
   background-color: rgb(129, 224, 193);
   margin-top: 20px;
   border-radius: 10px;
-  width: 400px;
   padding: 10px;
 }
 
-.contentContainer {
-  background-color: rgba(0, 0, 0, 0.692);
+.Container {
+  background-color: rgba(136, 255, 136, 0.199);
   margin: auto;
   border: solid 2px white;
-  height: 700px;
   margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+}
+
+.contentContainer {
+  display: flex;
+  justify-content: space-between;
+  /*border: solid 1px white;*/
+  padding-top: 5%;
 }
 
 #neverText {
-  margin-top: 40px;
+  margin-top: 20px;
   font-size: 30px;
   color: white;
 }
 
-#nextText {
+.textbutton {
   top: 25%;
   left: 46%;
   margin: auto;
   margin-top: 20px;
   padding: 20px;
   font-size: 20px;
+}
+
+#nextText {
+  margin-top: 0;
+}
+
+.promt {
+  height: fit-content;
+}
+
+#usernameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top: solid 2px white;
+  border-right: solid 2px white;
+  border-bottom: solid 2px white;
+}
+
+.usernameText {
+  color: white;
+  font-size: 25px;
+  /*border: solid 1px white;*/
+}
+
+.color {
+  background-color: green;
+  height: 5px;
+  width: 5px;
+}
+
+.chat {
+  border-top: solid 2px white;
+  border-right: solid 2px white;
+  border-bottom: solid 2px white;
+  width: 20%;
+  color: white;
+  height: fit-content;
+}
+
+#timer {
+  background-color: white;
+  padding: 10px;
+  height: fit-content;
+  width: fit-content;
 }
