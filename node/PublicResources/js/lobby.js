@@ -36,7 +36,7 @@ startGame = document.getElementById("startGame");
 
 //Debug funktion (runs when clicking on the Settings header)
 debugMeme.addEventListener("click", () => {
-    socket.emit('startGame', 'test1');
+    //socket.emit('startGame', 'test1');
 });
 
 startGame.addEventListener("click", () => {
@@ -67,18 +67,27 @@ usernameButton.addEventListener("click", () => {
 
 //Get's username from backend, so it can be updated on the site
 socket.on('changeName', (name, userId) =>{
-    let check = document.getElementById("userNamePara");
+    let userPlace = document.getElementById("id"+userId);
+    let check;
+    
+    if (userPlace == dontTouch) {
+        userPlace = document.getElementById("idclient");
+        console.log("userplace should be clien: " + userPlace);
+        check = document.querySelector("div.videoDiv#idclient > p");
+    } else {
+        check = document.querySelector("div.videoDiv#id" + userId + " > p");
+        console.log("userplace should be non-client: " + userPlace);
+    }
+    console.log("Check: " + check);
+    
     if (check != dontTouch) {
         check.remove();
     }
     console.log("User " + userId + "changed name to " + name);
-    let userPlace = document.getElementById(userId);
-    if (userPlace == dontTouch) {
-        userPlace = document.getElementById("client");
-    }
-    console.log(userPlace);
+
+    console.log("userplace should be whatever: " + userPlace);
     let displayName = document.createElement("p");
     displayName.setAttribute("id", "userNamePara");
     displayName.innerText = name;
-    userPlace.after(displayName);
+    userPlace.append(displayName);
 });

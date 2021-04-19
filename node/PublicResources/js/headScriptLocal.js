@@ -69,9 +69,11 @@ function connectToNewUser(userId, stream) {
         console.log(userVideoStream);
         console.log("Er det her????");
         addVideoStream(video, userVideoStream, userId);
+        let clientName = document.querySelector("div.videoDiv#idclient > p");
+        socket.emit('changeName', clientName.innerText, clientPeerId);
     });
     call.on('close', () => {
-        video.remove();
+        video.parentElement.remove();
     });
 
     peers[userId] = call;
@@ -79,20 +81,25 @@ function connectToNewUser(userId, stream) {
 
 //Creates videostream html element
 function addVideoStream(video, stream, userId) {
-    let scuffedFix = document.getElementById(userId);
+    let scuffedFix = document.getElementById("id" + userId);
     console.log("Scuffed Fix: " + scuffedFix);
     if (scuffedFix != dontTouch) {
         console.log("Removing element");
         scuffedFix.remove();
     }
     let videoDiv = document.createElement("div");
-    videoDiv.setAttribute("id", userId);
+    videoDiv.setAttribute("id", "id" + userId);
+    videoDiv.classList.add("videoDiv");
     video.srcObject = stream;
     video.addEventListener('loadedmetadata', () => {
         video.play();
     });
-    video.setAttribute("id", userId);
+    video.setAttribute("id", "id" + userId);
     videoDiv.append(video);
+    let userPara = document.createElement("p");
+    userPara.setAttribute("id", 'userNamePara');
+    userPara.innerText = 'Guest';
+    videoDiv.append(userPara);
     videoGrid.append(videoDiv);
 } 
 

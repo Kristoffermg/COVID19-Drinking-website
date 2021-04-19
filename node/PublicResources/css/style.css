@@ -922,5 +922,7 @@ overflow: auto;
 
 #userNamePara {
   /* HER SKER DER STYLING AF USERNAMES! */
-
+  text-align: center;
+  color: #fff;
+  font-size: 20px;
 }
