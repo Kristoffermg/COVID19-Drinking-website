@@ -23,7 +23,7 @@ navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permissio
     video: true,
     audio: true
 }).then(stream => { // Sets up the peer to peer connection and video streams
-    addVideoStream(localVideo, stream)
+    addVideoStream(localVideo, stream, "client")
 
     //Establishes connection between clients, when getting called
     myPeer.on('call', call => {
@@ -32,7 +32,7 @@ navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permissio
         const video = document.createElement('video');
         call.on('stream', userVideoStream => {
             console.log("In call, pre add");
-            addVideoStream(video, userVideoStream);
+            addVideoStream(video, userVideoStream, call.peer);
         });
     });
 
@@ -55,6 +55,8 @@ myPeer.on('error', err =>{
 //Connects players to the right lobby
 myPeer.on('open', id => {
     console.log('ja det er scuffed');
+    clientPeerId = id;
+    console.log("client id: " + id);
     socket.emit('joinRoom', ROOM_ID, id, idFlag);
 });
 
@@ -64,8 +66,9 @@ function connectToNewUser(userId, stream) {
     const call = myPeer.call(userId, stream);
     const video = document.createElement('video');
     call.on('stream', userVideoStream => {
+        console.log(userVideoStream);
         console.log("Er det her????");
-        addVideoStream(video, userVideoStream);
+        addVideoStream(video, userVideoStream, userId);
     });
     call.on('close', () => {
         video.remove();
@@ -75,12 +78,22 @@ function connectToNewUser(userId, stream) {
 }
 
 //Creates videostream html element
-function addVideoStream(video, stream) {
+function addVideoStream(video, stream, userId) {
+    let scuffedFix = document.getElementById(userId);
+    console.log("Scuffed Fix: " + scuffedFix);
+    if (scuffedFix != dontTouch) {
+        console.log("Removing element");
+        scuffedFix.remove();
+    }
+    let videoDiv = document.createElement("div");
+    videoDiv.setAttribute("id", userId);
     video.srcObject = stream;
     video.addEventListener('loadedmetadata', () => {
         video.play();
     });
-    videoGrid.append(video);
+    video.setAttribute("id", userId);
+    videoDiv.append(video);
+    videoGrid.append(videoDiv);
 } 
 
 //Changes the html page dynamically
