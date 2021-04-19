@@ -61,10 +61,24 @@ logo.addEventListener("click", () => {
 usernameButton.addEventListener("click", () => {
     let newUserName = document.getElementById("username").value;
     //console.log("username: " + newUserName);
-    socket.emit("changeName", newUserName);
+    console.log("name: " + newUserName + " id: " + clientPeerId);
+    socket.emit("changeName", newUserName, clientPeerId);
 })
 
 //Get's username from backend, so it can be updated on the site
-socket.on('changeName', name =>{
-    console.log("Username: " + socket.userName);
+socket.on('changeName', (name, userId) =>{
+    let check = document.getElementById("userNamePara");
+    if (check != dontTouch) {
+        check.remove();
+    }
+    console.log("User " + userId + "changed name to " + name);
+    let userPlace = document.getElementById(userId);
+    if (userPlace == dontTouch) {
+        userPlace = document.getElementById("client");
+    }
+    console.log(userPlace);
+    let displayName = document.createElement("p");
+    displayName.setAttribute("id", "userNamePara");
+    displayName.innerText = name;
+    userPlace.after(displayName);
 });

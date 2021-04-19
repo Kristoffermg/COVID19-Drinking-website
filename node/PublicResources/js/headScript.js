@@ -31,6 +31,7 @@ navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permissio
         call.answer(stream);
         const video = document.createElement('video');
         call.on('stream', userVideoStream => {
+            console.log("In call, pre add");
             addVideoStream(video, userVideoStream);
         });
     });
@@ -63,6 +64,7 @@ function connectToNewUser(userId, stream) {
     const call = myPeer.call(userId, stream);
     const video = document.createElement('video');
     call.on('stream', userVideoStream => {
+        console.log("Er det her????");
         addVideoStream(video, userVideoStream);
     });
     call.on('close', () => {

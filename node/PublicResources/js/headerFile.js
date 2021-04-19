@@ -11,3 +11,5 @@ let copyUrl;
 let startGame;
 
 let lobbyUrl;
+
+let clientPeerId;
