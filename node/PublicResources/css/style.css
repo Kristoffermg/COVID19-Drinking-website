@@ -692,7 +692,7 @@ a.p4 {
   cursor: pointer;
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1950px) {
   .services__wrapper {
     grid-template-columns: 1fr 1fr;
   }
