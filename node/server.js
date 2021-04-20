@@ -103,13 +103,14 @@ io.on('connection', (socket) => {
     socket.emit('roomId', idBase);
 
     //Changes the username of the user who requested it
-    socket.on('changeName', name => {
+    socket.on('changeName', (name, userId) => {
+        console.log("name: " + name + " id: " + userId);
         let oldName = socket.userName;
         socket.userName = name;
         
-        io.to(socket.room).emit('changeName', socket.userName);
+        io.to(socket.room).emit('changeName', socket.userName, userId);
         
-        io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
+        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);
     });
 

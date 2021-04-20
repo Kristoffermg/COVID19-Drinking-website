@@ -972,3 +972,10 @@ overflow: auto;
   height: fit-content;
   width: fit-content;
 }
+
+#userNamePara {
+  /* HER SKER DER STYLING AF USERNAMES! */
+  text-align: center;
+  color: #fff;
+  font-size: 20px;
+}
