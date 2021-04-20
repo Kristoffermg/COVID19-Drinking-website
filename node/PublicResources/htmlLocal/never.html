@@ -38,26 +38,11 @@
 
         <section class="contentSection">
             <div class="Container">
-                <div class="contentContainer">
-                    <div id="usernameContainer">
-                        <p class="usernameText">Username</p> 
-                        <p class="usernameText">Username</p> 
-                        <p class="usernameText">Username</p> 
-                        <p class="usernameText">Username</p> 
-                        <p class="usernameText">Username</p> 
-                    </div>
-
-                    <div class="promt">
-                        <input type="button" value="Start game" name="next" id="nextText" class="textbutton">
-                        <div id="neverText">
-                        </div> 
-                        <input type="button" value="Next round" name="Ja" id="test" class="textbutton">
-                        <input type="button" value="Next round" name="Nej" id="test" class="textbutton">
-                    </div>
-                    <div id="timer"><p id="test">Timer</p></div>
+                <div id="timer" data-style="smooth" style="--duration: 10;">
+                    <div></div>
                 </div>
 
-                <div class="contentContainer" id="lowercontainer">
+                <div class="contentContainer upperContainer">
                     <div class="chat">
                         <p>CHAD</p>
                         <p>Besked</p>
@@ -75,19 +60,20 @@
                         <p>Besked</p>
                         <p>Besked</p>
                     </div>
-                    <div id="videoPlacement">
+
+                    <div class="promt">
+                        <input type="button" value="Start game" name="next" id="nextText" class="textbutton" style="display:block">
+                        <div id="neverText">
+                        </div> 
+                        <input type="button" value="I have" name="Ja" id="iHave" class="textbutton">
+                        <input type="button" value="I have never" name="Nej" id="iHaveNever" class="textbutton">
                     </div>
                 </div>
             </div>
             
         </section>
 
-
-
-        <!--
-        <div id="videos">
-            <div id="video-grid"></div>
-        </div> -->
+        <div id="videoPlacement"></div>
 
         <footer>
             <div class="footer">

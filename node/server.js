@@ -82,6 +82,8 @@ let idBase;
 
 let idArr = [];
 
+const nextPromptCountdown = 10;
+
 //All the socket functions
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
@@ -206,23 +208,25 @@ io.on('connection', (socket) => {
 
     //Handles 'Never have I ever' logic
     socket.on('neverLogic', () => {
-        for (let i = 0; i < idArr.length; i++) {
-            if (idArr[i].roomId == socket.room) {
-                console.log("counter for room " + idArr[i].roomId + ": " + idArr[i].counter);
-                let randomPromptIndex;
-                if (idArr[i].usedPrompts.length != idArr[i].neverHaveIEverPrompts.length) {
-                    do {
-                        randomPromptIndex = Math.floor(Math.random() * idArr[i].neverHaveIEverPrompts.length);
-                    } while (idArr[i].usedPrompts.includes(randomPromptIndex));
-                    idArr[i].usedPrompts[idArr[i].counter] = randomPromptIndex;
-                    idArr[i].counter++;
-                    console.log("Prompt to send: '" + idArr[i].neverHaveIEverPrompts[randomPromptIndex] + "'");
-                    io.to(socket.room).emit("nextPrompt", idArr[i].neverHaveIEverPrompts[randomPromptIndex]);
-                } else {
-                    io.to(socket.room).emit("gameOver");
-                }       
+        let id;
+        for(let i = 0; i < idArr.length; i++) {
+            if(idArr[i].roomId === socket.room) {
+                id = i;
             }
         }
+        console.log(id);
+        //let id = currentRoomId(socket);
+        countdown(nextPromptCountdown, socket, id)
+        let randomPromptIndex;
+        /*if(unusedPromptsLeft(id)) {
+            randomPromptIndex = randomPrompt(id);
+            idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
+            idArr[id].counter++;
+            console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
+            io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
+        } else {
+            io.to(socket.room).emit("gameOver"); */
+        //}
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
@@ -269,6 +273,60 @@ function disconnectHandler (socket) {
 	        }
 	    }
 	}
+}
+
+function currentRoomId(socket) {
+    let id;
+    for(let i = 0; i < idArr.length; i++) {
+        if(idArr[i].roomId === socket.room) {
+            id = i;
+        }
+    }
+    return id;
+}
+
+function countdown(time, socket, id) {
+    console.log(`counter for room ${id} is at ` + time);
+    if(time > 0) {
+        setTimeout(function() { countdown(--time, socket, id) }, 1000);
+        io.to(socket.room).emit("countdownTick");
+    } else {    
+        console.log("-------------------------")  
+        try {
+            if(unusedPromptsLeft(id)) {
+                setTimeout(function() { countdown(nextPromptCountdown, socket, id) }, 1000);
+                let randomPromptIndex = randomPrompt(id);
+                io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
+            } else {
+                io.to(socket.room).emit("gameOver"); 
+            }
+        }
+        catch(error) { }
+    }
+}
+
+function unusedPromptsLeft(id) {
+    if(idArr[id].usedPrompts.length !== idArr[id].neverHaveIEverPrompts.length) {
+        return true;
+    }
+    return false;
+}
+
+function randomPrompt(id) {
+    let randomPromptIndex;
+    do {
+        randomPromptIndex = Math.floor(Math.random() * idArr[id].neverHaveIEverPrompts.length);
+    } while(promptHasBeenUsed(randomPromptIndex, id));
+    idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
+    idArr[id].counter++;
+    return randomPromptIndex;
+}
+
+function promptHasBeenUsed(randomPromptIndex, id) {
+    if(idArr[id].usedPrompts.includes(randomPromptIndex)) {
+      return true;
+    }
+    return false;
 }
 
 //Creates a new random room

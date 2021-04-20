@@ -74,6 +74,7 @@ h3 {
   cursor: pointer;
   text-decoration: none;
   font-size: 2rem;
+  background-clip: border-box; /*This line removes 4 errors*/
 }
 
 .navbar__menu {
@@ -593,7 +594,7 @@ a.p4 {
   -moz-text-fill-color: transparent;
   margin-bottom: 1rem;
   font-size: 2.5rem;
-
+  background-clip: border-box;  /*This line removes 4 erroes*/
 }
 
 .services h2 {
@@ -786,12 +787,13 @@ a.p4 {
 }
 
 #videos {
-  margin: auto;
+  position: relative;
   margin-top: 30px;
   margin-bottom: 100px;
   border: 3px solid black;
-  width: 80%;
-  height: fit-content;
+  left: 19%;
+  width: 60%;
+  height: 200px;
 }
 
 #video-grid {
@@ -900,7 +902,7 @@ overflow: auto;
   background-color: rgba(0, 0, 0, 0.199);
   margin: auto;
   border: solid 2px white;
-  margin-top: 20px;
+  margin-top: 10%;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -910,30 +912,47 @@ overflow: auto;
   display: flex;
   justify-content: space-between;
   /*border: solid 1px white;*/
-  padding-top: 5%;
+  height: 400px; 
 }
 
 #neverText {
-  margin-top: 20px;
   font-size: 30px;
   color: white;
+  height: 60px;
 }
 
 .textbutton {
-  top: 25%;
-  left: 46%;
   margin: auto;
-  margin-top: 20px;
-  padding: 20px;
+  margin-top: 40px;
+  padding: 15px;
   font-size: 20px;
+  border: solid 1px white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#iHave:hover {
+  background-color: rgb(9, 255, 0);
+  box-shadow: 2px 2px rgb(0, 0, 0);
+  transform: translateY(-2%);
+}
+
+#iHaveNever:hover {
+  background-color: rgb(255, 0, 0);
+  box-shadow: 2px 2px rgb(0, 0, 0);
+  transform: translateY(-2%);
 }
 
 #nextText {
   margin-top: 0;
+  margin-bottom: 20px;
 }
 
 .promt {
+  flex-grow: 2;
+  width: 100px;
   height: fit-content;
+  align-self: center;
 }
 
 #usernameContainer {
@@ -951,12 +970,6 @@ overflow: auto;
   /*border: solid 1px white;*/
 }
 
-.color {
-  background-color: green;
-  height: 5px;
-  width: 5px;
-}
-
 .chat {
   border-top: solid 2px white;
   border-right: solid 2px white;
@@ -964,13 +977,20 @@ overflow: auto;
   width: 20%;
   color: white;
   height: fit-content;
+  align-self: center;
+}
+
+@keyframes roundtime {
+  to {
+    transform: scaleX(0);
+  }
 }
 
 #timer {
-  background-color: white;
-  padding: 10px;
-  height: fit-content;
-  width: fit-content;
+  height: 15px;
+  background: green;
+  transform-origin: left center;
+  animation: roundtime calc(var(--duration) *1s) forwards;
 }
 
 #userNamePara {
