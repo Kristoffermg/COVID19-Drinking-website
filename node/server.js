@@ -61,11 +61,10 @@ io.on('connect_error', (err) => {
 });
 
 //Constructer function for room objects
-function idObj(roomId, amountConnected, userIdArr) {
+function idObj(roomId, amountConnected) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
-    this.userIdArr.push(userIdArr);
 
     this.neverGame = function NeverObj(neverPrompts) {
         this.neverHaveIEverPrompts = neverPrompts;
@@ -89,7 +88,6 @@ io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
 
     //Leaves own id-room
-    socket.leave(socket.id);
     console.log(socket.rooms);
 
     //Jeg ander ikk hvad der sker her, men det er nok vigtigt
@@ -100,7 +98,7 @@ io.on('connection', (socket) => {
     //Generates a random base64 string, which is used as the room id
     do {
         let i = Math.random();
-        idBase = Buffer.from(`${i}`).toString('base64');
+        idBase = "roomId-" + Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(idBase));
     socket.emit('roomId', idBase);
 
@@ -137,12 +135,25 @@ io.on('connection', (socket) => {
         var d2 = new Date();
         console.log("");
         console.log(d2.toLocaleTimeString() + '  ' + d2.toLocaleDateString());
+        socket.admin = false;
         if (idFlag) {
             randomRoom(socket, roomId);
         } else {
             socket.join(roomId);
             socket.room = roomId;
             console.log("User joined room " + socket.room);
+        }
+
+        for (let i = 0; i < idArr.length; i++) {
+            if (idArr[i].roomId == socket.room) {
+                idArr[i].amountConnected++;
+                idArr[i].userIdArr.push(socket.id);
+                console.log("room: " + idArr[i].roomId);
+                console.log("amount: " + idArr[i].amountConnected);
+                if (idArr[i].amountConnected == 1) {
+                    socket.admin = true;
+                }
+            }
         }
 
         socket.to(roomId).broadcast.emit("user-connected", userId);
@@ -153,57 +164,62 @@ io.on('connection', (socket) => {
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
     socket.on('startGame', gameType => {
-        let htmlPath;
-        console.log(gameType);
-        switch (gameType) {
-            case 'prompt':
-                console.log("Prompt game chosen");
-                //Throw prompt html
-                htmlPath = '/PublicResources/html/never.html';
-                //Initialize 'Never have I ever' variables
-                for (let i = 0; i < idArr.length; i++) {
-                    if (idArr[i].roomId == socket.room) {
-                        fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
-                            if (err) throw err;
-                            //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
-                            let neverHaveIEverPrompts = data.split(/\r?\n/);
-                            idArr[i].neverGame(neverHaveIEverPrompts);
-                        });
-                        console.log("pog");                     
+        if (!socket.admin) {
+            socket.emit('noAdminPerm');
+        } else {
+            let htmlPath;
+            console.log(gameType);
+            switch (gameType) {
+                case 'prompt':
+                    console.log("Prompt game chosen");
+                    //Throw prompt html
+                    htmlPath = '/PublicResources/html/never.html';
+                    //Initialize 'Never have I ever' variables
+                    for (let i = 0; i < idArr.length; i++) {
+                        if (idArr[i].roomId == socket.room) {
+                            fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
+                                if (err) throw err;
+                                //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
+                                let neverHaveIEverPrompts = data.split(/\r?\n/);
+                                idArr[i].neverGame(neverHaveIEverPrompts);
+                            });
+                            console.log("pog");                     
+                        }
                     }
-                }
-                break;
-            
-            case 'card':
-                console.log("Card game chosen");
-                //Throw card html
-                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
-                break;
-
-            case 'dice':
-                console.log("Dice game chosen");
-                //Throw dice html
-                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
-                break;
-            
-            case 'test1':
-                htmlPath = '/PublicResources/html/createlobbyMeme.html';
-                break;
-            
-            case 'test2':
-                htmlPath = '/PublicResources/html/createlobby.html';
-                break;
-
-            default:
-                console.log("shit broke");
-                break;
+                    break;
+                
+                case 'card':
+                    console.log("Card game chosen");
+                    //Throw card html
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    break;
+    
+                case 'dice':
+                    console.log("Dice game chosen");
+                    //Throw dice html
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    break;
+                
+                case 'test1':
+                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                    break;
+                
+                case 'test2':
+                    htmlPath = '/PublicResources/html/createlobby.html';
+                    break;
+    
+                default:
+                    console.log("shit broke");
+                    break;
+            }
+    
+            //Reads the relevent html file, and sends it to the frontend
+            fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
+                if (err) throw err;
+                io.to(socket.room).emit('changeHTML', data);
+            });
         }
 
-        //Reads the relevent html file, and sends it to the frontend
-        fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
-            if (err) throw err;
-            io.to(socket.room).emit('changeHTML', data);
-        });
     });
 
     //Handles 'Never have I ever' logic
@@ -239,6 +255,15 @@ io.on('connection', (socket) => {
         console.log(socket.rooms);
     });
 
+    socket.on('checkAdminStatus', () => {
+        socket.emit('checkAdminStatus', socket.admin);
+        //io.to(idArr[0].userIdArr[0]).emit("meme");
+    });
+
+    socket.on('makeAdmin', () => {
+        socket.admin = true;
+    });
+
     //Runs when socket disconnects from a room
     socket.on('disconnectRoom', (roomId) => {
         socket.leave(roomId);
@@ -261,8 +286,18 @@ function disconnectHandler (socket) {
 	        for(let j = 0; j < idArr[i].userIdArr.length; j++) {
 	            if (idArr[i].userIdArr[j] == socket.id) {
                     idArr[i].amountConnected--;
-                    idArr[i].userIdArr[j] = "";
+                    delete idArr[i].userIdArr[j];
+                    pushArray(idArr[i].userIdArr, j);
+                    idArr[i].userIdArr.pop();
                     console.log("Fetus has been deletus");
+                    console.log(idArr[i].userIdArr);
+                    console.log("status: " + socket.admin);
+                    if (socket.admin) {
+                        console.log("UserIdArr:");
+                        console.log(idArr[i].userIdArr);
+                        let newAdmin = Math.floor(Math.random() * (idArr[0].userIdArr.length));
+                        io.to(idArr[i].userIdArr[newAdmin]).emit("makeAdmin");
+                    }
 		        }
 	        }
 	        if(idArr[i].amountConnected == 0){
@@ -338,8 +373,7 @@ function randomRoom(socket, id) {
         id = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(id));
     */
-    let room = new idObj(id, 0, socket.id);
-    room.amountConnected++;
+    let room = new idObj(id, 0);
 
     idArr.push(room);
     socket.join(room.roomId);
