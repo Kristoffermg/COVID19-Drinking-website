@@ -27,7 +27,7 @@ socket.on('roomId', (roomId) => {
 idxd = document.URL.split("/Lobby/")[1];
 logo = document.getElementById("navbar__logo");
 usernameButton = document.getElementById("setUsername");
-debugMeme = document.getElementById("debugMeme");
+//debugMeme = document.getElementById("debugMeme");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
 
@@ -38,10 +38,10 @@ debug = document.querySelector("div.videoDiv#idclient");
 //socket.emit("joinRoom", idxd);
 
 //Debug funktion (runs when clicking on the Settings header)
-debugMeme.addEventListener("click", () => {
-    //socket.emit('startGame', 'test1');
-    socket.emit("checkAdminStatus");
-});
+// debugMeme.addEventListener("click", () => {
+//     //socket.emit('startGame', 'test1');
+//     socket.emit("checkAdminStatus");
+// });
 
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
