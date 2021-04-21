@@ -13,6 +13,8 @@ const { debug } = require('console');
 const { CLOSING } = require('ws');
 
 const io = require('socket.io')(server, {
+    pingTimeout: 5000,
+    pingInterval: 10000,
     cors: {
         origin: "*"
     }
@@ -287,6 +289,10 @@ io.on('connection', (socket) => {
         console.log(socket.userName + " has disconnected.");
         io.emit('message', `${socket.userName} has disconnected`);
         disconnectHandler(socket);
+    });
+
+    socket.onAny((event, ...args) =>{
+        console.log("---------> Got: " + event);
     });
 });
 
