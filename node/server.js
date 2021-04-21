@@ -13,8 +13,8 @@ const { debug } = require('console');
 const { CLOSING } = require('ws');
 
 const io = require('socket.io')(server, {
-    pingTimeout: 5000,
-    pingInterval: 10000,
+    pingInterval: 2500,
+    pingTimeout: 2500,
     cors: {
         origin: "*"
     }
@@ -30,11 +30,11 @@ console.log(path);
 app.use(express.static(path));
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -50,7 +50,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 
     for (let i = 0; i < idArr.length; i++) {
         if (idArr[i].roomId == lobbyId) {
-            fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+            fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
                 if (err) throw err;
                 //console.log(data);
                 res.send(data);
@@ -62,7 +62,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -130,7 +130,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -188,7 +188,7 @@ io.on('connection', (socket) => {
                 case 'prompt':
                     console.log("Prompt game chosen");
                     //Throw prompt html
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -206,21 +206,21 @@ io.on('connection', (socket) => {
                 case 'card':
                     console.log("Card game chosen");
                     //Throw card html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
     
                 case 'dice':
                     console.log("Dice game chosen");
                     //Throw dice html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
                 
                 case 'test1':
-                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
                     break;
                 
                 case 'test2':
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
     
                 default:
@@ -291,8 +291,8 @@ io.on('connection', (socket) => {
         disconnectHandler(socket);
     });
 
-    socket.onAny((event, ...args) =>{
-        console.log("---------> Got: " + event);
+    socket.onAny(() => {
+        console.log("---------------------------------------------------------------------");
     });
 });
 
