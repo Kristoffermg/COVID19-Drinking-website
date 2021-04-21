@@ -43,8 +43,9 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     let lobbyId = req.params.lobbyId;
     console.log(lobbyId);
     if (idArr.length <= 0) {
-        res.redirect('/');
+        res.redirect('/node0/');
     }
+
     for (let i = 0; i < idArr.length; i++) {
         if (idArr[i].roomId == lobbyId) {
             fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
@@ -53,7 +54,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
                 res.send(data);
             });
         } else {
-            res.redirect('/');
+            res.redirect('/node0/');
         }
     }
 });
