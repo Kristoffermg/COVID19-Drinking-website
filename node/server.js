@@ -153,6 +153,7 @@ io.on('connection', (socket) => {
         } else {
             socket.join(roomId);
             socket.room = roomId;
+            socket.emit('yeetAdminStuff');
             console.log("User joined room " + socket.room);
         }
 

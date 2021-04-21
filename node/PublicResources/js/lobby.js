@@ -27,9 +27,10 @@ socket.on('roomId', (roomId) => {
 idxd = document.URL.split("/Lobby/")[1];
 logo = document.getElementById("navbar__logo");
 usernameButton = document.getElementById("setUsername");
-//debugMeme = document.getElementById("debugMeme");
+settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
+
 
 debug = document.querySelector("div.videoDiv#idclient");
 
@@ -107,11 +108,18 @@ socket.on('checkAdminStatus', status => {
 
 socket.on('makeAdmin', () => {
     console.log("U is admin :)");
+    settingsTab.hidden = false;
+    startGame.hidden = false; 
     socket.emit('makeAdmin');
 });
 
 socket.on('meme', () => {
     console.log("it werk smile");
+});
+
+socket.on('yeetAdminStuff', () => {
+    settingsTab.hidden = true;
+    startGame.hidden = true; 
 });
 
 
