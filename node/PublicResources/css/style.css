@@ -62,9 +62,6 @@ h3 {
 }
 
 #navbar__logo {
-  background-color: #ff8177;
-  background-image: linear-gradient(to top, #fcfcfc 0%, #99f0ff 100%);
-  background-size: 100%;
   -webkit-background-clip: text;
   -moz-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -789,15 +786,17 @@ a.p4 {
 #videos {
   position: relative;
   margin-top: 30px;
-  margin-bottom: 100px;
-  border: 3px solid black;
-  left: 19%;
-  width: 60%;
-  height: 200px;
+  margin-bottom: 50px;
+  /*border: 3px solid black;*/
+  left: 22%;
+  width: 56%;
+  height: fit-content;
 }
 
-#video-grid {
-  display: inline-block;
+#video-grid, #videoPlacement {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   grid-auto-rows: 300px;
 }
 
@@ -807,6 +806,7 @@ video {
   width: 200px;
   height: 200px;
   object-fit: cover;
+  margin: 0px 5px 0px 5px;
 }
 
 .games__and__rounds {
@@ -998,4 +998,5 @@ overflow: auto;
   text-align: center;
   color: #fff;
   font-size: 20px;
+  margin-bottom: 8px;
 }

@@ -230,19 +230,17 @@ io.on('connection', (socket) => {
                 id = i;
             }
         }
-        console.log(id);
-        //let id = currentRoomId(socket);
-        countdown(nextPromptCountdown, socket, id)
-        let randomPromptIndex;
-        /*if(unusedPromptsLeft(id)) {
-            randomPromptIndex = randomPrompt(id);
+        if(unusedPromptsLeft(id)) {
+            let randomPromptIndex = randomPrompt(id);
             idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
             idArr[id].counter++;
             console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
             io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
+            io.to(socket.room).emit("countdownTick");
+            countdown(nextPromptCountdown, socket, id);
         } else {
-            io.to(socket.room).emit("gameOver"); */
-        //}
+            io.to(socket.room).emit("gameOver"); 
+        }
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
@@ -324,19 +322,9 @@ function countdown(time, socket, id) {
     console.log(`counter for room ${id} is at ` + time);
     if(time > 0) {
         setTimeout(function() { countdown(--time, socket, id) }, 1000);
-        io.to(socket.room).emit("countdownTick");
     } else {    
-        console.log("-------------------------")  
-        try {
-            if(unusedPromptsLeft(id)) {
-                setTimeout(function() { countdown(nextPromptCountdown, socket, id) }, 1000);
-                let randomPromptIndex = randomPrompt(id);
-                io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
-            } else {
-                io.to(socket.room).emit("gameOver"); 
-            }
-        }
-        catch(error) { }
+        console.log(`counter for room ${id} ended`);
+        io.to(socket.room).emit("activateNextRoundBtn");
     }
 }
 
