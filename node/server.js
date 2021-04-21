@@ -13,8 +13,8 @@ const { debug } = require('console');
 const { CLOSING } = require('ws');
 
 const io = require('socket.io')(server, {
-    pingInterval: 2500,
-    pingTimeout: 2500,
+    pingInterval: 1000,
+    pingTimeout: 1000,
     cors: {
         origin: "*"
     }
