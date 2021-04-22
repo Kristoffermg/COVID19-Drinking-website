@@ -14,3 +14,5 @@ let settingsTab;
 let lobbyUrl;
 
 let clientPeerId;
+
+let isAdmin;

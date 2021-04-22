@@ -167,6 +167,7 @@ io.on('connection', (socket) => {
                 console.log("amount: " + idArr[i].amountConnected);
                 if (idArr[i].amountConnected == 1) {
                     socket.admin = true;
+                    socket.emit('makeAdmin');
                 }
             }
         }
@@ -197,8 +198,9 @@ io.on('connection', (socket) => {
                                 //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
                                 let neverHaveIEverPrompts = data.split(/\r?\n/);
                                 idArr[i].neverGame(neverHaveIEverPrompts);
+                                //console.log(idArr[i]);
                             });
-                            console.log("pog");                   
+                            console.log("pog");
                         }
                     }
                     break;

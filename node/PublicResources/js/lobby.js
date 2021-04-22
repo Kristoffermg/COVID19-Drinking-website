@@ -109,7 +109,8 @@ socket.on('checkAdminStatus', status => {
 socket.on('makeAdmin', () => {
     console.log("U is admin :)");
     settingsTab.hidden = false;
-    startGame.hidden = false; 
+    startGame.hidden = false;
+    isAdmin = true; 
     socket.emit('makeAdmin');
 });
 
@@ -118,6 +119,7 @@ socket.on('meme', () => {
 });
 
 socket.on('yeetAdminStuff', () => {
+    isAdmin = false;
     settingsTab.hidden = true;
     startGame.hidden = true; 
 });

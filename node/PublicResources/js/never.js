@@ -12,8 +12,11 @@ neverText.innerHTML = "Never have I ever ";
 /* change the timer bar seconds whatever 
 document.getElementById("timer").style.setProperty("--duration", 10)
 */ 
+console.log("Admin status: " + isAdmin);
 
-socket.emit('neverLogic');
+
+if (isAdmin) socket.emit('neverLogic');
+
 
 nextText.addEventListener("click", () => {
     socket.emit('neverLogic');
