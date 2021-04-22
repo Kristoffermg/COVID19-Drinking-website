@@ -19,6 +19,10 @@ if (isAdmin) socket.emit('neverLogic', true);
 
 nextText.addEventListener("click", () => {
     socket.emit('neverLogic', false);
+    
+    nextText.style.opacity = 0.9;
+    nextText.disabled = true;
+    nextText.value = "Next round";
 });
 
 socket.on('activateNextRoundBtn', () => {
