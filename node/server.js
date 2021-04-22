@@ -45,7 +45,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     let lobbyId = req.params.lobbyId;
     console.log(lobbyId);
     if (idArr.length <= 0) {
-        res.redirect('/');      //Changed from /node0/
+        res.redirect('/node0/');      //Changed from /node0/
     }
 
     for (let i = 0; i < idArr.length; i++) {
@@ -56,7 +56,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
                 res.send(data);
             });
         } else {
-            res.redirect('/');  //Changed from /node0/
+            res.redirect('/node0/');  //Changed from /node0/
         }
     }
 });
