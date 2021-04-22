@@ -247,6 +247,7 @@ io.on('connection', (socket) => {
                 id = i;
             }
         }
+        
         if(unusedPromptsLeft(id)) {
             let randomPromptIndex = randomPrompt(id);
             idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
@@ -256,8 +257,7 @@ io.on('connection', (socket) => {
             countdown(nextPromptCountdown, socket, id);
         } else {
             io.to(socket.room).emit("gameOver"); 
-        }
-        
+        } 
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus

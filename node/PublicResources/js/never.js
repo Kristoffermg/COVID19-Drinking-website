@@ -20,17 +20,7 @@ if (isAdmin) socket.emit('neverLogic');
 
 nextText.addEventListener("click", () => {
     socket.emit('neverLogic');
-    nextText.style.opacity = 0.9;
-    nextText.disabled = true;
-    nextText.value = "Next round";
 
-    iHave.style.opacity = 1;
-    iHave.disabled = false;
-
-    iHaveNever.style.opacity = 0.9;
-    iHaveNever.disabled = false;
-
-    sipText.style.display = "none";
 });
 
 socket.on('activateNextRoundBtn', () => {
@@ -42,6 +32,8 @@ socket.on('activateNextRoundBtn', () => {
 
     iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
+
+
 })
 
 socket.on('nextPrompt', prompt => {
@@ -52,6 +44,18 @@ socket.on('nextPrompt', prompt => {
     roundtimeBar.classList.remove("round-time-bar");
     roundtimeBar.offsetWidth;
     roundtimeBar.classList.add("round-time-bar");
+
+    nextText.style.opacity = 0.9;
+    nextText.disabled = true;
+    nextText.value = "Next round";
+
+    sipText.style.display = "none";
+
+    iHave.style.opacity = 1;
+    iHave.disabled = false;
+
+    iHaveNever.style.opacity = 0.9;
+    iHaveNever.disabled = false;
 });
 
 socket.on('gameOver', () => {
