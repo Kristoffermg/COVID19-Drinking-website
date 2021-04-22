@@ -27,22 +27,27 @@ socket.on('roomId', (roomId) => {
 idxd = document.URL.split("/Lobby/")[1];
 logo = document.getElementById("navbar__logo");
 usernameButton = document.getElementById("setUsername");
-debugMeme = document.getElementById("debugMeme");
+settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
+
+
+debug = document.querySelector("div.videoDiv#idclient");
+
 //console.log(usernameButton);
 
 //socket.emit("joinRoom", idxd);
 
 //Debug funktion (runs when clicking on the Settings header)
-debugMeme.addEventListener("click", () => {
-    //socket.emit('startGame', 'test1');
-});
+// debugMeme.addEventListener("click", () => {
+//     //socket.emit('startGame', 'test1');
+//     socket.emit("checkAdminStatus");
+// });
 
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
     socket.emit('startGame', gameSelect.value);
-})
+});
 
 
 //Adds the lobby URL to the clipboard
@@ -90,6 +95,31 @@ socket.on('changeName', (name, userId) =>{
     displayName.setAttribute("id", "userNamePara");
     displayName.innerText = name;
     userPlace.append(displayName);
+});
+
+socket.on('noAdminPerm', () => {
+    console.log("No admin permission :)");
+    window.alert("Only the lobby admin (lobby creater by default) has permission to start the game");
+});
+
+socket.on('checkAdminStatus', status => {
+    console.log("Status: " + status);
+});
+
+socket.on('makeAdmin', () => {
+    console.log("U is admin :)");
+    settingsTab.hidden = false;
+    startGame.hidden = false; 
+    socket.emit('makeAdmin');
+});
+
+socket.on('meme', () => {
+    console.log("it werk smile");
+});
+
+socket.on('yeetAdminStuff', () => {
+    settingsTab.hidden = true;
+    startGame.hidden = true; 
 });
 
 

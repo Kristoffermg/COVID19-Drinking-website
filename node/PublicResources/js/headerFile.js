@@ -9,6 +9,7 @@ let usernameButton;
 let debugMeme;
 let copyUrl;
 let startGame;
+let settingsTab;
 
 let lobbyUrl;
 
