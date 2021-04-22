@@ -13,9 +13,8 @@ document.getElementById("timer").style.setProperty("--duration", 10)
 */ 
 console.log("Admin status: " + isAdmin);
 
-
+// Prevents an issue where a new prompt would be generated when people other than the admin joins
 if (isAdmin) socket.emit('neverLogic', true);
-
 
 nextText.addEventListener("click", () => {
     socket.emit('neverLogic', false);
@@ -23,6 +22,11 @@ nextText.addEventListener("click", () => {
     nextText.style.opacity = 0.9;
     nextText.disabled = true;
     nextText.value = "Next round";
+});
+
+socket.on('setRoundtime', roundtime => {
+    console.log("Round time: " + roundtime)
+    roundtimeBar.style.setProperty('--duration', roundtime);
 });
 
 socket.on('activateNextRoundBtn', () => {

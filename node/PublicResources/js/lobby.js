@@ -46,7 +46,8 @@ debug = document.querySelector("div.videoDiv#idclient");
 
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
-    socket.emit('startGame', gameSelect.value);
+    let roundtimeSelect = document.getElementById("roundtimeSelect");
+    socket.emit('startGame', gameSelect.value, roundtimeSelect.value);
 });
 
 

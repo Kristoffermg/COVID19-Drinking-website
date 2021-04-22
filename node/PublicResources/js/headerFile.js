@@ -10,6 +10,8 @@ let debugMeme;
 let copyUrl;
 let startGame;
 let settingsTab;
+let roundtimeValue;
+let nextPromptCountdown;
 
 let lobbyUrl;
 

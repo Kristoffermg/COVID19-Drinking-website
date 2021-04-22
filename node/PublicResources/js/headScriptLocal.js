@@ -104,7 +104,7 @@ function addVideoStream(video, stream, userId) {
 } 
 
 //Changes the html page dynamically
-socket.on('changeHTML', meme => {
+socket.on('changeHTML', meme=> {
     //Getting body and head elements
     let body = document.body;
     let head = document.getElementById("head");
