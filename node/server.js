@@ -84,6 +84,7 @@ function idObj(roomId, amountConnected) {
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
         this.counter = 0;
+        this.voteCount = 0;
     }
 }
 
@@ -240,22 +241,32 @@ io.on('connection', (socket) => {
     });
 
     //Handles 'Never have I ever' logic
-    socket.on('neverLogic', () => {
+    socket.on('neverLogic', firstTurn => {
         let id;
         for(let i = 0; i < idArr.length; i++) {
             if(idArr[i].roomId === socket.room) {
                 id = i;
             }
         }
-        if(unusedPromptsLeft(id)) {
-            let randomPromptIndex = randomPrompt(id);
-            idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
-            idArr[id].counter++;
-            console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
-            io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
-            countdown(nextPromptCountdown, socket, id);
-        } else {
-            io.to(socket.room).emit("gameOver"); 
+
+        idArr[id].voteCount++;
+        console.log("votes: " + idArr[id].voteCount);
+        console.log("connected: " + idArr[id].amountConnected);
+
+        if ((idArr[id].voteCount > (idArr[id].amountConnected / 2)) || firstTurn) {
+            console.log("TRIGGER");
+            if(unusedPromptsLeft(id)) {
+                let randomPromptIndex = randomPrompt(id);
+                idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
+                idArr[id].counter++;
+                console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
+                io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
+                countdown(nextPromptCountdown, socket, id);
+                idArr[id].voteCount = 0;
+                console.log("votes reset to: " + idArr[id].voteCount);
+            } else {
+                io.to(socket.room).emit("gameOver"); 
+            }
         }
         
     });

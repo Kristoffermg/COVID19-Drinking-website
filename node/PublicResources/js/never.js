@@ -15,11 +15,11 @@ document.getElementById("timer").style.setProperty("--duration", 10)
 console.log("Admin status: " + isAdmin);
 
 
-if (isAdmin) socket.emit('neverLogic');
+if (isAdmin) socket.emit('neverLogic', true);
 
 
 nextText.addEventListener("click", () => {
-    socket.emit('neverLogic');
+    socket.emit('neverLogic', false);
     nextText.style.opacity = 0.9;
     nextText.disabled = true;
     nextText.value = "Next round";
