@@ -126,7 +126,7 @@ socket.on('yeetAdminStuff', () => {
 // The code below serves the purpose of making a push
 // of the enter button, set one's username so a click by mouse on "Set Username" won't be required
 // It should have sockets integrated into it, 
-/*
+
 var input = document.getElementById("username");
 input.addEventListener("keyup", function(event) {
   if (event.keyCode === 13) {
@@ -135,4 +135,3 @@ input.addEventListener("keyup", function(event) {
    socket.emit("changeName", newUserName, clientPeerId); //Not sure if this line works
   }
 });
- */

@@ -8,13 +8,12 @@ let iHave = document.getElementById("iHave");
 let iHaveNever = document.getElementById("iHaveNever");
 let sipText = document.getElementById("sipText");
 
-
+neverText.innerHTML = "Never have I ever ";
 /* change the timer bar seconds whatever 
 document.getElementById("timer").style.setProperty("--duration", 10)
 */ 
 
-
-neverText.innerText = "Click \"Next round\" to start the game"
+socket.emit('neverLogic');
 
 nextText.addEventListener("click", () => {
     socket.emit('neverLogic');
@@ -29,11 +28,6 @@ nextText.addEventListener("click", () => {
     iHaveNever.disabled = false;
 
     sipText.style.display = "none";
-
-    roundtimeBar.style.display = "block";
-    roundtimeBar.classList.remove("round-time-bar");
-    roundtimeBar.offsetWidth;
-    roundtimeBar.classList.add("round-time-bar");
 });
 
 socket.on('activateNextRoundBtn', () => {
@@ -50,21 +44,16 @@ socket.on('activateNextRoundBtn', () => {
 socket.on('nextPrompt', prompt => {
     console.log("nextPromptTriggger");
     neverText.innerHTML = "Never have I ever " + prompt;
+
+    roundtimeBar.style.display = "block";
+    roundtimeBar.classList.remove("round-time-bar");
+    roundtimeBar.offsetWidth;
+    roundtimeBar.classList.add("round-time-bar");
 });
 
 socket.on('gameOver', () => {
     neverText.innerHTML = "GAME OVER LOSERS";
 });
-
-socket.on('countdownTick', () => {
-    /*
-    console.log("yooooooooooooooooooooooooooooooooooooooooooo im in countdownTick!")
-    let duration = getComputedStyle(timerBar)
-        .getPropertyValue('--duration')
-    console.log("duration: " + duration)
-    timerBar.style.setProperty('--duration', 10)
-    */
-})
 
 iHave.addEventListener("click", () => {
     sipText.style.display = "block";
