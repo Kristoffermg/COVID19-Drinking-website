@@ -38,37 +38,44 @@
 
         <section class="contentSection">
             <div class="Container">
-                <div id="timer" data-style="smooth" style="--duration: 10;">
-                    <div></div>
-                </div>
 
                 <div class="contentContainer upperContainer">
-                    <div class="chat">
-                        <p>CHAD</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
-                        <p>Besked</p>
+                    <div class="chatContainer">
+                        <div class="chat">
+                            <p>Chat system</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                            <p>message</p>
+                        </div>
                     </div>
 
-                    <div class="promt">
-                        <input type="button" value="Start game" name="next" id="nextText" class="textbutton" style="display:block">
-                        <div id="neverText">
-                        </div> 
-                        <input type="button" value="I have" name="Ja" id="iHave" class="textbutton">
-                        <input type="button" value="I have never" name="Nej" id="iHaveNever" class="textbutton">
+                    <div class="promtContainer">
+                        <div class="round-time-bar" data-style="smooth" style="--duration: 10;display:none"> </div>
+                        <div class="promt">
+                            <input type="button" value="Next round" name="next" id="nextText" class="textbutton" style="display:block" disabled="true">
+                            
+                            <div id="neverText">
+                            </div> 
+                            <input type="button" value="I have" name="Ja" id="iHave" class="textbutton" style="opacity:0.9">
+                            <input type="button" value="I have never" name="Nej" id="iHaveNever" class="textbutton" style="opacity:0.9">
+                        </div>
+                        <div id="test">
+                            <p id="sipText" style="display:none;">Take a sip of your drink</p>
+                        </div>
                     </div>
                 </div>
+
             </div>
             
         </section>
