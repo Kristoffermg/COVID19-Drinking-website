@@ -30,11 +30,11 @@ console.log(path);
 app.use(express.static(path));
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -45,24 +45,24 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     let lobbyId = req.params.lobbyId;
     console.log(lobbyId);
     if (idArr.length <= 0) {
-        res.redirect('/');      //Changed from /node0/
+        res.redirect('/node0/');      //Changed from /node0/
     }
 
     for (let i = 0; i < idArr.length; i++) {
         if (idArr[i].roomId == lobbyId) {
-            fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
+            fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
                 if (err) throw err;
                 //console.log(data);
                 res.send(data);
             });
         } else {
-            res.redirect('/');  //Changed from /node0/
+            res.redirect('/node0/');  //Changed from /node0/
         }
     }
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -84,6 +84,7 @@ function idObj(roomId, amountConnected) {
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
         this.counter = 0;
+        this.voteCount = 0;
     }
 }
 
@@ -130,7 +131,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -189,7 +190,7 @@ io.on('connection', (socket) => {
                 case 'prompt':
                     console.log("Prompt game chosen");
                     //Throw prompt html
-                    htmlPath = '/PublicResources/htmlLocal/never.html';
+                    htmlPath = '/PublicResources/html/never.html';
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -208,21 +209,21 @@ io.on('connection', (socket) => {
                 case 'card':
                     console.log("Card game chosen");
                     //Throw card html
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
     
                 case 'dice':
                     console.log("Dice game chosen");
                     //Throw dice html
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
                 
                 case 'test1':
-                    htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
+                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
                     break;
                 
                 case 'test2':
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
+                    htmlPath = '/PublicResources/html/createlobby.html';
                     break;
     
                 default:
@@ -240,24 +241,34 @@ io.on('connection', (socket) => {
     });
 
     //Handles 'Never have I ever' logic
-    socket.on('neverLogic', () => {
+    socket.on('neverLogic', firstTurn => {
         let id;
         for(let i = 0; i < idArr.length; i++) {
             if(idArr[i].roomId === socket.room) {
                 id = i;
             }
         }
+
+        idArr[id].voteCount++;
+        console.log("votes: " + idArr[id].voteCount);
+        console.log("connected: " + idArr[id].amountConnected);
+
+        if ((idArr[id].voteCount > (idArr[id].amountConnected / 2)) || firstTurn) {
+            console.log("TRIGGER");
+            if(unusedPromptsLeft(id)) {
+                let randomPromptIndex = randomPrompt(id);
+                idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
+                idArr[id].counter++;
+                console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
+                io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
+                countdown(nextPromptCountdown, socket, id);
+                idArr[id].voteCount = 0;
+                console.log("votes reset to: " + idArr[id].voteCount);
+            } else {
+                io.to(socket.room).emit("gameOver"); 
+            }
+        }
         
-        if(unusedPromptsLeft(id)) {
-            let randomPromptIndex = randomPrompt(id);
-            idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
-            idArr[id].counter++;
-            console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
-            io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
-            countdown(nextPromptCountdown, socket, id);
-        } else {
-            io.to(socket.room).emit("gameOver"); 
-        } 
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus

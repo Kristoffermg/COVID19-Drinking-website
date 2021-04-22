@@ -8,19 +8,17 @@ let iHave = document.getElementById("iHave");
 let iHaveNever = document.getElementById("iHaveNever");
 let sipText = document.getElementById("sipText");
 
-neverText.innerHTML = "Never have I ever ";
 /* change the timer bar seconds whatever 
 document.getElementById("timer").style.setProperty("--duration", 10)
 */ 
 console.log("Admin status: " + isAdmin);
 
 
-if (isAdmin) socket.emit('neverLogic');
+if (isAdmin) socket.emit('neverLogic', true);
 
 
 nextText.addEventListener("click", () => {
-    socket.emit('neverLogic');
-
+    socket.emit('neverLogic', false);
 });
 
 socket.on('activateNextRoundBtn', () => {
@@ -32,8 +30,6 @@ socket.on('activateNextRoundBtn', () => {
 
     iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
-
-
 })
 
 socket.on('nextPrompt', prompt => {
