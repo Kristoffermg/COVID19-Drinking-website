@@ -371,7 +371,7 @@ a.link{
   height: 100%;
 }
 
-.createLobby {
+.createLobby, .backToHomepage {
   color: white;
   font-size: large;
   padding: 1cm 2cm;
@@ -391,7 +391,9 @@ a.link{
 }  
 
 .createLobby:hover,
-.createLobby:focus {
+.createLobby:focus
+.backToHomepage:hover,
+.backToHomepage:focus {
     box-shadow: 0.5em 0.5em 0.5em -0.4em #ffffff;
 }
 
@@ -857,7 +859,7 @@ video {
   transform: translateY(-2%);
 }
 
-#startGame {
+#startGame, #backToFrontpage {
   margin: auto;
   margin-top: 50px;
   padding: 25px 40px 25px 40px;
