@@ -9,6 +9,7 @@ if (!socket.connected) {
 //Setup for the videochat
 const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
+    pingInterval: 2000,
     config: {'iceServers': [
       { url: 'stun:stun.l.google.com:19302'},
       { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
@@ -57,6 +58,9 @@ myPeer.on('open', id => {
     console.log('ja det er scuffed');
     clientPeerId = id;
     console.log("client id: " + id);
+    // let clientDiv = document.getElementById("idclient");
+    // console.log(clientDiv);
+    // clientDiv.setAttribute("id", "id" + id);
     socket.emit('joinRoom', ROOM_ID, id, idFlag);
 });
 
@@ -101,6 +105,7 @@ function addVideoStream(video, stream, userId) {
     userPara.innerText = 'Guest';
     videoDiv.append(userPara);
     videoGrid.append(videoDiv);
+    console.log("DONESO");
 } 
 
 //Changes the html page dynamically
