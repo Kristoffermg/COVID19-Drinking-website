@@ -140,13 +140,29 @@ io.on('connection', (socket) => {
     } while (idArr.includes(idBase));
     socket.emit('roomId', idBase);
 
+    //Gives the id of the socket to the client
+    socket.on('getId', () => {
+        socket.emit('getId', socket.id);
+    });
+
+    socket.on('DUMMYchangeName', (name, userId) => {
+        // console.log("name: " + name + " id: " + userId);
+        // let oldName = socket.userName;
+        // socket.userName = name;
+        
+        io.to(socket.room).emit('changeName', socket.userName, userId, "This is a dummy string");
+        
+        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
+        // console.log("succesfully changed to the name " + socket.userName);
+    });
+
     //Changes the username of the user who requested it
     socket.on('changeName', (name, userId) => {
         console.log("name: " + name + " id: " + userId);
         let oldName = socket.userName;
         socket.userName = name;
         
-        io.to(socket.room).emit('changeName', socket.userName, userId);
+        io.to(socket.room).emit('changeName', socket.userName, userId, socket.id);
         
         //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);

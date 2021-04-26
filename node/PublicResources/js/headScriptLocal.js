@@ -6,6 +6,9 @@ if (!socket.connected) {
     socket.connect();
 }
 
+//Requests backend socket id
+socket.emit('getId');
+
 //Setup for the videochat
 const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
@@ -24,7 +27,7 @@ navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permissio
     video: true,
     audio: true
 }).then(stream => { // Sets up the peer to peer connection and video streams
-    addVideoStream(localVideo, stream, "client")
+    addVideoStream(localVideo, stream, clientSocketId)
 
     //Establishes connection between clients, when getting called
     myPeer.on('call', call => {
@@ -73,7 +76,7 @@ function connectToNewUser(userId, stream) {
         console.log(userVideoStream);
         console.log("Er det her????");
         addVideoStream(video, userVideoStream, userId);
-        let clientName = document.querySelector("div.videoDiv#idclient > p");
+        let clientName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p");
         socket.emit('changeName', clientName.innerText, clientPeerId);
     });
     call.on('close', () => {
@@ -109,6 +112,12 @@ function addVideoStream(video, stream, userId) {
     console.log("DONESO");
 }
 
+//Gets own socket id from backend
+socket.on('getId', id => {
+    clientSocketId = id;
+    console.log('clientSocketId: ' + clientSocketId);
+});
+
 //Gets the roomID from the backend
 socket.on('roomId', (roomId) => {
     idxd = document.URL.split("/Lobby/")[1];
@@ -136,14 +145,17 @@ socket.on('roomId', (roomId) => {
 });
 
 //Get's username from backend, so it can be updated on the site
-socket.on('changeName', (name, userId) =>{
+socket.on('changeName', (name, userId, userSocketId) =>{
     let userPlace = document.getElementById("id"+userId);
+    console.log("userId");
+    console.log(userId);
+    console.log(userPlace);
     let check;
     
     if (userPlace == dontTouch) {
-        userPlace = document.getElementById("idclient");
+        userPlace = document.getElementById("id" + userSocketId);
         console.log("userplace should be clien: " + userPlace);
-        check = document.querySelector("div.videoDiv#idclient > p");
+        check = document.querySelector("div.videoDiv#id" + userSocketId + " > p");
     } else {
         check = document.querySelector("div.videoDiv#id" + userId + " > p");
         console.log("userplace should be non-client: " + userPlace);
@@ -156,10 +168,13 @@ socket.on('changeName', (name, userId) =>{
     console.log("User " + userId + "changed name to " + name);
 
     console.log("userplace should be whatever: " + userPlace);
-    let displayName = document.createElement("p");
-    displayName.setAttribute("id", "userNamePara");
-    displayName.innerText = name;
-    userPlace.append(displayName);
+    console.log(userPlace);
+    if (userPlace != dontTouch) {
+        let displayName = document.createElement("p");
+        displayName.setAttribute("id", "userNamePara");
+        displayName.innerText = name;
+        userPlace.append(displayName);
+    }
 });
 
 //Changes the html page dynamically

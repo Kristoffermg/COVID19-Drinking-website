@@ -8,7 +8,7 @@ usernameButton = document.getElementById("setUsername");
 settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
-
+// newDebugMeme = document.getElementById("newDebugMeme");
 
 debug = document.querySelector("div.videoDiv#idclient");
 
@@ -20,6 +20,11 @@ debug = document.querySelector("div.videoDiv#idclient");
 // debugMeme.addEventListener("click", () => {
 //     //socket.emit('startGame', 'test1');
 //     socket.emit("checkAdminStatus");
+// });
+
+// newDebugMeme.addEventListener("click", () => {
+//     console.log("THE NEW DEBUG BOY WAS CLICKED!");
+//     socket.emit('DUMMYchangeName', "Bob", "This is a random bullshit string");
 // });
 
 startGame.addEventListener("click", () => {
