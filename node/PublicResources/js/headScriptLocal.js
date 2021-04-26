@@ -135,6 +135,33 @@ socket.on('roomId', (roomId) => {
     //ROOM_ID = roomId;
 });
 
+//Get's username from backend, so it can be updated on the site
+socket.on('changeName', (name, userId) =>{
+    let userPlace = document.getElementById("id"+userId);
+    let check;
+    
+    if (userPlace == dontTouch) {
+        userPlace = document.getElementById("idclient");
+        console.log("userplace should be clien: " + userPlace);
+        check = document.querySelector("div.videoDiv#idclient > p");
+    } else {
+        check = document.querySelector("div.videoDiv#id" + userId + " > p");
+        console.log("userplace should be non-client: " + userPlace);
+    }
+    console.log("Check: " + check);
+    
+    if (check != dontTouch) {
+        check.remove();
+    }
+    console.log("User " + userId + "changed name to " + name);
+
+    console.log("userplace should be whatever: " + userPlace);
+    let displayName = document.createElement("p");
+    displayName.setAttribute("id", "userNamePara");
+    displayName.innerText = name;
+    userPlace.append(displayName);
+});
+
 //Changes the html page dynamically
 socket.on('changeHTML', meme => {
     //Getting body and head elements
