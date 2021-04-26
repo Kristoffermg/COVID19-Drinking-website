@@ -13,7 +13,7 @@ const myPeer = new Peer({
     config: {'iceServers': [
       { url: 'stun:stun.l.google.com:19302'},
       { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
-    ]} /* Sample servers, please use appropriate ones */
+    ]} 
   });
 const localVideo = document.createElement('video');
 localVideo.muted = true; 
@@ -104,9 +104,36 @@ function addVideoStream(video, stream, userId) {
     userPara.setAttribute("id", 'userNamePara');
     userPara.innerText = 'Guest';
     videoDiv.append(userPara);
+    console.log(videoGrid);
     videoGrid.append(videoDiv);
     console.log("DONESO");
-} 
+}
+
+//Gets the roomID from the backend
+socket.on('roomId', (roomId) => {
+    idxd = document.URL.split("/Lobby/")[1];
+    console.log("TEEEEEEEST: " + idxd);
+    console.log("Enter RoomID Socket!");
+    let lobbyUrl = document.getElementById("lobbyurl");
+    
+    console.log('backend roomid ' + roomId);
+    console.log('idxd ' + idxd);
+
+    if(idxd == "" || idxd == dontTouch){
+        ROOM_ID = roomId;
+        idFlag = true;
+        if (lobbyUrl != dontTouch) lobbyUrl.value = document.URL + ROOM_ID;            
+                
+    }else{
+        ROOM_ID = idxd;
+        idFlag = false;
+        if (lobbyUrl != dontTouch) lobbyUrl.value = document.URL;            
+    }
+
+    console.log('ROOOOOOOM ' + ROOM_ID);
+
+    //ROOM_ID = roomId;
+});
 
 //Changes the html page dynamically
 socket.on('changeHTML', meme => {

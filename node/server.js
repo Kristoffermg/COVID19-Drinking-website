@@ -51,7 +51,26 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 
     for (let i = 0; i < idArr.length; i++) {
         if (idArr[i].roomId == lobbyId) {
-            fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+            let htmlPath;
+            switch (idArr[i].startedGame) {
+                case 'prompt':
+                    htmlPath = '/PublicResources/html/never.html';
+                    break;
+
+                case 'card':
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
+                    break;
+
+                case 'dice':
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig
+                    break;
+
+                default:
+                    htmlPath = '/PublicResources/html/createlobby.html';
+                    break;
+            }
+
+            fs.readFile(__dirname + htmlPath, 'utf8', function(err, data) {
                 if (err) throw err;
                 //console.log(data);
                 res.send(data);
@@ -81,12 +100,14 @@ function idObj(roomId, amountConnected) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
+    this.startedGame = 'none';
 
     this.neverGame = function NeverObj(neverPrompts) {
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
         this.counter = 0;
         this.voteCount = 0;
+        this.votingRight = 0;
     }
 }
 
@@ -183,6 +204,7 @@ io.on('connection', (socket) => {
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
     socket.on('startGame', gameType => {
+        let id;
         if (!socket.admin) {
             socket.emit('noAdminPerm');
         } else {
@@ -196,6 +218,8 @@ io.on('connection', (socket) => {
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
+                            id = i;
+                            idArr[i].startedGame = gameType;
                             fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
                                 if (err) throw err;
                                 //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
@@ -240,6 +264,8 @@ io.on('connection', (socket) => {
             });
         }
 
+        console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
+
     });
 
     //Handles 'Never have I ever' logic
@@ -253,9 +279,9 @@ io.on('connection', (socket) => {
 
         idArr[id].voteCount++;
         console.log("votes: " + idArr[id].voteCount);
-        console.log("connected: " + idArr[id].amountConnected);
+        console.log("People with voting right: " + idArr[id].votingRight);
 
-        if ((idArr[id].voteCount > (idArr[id].amountConnected / 2)) || firstTurn) {
+        if ((idArr[id].voteCount > (idArr[id].votingRight / 2)) || firstTurn) {
             console.log("TRIGGER");
             if(unusedPromptsLeft(id)) {
                 let randomPromptIndex = randomPrompt(id);
@@ -304,10 +330,6 @@ io.on('connection', (socket) => {
         console.log(socket.userName + " has disconnected.");
         io.emit('message', `${socket.userName} has disconnected`);
         disconnectHandler(socket);
-    });
-
-    socket.onAny(() => {
-        console.log("---------------------------------------------------------------------");
     });
 });
 
@@ -358,6 +380,7 @@ function countdown(time, socket, id) {
         setTimeout(function() { countdown(--time, socket, id) }, 1000);
     } else {    
         console.log(`counter for room ${id} ended`);
+        idArr[id].votingRight = idArr[id].amountConnected;
         io.to(socket.room).emit("activateNextRoundBtn");
     }
 }
