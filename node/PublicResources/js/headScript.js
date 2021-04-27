@@ -11,13 +11,20 @@ socket.emit('getId');
 
 //Setup for the videochat
 const videoGrid = document.getElementById('video-grid');
-const myPeer = new Peer({
-    pingInterval: 2000,
-    config: {'iceServers': [
-      { url: 'stun:stun.l.google.com:19302'},
-      { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
-    ]} 
-  });
+
+let options = {
+    host: "global.xirsys.net",
+    path: "/_turn/covid19-drinking",
+    method: "PUT",
+    headers: {
+        "Authorization": "Basic " + Buffer.from("kristoffergregersen:60c40830-a79a-11eb-aad9-0242ac150003").toString("base64"),
+        "Content-Type": "application/json",
+        "Content-Length": bodyString.length
+    }
+};
+
+const myPeer = new Peer(options);
+
 const localVideo = document.createElement('video');
 localVideo.muted = true; 
 const peers = {};
@@ -70,9 +77,7 @@ myPeer.on('open', id => {
 //The helper function for connecting to new users
 function connectToNewUser(userId, stream) {
     console.log('calling. ring ring ring');
-    console.log('id to call: ' + userId);
     const call = myPeer.call(userId, stream);
-    console.log('post myPeer.call!!!!!');
     const video = document.createElement('video');
     call.on('stream', userVideoStream => {
         console.log(userVideoStream);
