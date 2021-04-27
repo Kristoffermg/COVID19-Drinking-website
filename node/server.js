@@ -30,11 +30,11 @@ console.log(path);
 app.use(express.static(path));
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -46,7 +46,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     console.log(lobbyId);
     if (idArr.length <= 0) {
         // res.redirect('/');      //Changed from /node0/
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
     }
 
     for (let i = 0; i < idArr.length; i++) {
@@ -54,19 +54,19 @@ app.get('/Lobby/:lobbyId', function(req, res) {
             let htmlPath;
             switch (idArr[i].startedGame) {
                 case 'prompt':
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     break;
 
                 case 'card':
-                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';  //Midlertidig          
                     break;
 
                 case 'dice':
-                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';  //Midlertidig
                     break;
 
                 default:
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
             }
 
@@ -77,13 +77,13 @@ app.get('/Lobby/:lobbyId', function(req, res) {
             });
         } else {
             // res.redirect('/');  //Changed from /node0/
-            res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+            res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
         }
     }
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -108,6 +108,7 @@ function idObj(roomId, amountConnected) {
         this.counter = 0;
         this.voteCount = 0;
         this.votingRight = 0;
+        this.answerArr = [];
     }
 }
 
@@ -170,7 +171,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -230,7 +231,7 @@ io.on('connection', (socket) => {
                 case 'prompt':
                     console.log("Prompt game chosen");
                     //Throw prompt html
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -251,21 +252,21 @@ io.on('connection', (socket) => {
                 case 'card':
                     console.log("Card game chosen");
                     //Throw card html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
     
                 case 'dice':
                     console.log("Dice game chosen");
                     //Throw dice html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
                 
                 case 'test1':
-                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
                     break;
                 
                 case 'test2':
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
     
                 default:
@@ -313,6 +314,26 @@ io.on('connection', (socket) => {
             }
         }
         
+    });
+
+    socket.on('neverAnswer', (answer, clientID) => {
+        let tempArray = [];
+        console.log('neverAnswer: ' + answer);
+        console.log('clientID: ' + clientID);
+
+        tempArray[0] = clientID;
+        tempArray[1] = answer;
+
+        for(i = 0; i < idArr.length; i++){
+            if(idArr[i].roomId == socket.room){
+                idArr[i].answerArr.push(tempArray);
+                console.log('-------------------------------------')
+                console.log(idArr[i].answerArr);
+            }
+        }
+
+        
+
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
@@ -398,6 +419,7 @@ function countdown(time, socket, id) {
         console.log(`counter for room ${id} ended`);
         idArr[id].votingRight = idArr[id].amountConnected;
         io.to(socket.room).emit("activateNextRoundBtn");
+        io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
     }
 }
 
