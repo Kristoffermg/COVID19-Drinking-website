@@ -93,13 +93,10 @@ iHave.addEventListener("click", () => {
 });
 
 iHaveNever.addEventListener("click", () => {
-
     iHave.style.opacity = 0.9;
     iHave.disabled = true;
     iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
-
-    
 
     neverAnswer = false;
     socket.emit('neverAnswer', neverAnswer, clientPeerId);
