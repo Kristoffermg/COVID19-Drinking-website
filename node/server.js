@@ -218,7 +218,7 @@ io.on('connection', (socket) => {
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
-    socket.on('startGame', gameType => {
+    socket.on('startGame', (gameType, roundtime) => {
         let id;
         if (!socket.admin) {
             socket.emit('noAdminPerm');
