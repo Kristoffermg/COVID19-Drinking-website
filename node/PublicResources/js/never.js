@@ -41,7 +41,28 @@ socket.on('activateNextRoundBtn', () => {
 })
 
 socket.on('revealAnswer', (answerArray) => {
-    //jeres tur frontend folk
+    //answerArr 0 = id, 1 = svar
+    let border;
+    for (let i = 0; i < answerArray.length; i++) {
+        border = document.querySelector('div.videoDiv#id' + answerArray[i][0] + ' > video');
+        console.log(border);
+        if (border == dontTouch) {
+            border = document.querySelector('div.videoDiv#id' + answerArray[i][2] + ' > video');
+            if (border != dontTouch) {
+                if (answerArray[i][1]) {
+                    border.style.outlineColor = 'green';
+                } else {
+                    border.style.outlineColor = 'red';
+                }
+            }
+        } else {
+            if (answerArray[i][1]) {
+                border.style.outlineColor = 'green';
+            } else {
+                border.style.outlineColor = 'red';
+            }
+        }
+    }
 });
 
 socket.on('nextPrompt', prompt => {

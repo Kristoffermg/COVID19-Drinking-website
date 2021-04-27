@@ -323,6 +323,7 @@ io.on('connection', (socket) => {
 
         tempArray[0] = clientID;
         tempArray[1] = answer;
+        tempArray[2] = socket.id;
 
         for(i = 0; i < idArr.length; i++){
             if(idArr[i].roomId == socket.room){
