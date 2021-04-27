@@ -70,7 +70,9 @@ myPeer.on('open', id => {
 //The helper function for connecting to new users
 function connectToNewUser(userId, stream) {
     console.log('calling. ring ring ring');
+    console.log('id to call: ' + userId);
     const call = myPeer.call(userId, stream);
+    console.log('post myPeer.call!!!!!');
     const video = document.createElement('video');
     call.on('stream', userVideoStream => {
         console.log(userVideoStream);
