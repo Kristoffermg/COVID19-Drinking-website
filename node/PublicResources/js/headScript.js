@@ -13,10 +13,10 @@ socket.emit('getId');
 const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
     pingInterval: 2000,
-    // config: {'iceServers': [
-    //   { url: 'stun:stun.l.google.com:19302'},
-    //   { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
-    // ]} 
+    config: {'iceServers': [
+      { url: 'stun:stun.l.google.com:19302'},
+      { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
+    ]} 
   });
 const localVideo = document.createElement('video');
 localVideo.muted = true; 

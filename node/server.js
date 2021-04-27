@@ -431,6 +431,7 @@ function countdown(time, socket, id) {
         idArr[id].votingRight = idArr[id].amountConnected;
         io.to(socket.room).emit("activateNextRoundBtn");
         io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
+        idArr[id].answerArr = [];
     }
 }
 

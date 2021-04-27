@@ -67,6 +67,13 @@ socket.on('revealAnswer', (answerArray) => {
 });
 
 socket.on('nextPrompt', prompt => {
+    let allVideoDiv = document.querySelectorAll('div#video-grid > div.videoDiv');
+
+    for (let i = 0; i < allVideoDiv.length; i++) {
+        console.log(allVideoDiv[i]);
+        allVideoDiv[i].childNodes[1].style.outlineColor = 'grey';
+    }
+
     console.log("nextPromptTriggger");
     neverText.innerHTML = "Never have I ever " + prompt;
 

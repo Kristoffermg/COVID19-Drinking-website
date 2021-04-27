@@ -652,12 +652,13 @@ a.link{
 }
 
 video {
-  outline-style: groove;
+  outline-style: solid;
   outline-color: rgb(129, 224, 193);
+  outline-width: thick;
   width: 200px;
   height: 200px;
   object-fit: cover;
-  margin: 0px 5px 0px 5px;
+  margin: 0px 8px 0px 8px;
 }
 
 .games__and__rounds {
