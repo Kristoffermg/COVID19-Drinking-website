@@ -45,18 +45,39 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     let lobbyId = req.params.lobbyId;
     console.log(lobbyId);
     if (idArr.length <= 0) {
-        res.redirect('/node0/');      //Changed from /node0/
+        // res.redirect('/');      //Changed from /node0/
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
     }
 
     for (let i = 0; i < idArr.length; i++) {
         if (idArr[i].roomId == lobbyId) {
-            fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+            let htmlPath;
+            switch (idArr[i].startedGame) {
+                case 'prompt':
+                    htmlPath = '/PublicResources/html/never.html';
+                    break;
+
+                case 'card':
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
+                    break;
+
+                case 'dice':
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig
+                    break;
+
+                default:
+                    htmlPath = '/PublicResources/html/createlobby.html';
+                    break;
+            }
+
+            fs.readFile(__dirname + htmlPath, 'utf8', function(err, data) {
                 if (err) throw err;
                 //console.log(data);
                 res.send(data);
             });
         } else {
-            res.redirect('/node0/');  //Changed from /node0/
+            // res.redirect('/');  //Changed from /node0/
+            res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
         }
     }
 });
@@ -79,12 +100,15 @@ function idObj(roomId, amountConnected) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
+    this.startedGame = 'none';
 
     this.neverGame = function NeverObj(neverPrompts) {
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
         this.counter = 0;
         this.voteCount = 0;
+        this.votingRight = 0;
+        this.answerArr = [];
     }
 }
 
@@ -115,13 +139,29 @@ io.on('connection', (socket) => {
     } while (idArr.includes(idBase));
     socket.emit('roomId', idBase);
 
+    //Gives the id of the socket to the client
+    socket.on('getId', () => {
+        socket.emit('getId', socket.id);
+    });
+
+    socket.on('DUMMYchangeName', (name, userId) => {
+        // console.log("name: " + name + " id: " + userId);
+        // let oldName = socket.userName;
+        // socket.userName = name;
+        
+        io.to(socket.room).emit('changeName', socket.userName, userId, "This is a dummy string");
+        
+        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
+        // console.log("succesfully changed to the name " + socket.userName);
+    });
+
     //Changes the username of the user who requested it
     socket.on('changeName', (name, userId) => {
         console.log("name: " + name + " id: " + userId);
         let oldName = socket.userName;
         socket.userName = name;
         
-        io.to(socket.room).emit('changeName', socket.userName, userId);
+        io.to(socket.room).emit('changeName', socket.userName, userId, socket.id);
         
         //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);
@@ -178,7 +218,8 @@ io.on('connection', (socket) => {
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
-    socket.on('startGame', (gameType, roundtime) => {
+    socket.on('startGame', gameType => {
+        let id;
         if (!socket.admin) {
             socket.emit('noAdminPerm');
         } else {
@@ -192,6 +233,8 @@ io.on('connection', (socket) => {
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
+                            id = i;
+                            idArr[i].startedGame = gameType;
                             fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
                                 if (err) throw err;
                                 //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
@@ -257,6 +300,8 @@ io.on('connection', (socket) => {
 
         }
 
+        console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
+
     });
 
     //Handles 'Never have I ever' logic
@@ -271,9 +316,9 @@ io.on('connection', (socket) => {
 
         idArr[id].voteCount++;
         console.log("votes: " + idArr[id].voteCount);
-        console.log("connected: " + idArr[id].amountConnected);
+        console.log("People with voting right: " + idArr[id].votingRight);
 
-        if ((idArr[id].voteCount > (idArr[id].amountConnected / 2)) || firstTurn) {
+        if ((idArr[id].voteCount > (idArr[id].votingRight / 2)) || firstTurn) {
             console.log("TRIGGER");
             if(unusedPromptsLeft(id)) {
                 let randomPromptIndex = randomPrompt(id);
@@ -289,6 +334,27 @@ io.on('connection', (socket) => {
             }
         }
         
+    });
+
+    socket.on('neverAnswer', (answer, clientID) => {
+        let tempArray = [];
+        console.log('neverAnswer: ' + answer);
+        console.log('clientID: ' + clientID);
+
+        tempArray[0] = clientID;
+        tempArray[1] = answer;
+        tempArray[2] = socket.id;
+
+        for(i = 0; i < idArr.length; i++){
+            if(idArr[i].roomId == socket.room){
+                idArr[i].answerArr.push(tempArray);
+                console.log('-------------------------------------')
+                console.log(idArr[i].answerArr);
+            }
+        }
+
+        
+
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
@@ -322,10 +388,6 @@ io.on('connection', (socket) => {
         console.log(socket.userName + " has disconnected.");
         io.emit('message', `${socket.userName} has disconnected`);
         disconnectHandler(socket);
-    });
-
-    socket.onAny(() => {
-        console.log("---------------------------------------------------------------------");
     });
 });
 
@@ -366,7 +428,9 @@ function countdown(time, socket, id) {
         setTimeout(function() { countdown(--time, socket, id) }, 1000);
     } else {    
         console.log(`counter for room ${id} ended`);
+        idArr[id].votingRight = idArr[id].amountConnected;
         io.to(socket.room).emit("activateNextRoundBtn");
+        io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
     }
 }
 

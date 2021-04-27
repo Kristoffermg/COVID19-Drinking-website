@@ -16,5 +16,6 @@ let nextPromptCountdown;
 let lobbyUrl;
 
 let clientPeerId;
+let clientSocketId;
 
 let isAdmin;

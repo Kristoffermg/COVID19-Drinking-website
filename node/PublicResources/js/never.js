@@ -1,5 +1,7 @@
 let answerYes = 0;  //Counter which shows how many rounds one has answered yes
 let answerNo = 0;   //Counter which shows how many rounds one has answered no
+let neverAnswer;
+
 
 let roundtimeBar = document.querySelector(".round-time-bar")
 let neverText = document.getElementById("neverText")
@@ -32,13 +34,32 @@ socket.on('setRoundtime', roundtime => {
 socket.on('activateNextRoundBtn', () => {
     nextText.style.opacity = 1;
     nextText.disabled = false;
-
-    iHave.style.opacity = 0.9;
-    iHave.disabled = true;
-
-    iHaveNever.style.opacity = 0.9;
-    iHaveNever.disabled = true;
 })
+
+socket.on('revealAnswer', (answerArray) => {
+    //answerArr 0 = id, 1 = svar
+    let border;
+    for (let i = 0; i < answerArray.length; i++) {
+        border = document.querySelector('div.videoDiv#id' + answerArray[i][0] + ' > video');
+        console.log(border);
+        if (border == dontTouch) {
+            border = document.querySelector('div.videoDiv#id' + answerArray[i][2] + ' > video');
+            if (border != dontTouch) {
+                if (answerArray[i][1]) {
+                    border.style.outlineColor = 'green';
+                } else {
+                    border.style.outlineColor = 'red';
+                }
+            }
+        } else {
+            if (answerArray[i][1]) {
+                border.style.outlineColor = 'green';
+            } else {
+                border.style.outlineColor = 'red';
+            }
+        }
+    }
+});
 
 socket.on('nextPrompt', prompt => {
     console.log("nextPromptTriggger");
@@ -67,5 +88,24 @@ socket.on('gameOver', () => {
 });
 
 iHave.addEventListener("click", () => {
-    sipText.style.display = "block";
-})
+    //sipText.style.display = "block";
+
+    iHave.style.opacity = 0.9;
+    iHave.disabled = true;
+    iHaveNever.style.opacity = 0.9;
+    iHaveNever.disabled = true;
+
+
+    neverAnswer = true;
+    socket.emit('neverAnswer', neverAnswer, clientPeerId);
+});
+
+iHaveNever.addEventListener("click", () => {
+    iHave.style.opacity = 0.9;
+    iHave.disabled = true;
+    iHaveNever.style.opacity = 0.9;
+    iHaveNever.disabled = true;
+
+    neverAnswer = false;
+    socket.emit('neverAnswer', neverAnswer, clientPeerId);
+});
