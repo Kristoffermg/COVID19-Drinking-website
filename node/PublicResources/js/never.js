@@ -34,6 +34,11 @@ socket.on('setRoundtime', roundtime => {
 socket.on('activateNextRoundBtn', () => {
     nextText.style.opacity = 1;
     nextText.disabled = false;
+
+    iHave.style.opacity = 0.9;
+    iHave.disabled = true;
+    iHaveNever.style.opacity = 0.9;
+    iHaveNever.disabled = true;
 })
 
 socket.on('revealAnswer', (answerArray) => {
@@ -94,7 +99,6 @@ iHave.addEventListener("click", () => {
     iHave.disabled = true;
     iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
-
 
     neverAnswer = true;
     socket.emit('neverAnswer', neverAnswer, clientPeerId);
