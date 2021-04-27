@@ -12,7 +12,7 @@ socket.emit('getId');
 //Setup for the videochat
 const videoGrid = document.getElementById('video-grid');
 const myPeer = new Peer({
-    pingInterval: 2000,
+    pingInterval: 7000,
     config: {'iceServers': [
       { url: 'stun:stun.l.google.com:19302'},
       { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
@@ -71,6 +71,7 @@ myPeer.on('open', id => {
 function connectToNewUser(userId, stream) {
     console.log('calling. ring ring ring');
     const call = myPeer.call(userId, stream);
+    console.log('Post peer.call!!');
     const video = document.createElement('video');
     call.on('stream', userVideoStream => {
         console.log(userVideoStream);
