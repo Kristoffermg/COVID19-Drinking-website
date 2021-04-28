@@ -13,6 +13,8 @@ const { debug } = require('console');
 const { CLOSING } = require('ws');
 
 const io = require('socket.io')(server, {
+    pingInterval: 1000,
+    pingTimeout: 1000,
     cors: {
         origin: "*"
     }
@@ -32,19 +34,62 @@ app.get('/', function(req, res) {
 });
 
 app.get('/Lobby', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
-        if (err) throw err;
-        //console.log(data);
-        res.send(data);
-    });
+    // fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    //     if (err) throw err;
+    //     //console.log(data);
+    //     res.send(data);
+    // });
+    res.sendFile(__dirname + '/PublicResources/html/createlobby.html');
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
-        if (err) throw err;
-        //console.log(data);
-        res.send(data);
-    });
+    let lobbyId = req.params.lobbyId;
+    let fileSent = false;
+    console.log(lobbyId);
+    if (idArr.length <= 0) {
+        // res.redirect('/');      //Changed from /node0/
+        console.log("No rooms exist");
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+    }
+
+    for (let i = 0; i < idArr.length; i++) {
+        if (idArr[i].roomId == lobbyId) {
+            let htmlPath;
+            switch (idArr[i].startedGame) {
+                case 'prompt':
+                    htmlPath = '/PublicResources/html/never.html';
+                    break;
+
+                case 'card':
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
+                    break;
+
+                case 'dice':
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig
+                    break;
+
+                default:
+                    htmlPath = '/PublicResources/html/createlobby.html';
+                    break;
+            }
+
+            // fs.readFile(__dirname + htmlPath, 'utf8', function(err, data) {
+            //     if (err) throw err;
+            //     //console.log(data);
+            //     res.send(data);
+            // });
+            res.sendFile(__dirname + htmlPath);
+            fileSent = true;
+
+        } else {
+            // res.redirect('/');  //Changed from /node0/
+        }
+    }
+
+    if (!fileSent) {
+        console.log("Else in switch");
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+    }
 });
 
 app.get('/GamesAndRules', function(req, res) {
@@ -61,16 +106,19 @@ io.on('connect_error', (err) => {
 });
 
 //Constructer function for room objects
-function idObj(roomId, amountConnected, userIdArr) {
+function idObj(roomId, amountConnected) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
-    this.userIdArr.push(userIdArr);
+    this.startedGame = 'none';
 
     this.neverGame = function NeverObj(neverPrompts) {
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
         this.counter = 0;
+        this.voteCount = 0;
+        this.votingRight = 0;
+        this.answerArr = [];
     }
 }
 
@@ -87,7 +135,6 @@ io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
 
     //Leaves own id-room
-    socket.leave(socket.id);
     console.log(socket.rooms);
 
     //Jeg ander ikk hvad der sker her, men det er nok vigtigt
@@ -98,18 +145,35 @@ io.on('connection', (socket) => {
     //Generates a random base64 string, which is used as the room id
     do {
         let i = Math.random();
-        idBase = Buffer.from(`${i}`).toString('base64');
+        idBase = "roomId-" + Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(idBase));
     socket.emit('roomId', idBase);
 
+    //Gives the id of the socket to the client
+    socket.on('getId', () => {
+        socket.emit('getId', socket.id);
+    });
+
+    socket.on('DUMMYchangeName', (name, userId) => {
+        // console.log("name: " + name + " id: " + userId);
+        // let oldName = socket.userName;
+        // socket.userName = name;
+        
+        io.to(socket.room).emit('changeName', socket.userName, userId, "This is a dummy string");
+        
+        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
+        // console.log("succesfully changed to the name " + socket.userName);
+    });
+
     //Changes the username of the user who requested it
-    socket.on('changeName', name => {
+    socket.on('changeName', (name, userId) => {
+        console.log("name: " + name + " id: " + userId);
         let oldName = socket.userName;
         socket.userName = name;
         
-        io.to(socket.room).emit('changeName', socket.userName);
+        io.to(socket.room).emit('changeName', socket.userName, userId, socket.id);
         
-        io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
+        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);
     });
 
@@ -130,98 +194,179 @@ io.on('connection', (socket) => {
     });
 
     //Joins an existing room based on the url, or creates one if nessesary
-    socket.on('joinRoom', (roomId, userId, idFlag) => {
+    socket.on('joinRoom', (roomId, idFlag) => {
         var d2 = new Date();
         console.log("");
         console.log(d2.toLocaleTimeString() + '  ' + d2.toLocaleDateString());
+        socket.admin = false;
         if (idFlag) {
             randomRoom(socket, roomId);
         } else {
             socket.join(roomId);
             socket.room = roomId;
+            socket.emit('yeetAdminStuff');
             console.log("User joined room " + socket.room);
         }
 
-        socket.to(roomId).broadcast.emit("user-connected", userId);
+        for (let i = 0; i < idArr.length; i++) {
+            if (idArr[i].roomId == socket.room) {
+                idArr[i].amountConnected++;
+                idArr[i].userIdArr.push(socket.id);
+                console.log("room: " + idArr[i].roomId);
+                console.log("amount: " + idArr[i].amountConnected);
+                if (idArr[i].amountConnected == 1) {
+                    socket.admin = true;
+                    socket.emit('makeAdmin');
+                }
+            }
+        }
+
+        socket.to(roomId).broadcast.emit("user-connected", socket.id);
         socket.on('disconnect', () => {
-            socket.to(roomId).broadcast.emit('user-disconnected', userId);
+            socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
         });
+    });
+
+    socket.on('answerCall', (callerID) => {
+        io.to(callerID).emit('ringring', socket.id);
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
-    socket.on('startGame', gameType => {
-        let htmlPath;
-        console.log(gameType);
-        switch (gameType) {
-            case 'prompt':
-                console.log("Prompt game chosen");
-                //Throw prompt html
-                htmlPath = '/PublicResources/html/never.html';
-                //Initialize 'Never have I ever' variables
-                for (let i = 0; i < idArr.length; i++) {
-                    if (idArr[i].roomId == socket.room) {
-                        fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
-                            if (err) throw err;
-                            //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
-                            let neverHaveIEverPrompts = data.split(/\r?\n/);
-                            idArr[i].neverGame(neverHaveIEverPrompts);
-                        });
-                        console.log("pog");                     
+    socket.on('startGame', (gameType, roundtime) => {
+        let id;
+        if (!socket.admin) {
+            socket.emit('noAdminPerm');
+        } else {
+            let htmlPath;
+            console.log(gameType);
+            switch (gameType) {
+                case 'prompt':
+                    console.log("Prompt game chosen");
+                    //Throw prompt html
+                    htmlPath = '/PublicResources/html/never.html';
+                    //Initialize 'Never have I ever' variables
+                    for (let i = 0; i < idArr.length; i++) {
+                        if (idArr[i].roomId == socket.room) {
+                            id = i;
+                            idArr[i].startedGame = gameType;
+                            fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
+                                if (err) throw err;
+                                //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
+                                let neverHaveIEverPrompts = data.split(/\r?\n/);
+                                idArr[i].neverGame(neverHaveIEverPrompts);
+                                //console.log(idArr[i]);
+                            });
+                            console.log("pog");
+                        }
                     }
-                }
-                break;
-            
-            case 'card':
-                console.log("Card game chosen");
-                //Throw card html
-                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
-                break;
+                    break;
+                
+                case 'card':
+                    console.log("Card game chosen");
+                    //Throw card html
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    break;
+    
+                case 'dice':
+                    console.log("Dice game chosen");
+                    //Throw dice html
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    break;
+                
+                case 'test1':
+                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                    break;
+                
+                case 'test2':
+                    htmlPath = '/PublicResources/html/createlobby.html';
+                    break;
+    
+                default:
+                    console.log("shit broke");
+                    break;
+            }
 
-            case 'dice':
-                console.log("Dice game chosen");
-                //Throw dice html
-                htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
-                break;
-            
-            case 'test1':
-                htmlPath = '/PublicResources/html/createlobbyMeme.html';
-                break;
-            
-            case 'test2':
-                htmlPath = '/PublicResources/html/createlobby.html';
-                break;
+            switch(roundtime) {
+                case '1s':
+                    roundtimeValue = 1;
+                    nextPromptCountdown = 1;
+                    break;
+                case '10s':
+                    roundtimeValue = 10;
+                    nextPromptCountdown = 10;
+                    break;
+                case '15s':
+                    roundtimeValue = 15;
+                    nextPromptCountdown = 15;
+                    break;
+                case '30s':
+                    roundtimeValue = 30;
+                    nextPromptCountdown = 30;
+                    break;
+            }
 
-            default:
-                console.log("shit broke");
-                break;
+            //io.to(socket.room).emit('setRoundtime', 3);
+            //Reads the relevent html file, and sends it to the frontend
+            fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
+                if (err) throw err;
+                io.to(socket.room).emit('changeHTML', data);
+            });
+
         }
 
-        //Reads the relevent html file, and sends it to the frontend
-        fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
-            if (err) throw err;
-            io.to(socket.room).emit('changeHTML', data);
-        });
+        console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
+
     });
 
     //Handles 'Never have I ever' logic
-    socket.on('neverLogic', () => {
-        for (let i = 0; i < idArr.length; i++) {
-            if (idArr[i].roomId == socket.room) {
-                console.log("counter for room " + idArr[i].roomId + ": " + idArr[i].counter);
-                let randomPromptIndex;
-                if (idArr[i].usedPrompts.length != idArr[i].neverHaveIEverPrompts.length) {
-                    do {
-                        randomPromptIndex = Math.floor(Math.random() * idArr[i].neverHaveIEverPrompts.length);
-                    } while (idArr[i].usedPrompts.includes(randomPromptIndex));
-                    idArr[i].usedPrompts[idArr[i].counter] = randomPromptIndex;
-                    idArr[i].counter++;
-                    console.log("Prompt to send: '" + idArr[i].neverHaveIEverPrompts[randomPromptIndex] + "'");
-                    io.to(socket.room).emit("nextPrompt", idArr[i].neverHaveIEverPrompts[randomPromptIndex]);
-                } else {
-                    io.to(socket.room).emit("gameOver");
-                }       
+    socket.on('neverLogic', firstTurn => {
+        io.to(socket.room).emit("setRoundtime", roundtimeValue);
+        let id;
+        for(let i = 0; i < idArr.length; i++) {
+            if(idArr[i].roomId === socket.room) {
+                id = i;
             }
         }
+
+        idArr[id].voteCount++;
+        console.log("votes: " + idArr[id].voteCount);
+        console.log("People with voting right: " + idArr[id].votingRight);
+
+        if ((idArr[id].voteCount > (idArr[id].votingRight / 2)) || firstTurn) {
+            console.log("TRIGGER");
+            if(unusedPromptsLeft(id)) {
+                let randomPromptIndex = randomPrompt(id);
+                idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
+                idArr[id].counter++;
+                console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
+                io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
+                countdown(nextPromptCountdown, socket, id);
+                idArr[id].voteCount = 0;
+                console.log("votes reset to: " + idArr[id].voteCount);
+            } else {
+                io.to(socket.room).emit("gameOver"); 
+            }
+        }
+        
+    });
+
+    socket.on('neverAnswer', (answer) => {
+        let tempArray = [];
+        console.log('neverAnswer: ' + answer);
+
+        tempArray[0] = socket.id;
+        tempArray[1] = answer;
+
+        for(i = 0; i < idArr.length; i++){
+            if(idArr[i].roomId == socket.room){
+                idArr[i].answerArr.push(tempArray);
+                console.log('-------------------------------------')
+                console.log(idArr[i].answerArr);
+            }
+        }
+
+        
+
     });
 
     //Actually does nothing, but i am too scared to deletus this fetus
@@ -232,6 +377,15 @@ io.on('connection', (socket) => {
     //Hihi debug go brr
     socket.on('debug', () => {
         console.log(socket.rooms);
+    });
+
+    socket.on('checkAdminStatus', () => {
+        socket.emit('checkAdminStatus', socket.admin);
+        //io.to(idArr[0].userIdArr[0]).emit("meme");
+    });
+
+    socket.on('makeAdmin', () => {
+        socket.admin = true;
     });
 
     //Runs when socket disconnects from a room
@@ -256,8 +410,18 @@ function disconnectHandler (socket) {
 	        for(let j = 0; j < idArr[i].userIdArr.length; j++) {
 	            if (idArr[i].userIdArr[j] == socket.id) {
                     idArr[i].amountConnected--;
-                    idArr[i].userIdArr[j] = "";
+                    delete idArr[i].userIdArr[j];
+                    pushArray(idArr[i].userIdArr, j);
+                    idArr[i].userIdArr.pop();
                     console.log("Fetus has been deletus");
+                    console.log(idArr[i].userIdArr);
+                    console.log("status: " + socket.admin);
+                    if (socket.admin) {
+                        console.log("UserIdArr:");
+                        console.log(idArr[i].userIdArr);
+                        let newAdmin = Math.floor(Math.random() * (idArr[0].userIdArr.length));
+                        io.to(idArr[i].userIdArr[newAdmin]).emit("makeAdmin");
+                    }
 		        }
 	        }
 	        if(idArr[i].amountConnected == 0){
@@ -270,6 +434,44 @@ function disconnectHandler (socket) {
 	}
 }
 
+function countdown(time, socket, id) {
+    console.log(`counter for room ${id} is at ` + time);
+    if(time > 0) {
+        setTimeout(function() { countdown(--time, socket, id) }, 1000);
+    } else {    
+        console.log(`counter for room ${id} ended`);
+        idArr[id].votingRight = idArr[id].amountConnected;
+        io.to(socket.room).emit("activateNextRoundBtn");
+        io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
+        idArr[id].answerArr = [];
+    }
+}
+
+function unusedPromptsLeft(id) {
+    if(idArr[id].usedPrompts.length === undefined) idArr[id].usedPrompts[0] = -1;
+    if(idArr[id].usedPrompts.length !== idArr[id].neverHaveIEverPrompts.length) {
+        return true;
+    }
+    return false;
+}
+
+function randomPrompt(id) {
+    let randomPromptIndex;
+    do {
+        randomPromptIndex = Math.floor(Math.random() * idArr[id].neverHaveIEverPrompts.length);
+    } while(promptHasBeenUsed(randomPromptIndex, id));
+    idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
+    idArr[id].counter++;
+    return randomPromptIndex;
+}
+
+function promptHasBeenUsed(randomPromptIndex, id) {
+    if(idArr[id].usedPrompts.includes(randomPromptIndex)) {
+      return true;
+    }
+    return false;
+}
+
 //Creates a new random room
 function randomRoom(socket, id) {
     //let id;
@@ -279,8 +481,7 @@ function randomRoom(socket, id) {
         id = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(id));
     */
-    let room = new idObj(id, 0, socket.id);
-    room.amountConnected++;
+    let room = new idObj(id, 0);
 
     idArr.push(room);
     socket.join(room.roomId);

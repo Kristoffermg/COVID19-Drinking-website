@@ -9,5 +9,13 @@ let usernameButton;
 let debugMeme;
 let copyUrl;
 let startGame;
+let settingsTab;
+let roundtimeValue;
+let nextPromptCountdown;
 
 let lobbyUrl;
+
+let clientPeerId;
+let clientSocketId;
+
+let isAdmin;

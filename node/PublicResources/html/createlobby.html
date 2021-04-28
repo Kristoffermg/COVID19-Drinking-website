@@ -38,7 +38,7 @@
     </nav>
 
     <div class="settingstab">
-        <h2 class="Settingh" id="debugMeme">Settings</h2>
+        <!-- <h2 class="Settingh" id="debugMeme">Settings</h2> -->
 
       <div class="card">
         <a href="/node0/"><img class="card__logo" src="../img/Logo.png"></a>
@@ -65,6 +65,13 @@
           <option value="dice">Dice</option>
           <option value="card">Card</option>
         </select><br>
+        <label class="games__and__rounds">Set roundtime:</label>
+        <select class="gameselect" form="timeform" id="roundtimeSelect">
+          <option value="1s">1s (testing purposes)</option>
+          <option value="10s">10s</option>
+          <option value="15s">15s</option>
+          <option value="30s">30s</option>
+        </select>
       </form>
       
       <div class="url-div">
@@ -78,13 +85,7 @@
       </div>
     </div>
     <input type="button" value="Start game" id="startGame" name="startGame">
-
-    <div id="testerino" style="display:none">
-      <h1>this is where the epic gaming happens 😎😎😎😎</h1>
-    </div>
-
-  <div id="videoPlacement">
-  </div>
+</section>
 
   <div id="videos">
       <div id="video-grid"></div>

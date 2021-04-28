@@ -62,9 +62,6 @@ h3 {
 }
 
 #navbar__logo {
-  background-color: #ff8177;
-  background-image: linear-gradient(to top, #fcfcfc 0%, #99f0ff 100%);
-  background-size: 100%;
   -webkit-background-clip: text;
   -moz-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -74,6 +71,7 @@ h3 {
   cursor: pointer;
   text-decoration: none;
   font-size: 2rem;
+  background-clip: border-box; /*This line removes 4 errors*/
 }
 
 .navbar__menu {
@@ -373,7 +371,7 @@ a.link{
   height: 100%;
 }
 
-.createLobby {
+.createLobby, .backToHomepage {
   color: white;
   font-size: large;
   padding: 1cm 2cm;
@@ -393,160 +391,11 @@ a.link{
 }  
 
 .createLobby:hover,
-.createLobby:focus {
+.createLobby:focus
+.backToHomepage:hover,
+.backToHomepage:focus {
     box-shadow: 0.5em 0.5em 0.5em -0.4em #ffffff;
 }
-
-/*
-.bottomtext{
-  position: relative;
-  bottom: -175mm;
-  color: white;
-  text-align: center;
-  padding-left: 1cm ;
-  padding-right: 1cm;
-  padding-top: 1mm;
-  background: #bdc3c7;  
-  background: #bdc3c7;  
-  background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7); 
-  background: linear-gradient(to right, #2c3e50, #bdc3c7); 
-  border-radius: 5mm;
-  border-width: 5mm;
-  border-color: white;
-  border-style: solid;
-}
-/*
-a.p1{
-  color: white;
-  font-family: 'Roboto', sans-serif;
-  font-size: 7mm;
-  position: relative;
-  top: 0px;
-  left: 400px;
-  color: black;
-  -webkit-text-fill-color:white; 
-  -webkit-text-stroke-width: 0.5px;
-  -webkit-text-stroke-color: black;
-  border-radius: 3mm;
-  padding-top:  1mm;
-  padding-bottom: 1mm;
-  padding-left: 1mm;
-  padding-right: 1mm;
-  background-image: linear-gradient(
-      -120deg,
-      #0bbdf3 0%,
-      #0692bd 29%,
-      #045a74 75%,
-      #013d50 100%
-    );
-}
-a.p2{
-  color: white;
-  font-family: 'Roboto', sans-serif;
-  font-size: 7mm;
-  position: relative;
-  top: 0px;
-  left: 400px;
-  color: black;
-  -webkit-text-fill-color: white; 
-  -webkit-text-stroke-width: 0.5px;
-  -webkit-text-stroke-color: black;
-  border-radius: 3mm;
-  padding-top:  1mm;
-  padding-bottom: 1mm;
-  padding-left: 1mm;
-  padding-right: 1mm;
-  background-image: linear-gradient(
-      -120deg,
-      #0bbdf3 0%,
-      #0692bd 29%,
-      #045a74 75%,
-      #013d50 100%
-    );
-}
-a.p3{
-  color: white;
-  font-family: 'Roboto', sans-serif;
-  font-size: 7mm;
-  position: relative;
-  top: 0px;
-  left: 400px;
-  color: black;
-  -webkit-text-fill-color: white; 
-  -webkit-text-stroke-width: 0.5px;
-  -webkit-text-stroke-color: black;
-  border-radius: 3mm;
-  padding-top:  1mm;
-  padding-bottom: 1mm;
-  padding-left: 1mm;
-  padding-right: 1mm;
-  background-image: linear-gradient(
-      -120deg,
-      #0bbdf3 0%,
-      #0692bd 29%,
-      #045a74 75%,
-      #013d50 100%
-    );
-}
-a.p4 {
-  color: white;
-  font-family: 'Roboto', sans-serif;
-  font-size: 6mm;
-  position: relative;
-  top: 0px;
-  left: 400px;
-  color: black;
-  -webkit-text-fill-color: white; 
-  -webkit-text-stroke-width: 0.5px;
-  -webkit-text-stroke-color: black;
-  border-radius: 3mm;
-  padding-top:  1mm;
-  padding-bottom: 1mm;
-  padding-left: 1mm;
-  padding-right: 1mm;
-  background-image: linear-gradient(
-      -120deg,
-      #0bbdf3 0%,
-      #0692bd 29%,
-      #045a74 75%,
-      #013d50 100%
-    );
-}
-.bottomtext2{
-  position: relative;
-  bottom: -10rem;
-  color: white;
-  text-align: center;
-  padding-left: 1cm ;
-  padding-right: 1cm;
-  padding-top: 1mm;
-  background: #bdc3c7;  
-  background: #bdc3c7;  
-  background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);  
-  background: linear-gradient(to right, #2c3e50, #bdc3c7); 
-  border-radius: 5mm;
-  border-width: 5mm;
-  border-color: white;
-  border-style: solid;
-}
-.bottomtext3{
-  position: relative;
-  top: -9cm;
-  color: white;
-  text-align: center;
-  padding-left: 1cm ;
-  padding-right: 1cm;
-  padding-top: 1mm;
-  background: #bdc3c7;  
-  background: #bdc3c7;  
-  background: -webkit-linear-gradient(to right, #2c3e50, #bdc3c7);  
-  background: linear-gradient(to right, #2c3e50, #bdc3c7); 
-  border-radius: 5mm;
-  border-width: 5mm;
-  border-color: rgb(255, 255, 255);
-  border-style: solid;
-}
-*/
 
 .section_container {
   margin: 0px, 0px, 60px, 60px;
@@ -593,7 +442,7 @@ a.p4 {
   -moz-text-fill-color: transparent;
   margin-bottom: 1rem;
   font-size: 2.5rem;
-
+  background-clip: border-box;  /*This line removes 4 erroes*/
 }
 
 .services h2 {
@@ -691,7 +540,7 @@ a.p4 {
   cursor: pointer;
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 1950px) {
   .services__wrapper {
     grid-template-columns: 1fr 1fr;
   }
@@ -786,25 +635,40 @@ a.p4 {
 }
 
 #videos {
-  margin: auto;
+  position: relative;
   margin-top: 30px;
-  margin-bottom: 100px;
-  border: 3px solid black;
-  width: 80%;
-  height: 200px;
+  margin-bottom: 50px;
+  /*border: 3px solid black;*/
+  left: 22%;
+  width: 56%;
+  height: fit-content;
 }
 
-#video-grid {
-  display: inline-block;
+#video-grid, #videoPlacement {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   grid-auto-rows: 300px;
 }
 
 video {
-  outline-style: groove;
+  outline-style: solid;
   outline-color: rgb(129, 224, 193);
+  outline-width: thick;
   width: 200px;
   height: 200px;
   object-fit: cover;
+  margin: 0px 8px 0px 8px;
+}
+
+.avatar {
+  outline-style: solid;
+  outline-color: rgb(129, 224, 193);
+  outline-width: thick;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin: 0px 8px 0px 8px;
 }
 
 .games__and__rounds {
@@ -855,7 +719,7 @@ video {
   transform: translateY(-2%);
 }
 
-#startGame {
+#startGame, #backToFrontpage {
   margin: auto;
   margin-top: 50px;
   padding: 25px 40px 25px 40px;
@@ -885,7 +749,8 @@ overflow: auto;
   margin: auto;
   text-align: center;
   justify-content: center;
-  width: 900px;
+  width: 50%;
+  margin-top: 5%;
 }
 
 .container {
@@ -893,29 +758,131 @@ overflow: auto;
   background-color: rgb(129, 224, 193);
   margin-top: 20px;
   border-radius: 10px;
-  width: 400px;
   padding: 10px;
 }
 
-.contentContainer {
-  background-color: rgba(0, 0, 0, 0.692);
+.Container {
+  background-color: rgba(0, 0, 0, 0.199);
   margin: auto;
   border: solid 2px white;
-  height: 700px;
-  margin-top: 20px;
+
+}
+
+.contentContainer {
+  display: flex;
+  justify-content: space-between;
+  /*border: solid 1px white;*/
+  height: fit-content;
+}
+
+.chatContainer {
+  width: 20%;
+}
+
+.promtContainer {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
 }
 
 #neverText {
-  margin-top: 40px;
   font-size: 30px;
   color: white;
+  height: 60px;
+}
+
+.textbutton {
+  margin: auto;
+  margin-top: 40px;
+  padding: 15px;
+  font-size: 20px;
+  border: solid 1px white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#iHave:hover {
+  background-color: rgb(9, 255, 0);
+  box-shadow: 2px 2px rgb(0, 0, 0);
+  transform: translateY(-2%);
+}
+
+#iHaveNever:hover {
+  background-color: rgb(255, 0, 0);
+  box-shadow: 2px 2px rgb(0, 0, 0);
+  transform: translateY(-2%);
 }
 
 #nextText {
-  top: 25%;
-  left: 46%;
-  margin: auto;
-  margin-top: 20px;
-  padding: 20px;
-  font-size: 20px;
+  margin-top: 0;
+  margin-bottom: 20px;
 }
+
+.promt {
+  margin-top: 5%;
+  margin-bottom: 5%;
+  height: fit-content;
+  align-self: center;
+  width: 100%;
+}
+
+#usernameContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-top: solid 2px white;
+  border-right: solid 2px white;
+  border-bottom: solid 2px white;
+}
+
+.usernameText {
+  color: white;
+  font-size: 25px;
+  /*border: solid 1px white;*/
+}
+
+.chat {
+  height: 100%;
+  border-right: solid 2px white;
+  color: white;
+  align-self: center;
+}
+
+@keyframes roundtime {
+  to {
+    transform: scaleX(0);
+  }
+}
+
+.round-time-bar {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 12px;
+  animation: roundtime calc(var(--duration) *1s) steps(var(--duration)) forwards;
+  background: green;
+  background: linear-gradient(to bottom, rgb(0, 255, 0), rgb(0, 153, 0));
+  /*background: linear-gradient(to left, rgb(0, 255, 0), rgb(255, 0, 0));*/
+  transform-origin: left center;
+}
+
+.round-time-bar[data-style="smooth"] {
+  animation: roundtime calc(var(--duration) *1s) linear forwards;
+}
+
+#userNamePara {
+  /* HER SKER DER STYLING AF USERNAMES! */
+  text-align: center;
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 8px;
+}
+
+#sipText {
+  width: 100%;
+  border-top: solid 2px white;
+  color: white;
+  font-size: 40px;
+  padding: 4%;
+}
+
