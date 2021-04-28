@@ -34,18 +34,21 @@ app.get('/', function(req, res) {
 });
 
 app.get('/Lobby', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
-        if (err) throw err;
-        //console.log(data);
-        res.send(data);
-    });
+    // fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    //     if (err) throw err;
+    //     //console.log(data);
+    //     res.send(data);
+    // });
+    res.sendFile(__dirname + '/PublicResources/html/createlobby.html');
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
     let lobbyId = req.params.lobbyId;
+    let fileSent = false;
     console.log(lobbyId);
     if (idArr.length <= 0) {
         // res.redirect('/');      //Changed from /node0/
+        console.log("No rooms exist");
         res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
     }
 
@@ -70,15 +73,22 @@ app.get('/Lobby/:lobbyId', function(req, res) {
                     break;
             }
 
-            fs.readFile(__dirname + htmlPath, 'utf8', function(err, data) {
-                if (err) throw err;
-                //console.log(data);
-                res.send(data);
-            });
+            // fs.readFile(__dirname + htmlPath, 'utf8', function(err, data) {
+            //     if (err) throw err;
+            //     //console.log(data);
+            //     res.send(data);
+            // });
+            res.sendFile(__dirname + htmlPath);
+            fileSent = true;
+
         } else {
             // res.redirect('/');  //Changed from /node0/
-            res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
         }
+    }
+
+    if (!fileSent) {
+        console.log("Else in switch");
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
     }
 });
 
