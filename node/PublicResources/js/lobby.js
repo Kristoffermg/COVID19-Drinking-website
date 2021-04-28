@@ -1,5 +1,6 @@
 console.log("lobby executed");
 
+socket.emit('insertPromptQuery', "done this right first try");
 
 
 //Sets different variables
@@ -8,6 +9,8 @@ usernameButton = document.getElementById("setUsername");
 settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
+let addPromt = document.getElementById("addPromt")
+let promtInput = document.getElementById('custompromttext')
 // newDebugMeme = document.getElementById("newDebugMeme");
 
 debug = document.querySelector("div.videoDiv#idclient");
@@ -52,7 +55,13 @@ usernameButton.addEventListener("click", () => {
     //console.log("username: " + newUserName);
     console.log("name: " + newUserName);
     socket.emit("changeName", newUserName);
+    newUserName.value = "";
 })
+
+//Adds promt
+addPromt.addEventListener("click", () => {
+    promtInput.value = "";
+});
 
 //PAAAAAAAAAAAAAAAAAAAAAAAAUSE!
 

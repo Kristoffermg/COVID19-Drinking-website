@@ -704,7 +704,11 @@ video {
   top: -4.5rem;
 }
 
-#startGame, #copyURL, #setUsername, #nexttext {
+.customPromtText {
+  width: 50%;
+}
+
+#startGame, #copyURL, #setUsername, #nexttext, #addPromt {
   background-color: white;
   color: black;
   border: solid 1px;
@@ -713,7 +717,7 @@ video {
   cursor: pointer;
 }
 
-#startGame:hover, #copyURL:hover, #setUsername:hover, #nexttext:hover {
+#startGame:hover, #copyURL:hover, #setUsername:hover, #nexttext:hover, #addPromt:hover {
   background-color: rgb(0, 204, 255);
   box-shadow: 2px 2px rgb(0, 0, 0);
   transform: translateY(-2%);
