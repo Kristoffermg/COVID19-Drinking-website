@@ -661,6 +661,16 @@ video {
   margin: 0px 8px 0px 8px;
 }
 
+.avatar {
+  outline-style: solid;
+  outline-color: rgb(129, 224, 193);
+  outline-width: thick;
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  margin: 0px 8px 0px 8px;
+}
+
 .games__and__rounds {
   font-size: 20px;
   padding: 8px 12px;

@@ -45,10 +45,10 @@ socket.on('revealAnswer', (answerArray) => {
     //answerArr 0 = id, 1 = svar
     let border;
     for (let i = 0; i < answerArray.length; i++) {
-        border = document.querySelector('div.videoDiv#id' + answerArray[i][0] + ' > video');
+        border = document.querySelector('div.videoDiv#id' + answerArray[i][0] + ' > img');
         console.log(border);
         if (border == dontTouch) {
-            border = document.querySelector('div.videoDiv#id' + answerArray[i][2] + ' > video');
+            border = document.querySelector('div.videoDiv#id' + answerArray[i][0] + ' > img');
             if (border != dontTouch) {
                 if (answerArray[i][1]) {
                     border.style.outlineColor = 'green';
@@ -71,7 +71,7 @@ socket.on('nextPrompt', prompt => {
 
     for (let i = 0; i < allVideoDiv.length; i++) {
         console.log(allVideoDiv[i]);
-        allVideoDiv[i].childNodes[1].style.outlineColor = 'grey';
+        allVideoDiv[i].childNodes[0].style.outlineColor = 'grey';
     }
 
     console.log("nextPromptTriggger");
@@ -118,5 +118,5 @@ iHaveNever.addEventListener("click", () => {
     iHaveNever.disabled = true;
 
     neverAnswer = false;
-    socket.emit('neverAnswer', neverAnswer, clientPeerId);
+    socket.emit('neverAnswer', neverAnswer);
 });

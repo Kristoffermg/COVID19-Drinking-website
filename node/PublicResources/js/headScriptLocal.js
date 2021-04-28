@@ -17,7 +17,7 @@ socket.on('user-connected', userId => {
 
 socket.on('ringring', answerID => {
     console.log('Enter ringring');
-    connectToNewUser(userId, false);
+    connectToNewUser(answerID, false);
 });
 
 //Setup for the videochat
@@ -80,17 +80,22 @@ socket.on('ringring', answerID => {
 
 //The helper function for connecting to new users
 function connectToNewUser(userId, flag) {
+    let name;
     console.log('calling. ring ring ring');
     let check = document.querySelector("div.videoDiv#id" + clientSocketId);
     console.log('flagSmile: ' + flag);
     if (check == dontTouch || flag) {
         socket.emit('answerCall', userId);
+        name = document.querySelector("div.videoDiv#id" + clientSocketId + " > p");
+        console.log("name: " + name.innerText);
+        socket.emit('changeName', name.innerText, clientSocketId);
     }
     console.log('post myPeer.call!!!!!');
     const video = document.createElement('img');
     addVideoStream(video, userId);
-    socket.on('user-disconnected', () => {
-        video.parentElement.remove();
+    socket.on('user-disconnected', (disconnectID) => {
+    let meme = document.querySelector("div.videoDiv#id" + disconnectID);
+        meme.remove();
     });
 
     // peers[userId] = call;
@@ -112,6 +117,7 @@ function addVideoStream(video, userId) {
     
 
     video.setAttribute("id", "id" + userId);
+    video.classList.add('avatar');
     videoDiv.append(video);
     let userPara = document.createElement("p");
     userPara.setAttribute("id", 'userNamePara');
@@ -154,7 +160,7 @@ socket.on('roomId', (roomId) => {
     socket.emit('joinRoom', ROOM_ID, idFlag);
     console.log('ROOOOOOOM ' + ROOM_ID);
 
-    //ROOM_ID = roomId;
+    //ROOM_ID = roomId
 });
 
 //Get's username from backend, so it can be updated on the site
@@ -225,3 +231,8 @@ socket.on('changeHTML', meme=> {
     scriptPlaceholder.remove();
     document.body.appendChild(pageScript);
 });
+
+// socket.on('disconnect', (reason) => {
+//     console.log('YOU HAS DISCONNECTED!!!!!');
+//     console.log(reason);
+// });

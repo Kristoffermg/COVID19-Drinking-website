@@ -50,8 +50,8 @@ logo.addEventListener("click", () => {
 usernameButton.addEventListener("click", () => {
     let newUserName = document.getElementById("username").value;
     //console.log("username: " + newUserName);
-    console.log("name: " + newUserName + " id: " + clientPeerId);
-    socket.emit("changeName", newUserName, clientPeerId);
+    console.log("name: " + newUserName);
+    socket.emit("changeName", newUserName);
 })
 
 //PAAAAAAAAAAAAAAAAAAAAAAAAUSE!
