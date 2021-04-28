@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar__container">
+        
+        <a href="/" id="navbar__logo"><pre>Bar        Games</pre></a>
+
+        <div class="card">
+            <a href="/"><img class="card__logo" src="../img/Logo.png"></a>
+        </div>
+
+        <div class="navbar__toggle" id="mobile-menu">
+            <span class="bar"></span> <span class="bar"></span>
+            <span class="bar"></span>
+        </div>
+        <ul class="navbar__menu">
+            <li class="navbar__item">
+            <a href="/" class="navbar__links" id="home-page">Home</a>
+            </li>
+            <li class="navbar__item">
+            <a href="/GamesAndRules" class="navbar__links" id="Games rules">Game rules</a>
+            </li>
+            <!--<li class="navbar__btn">
+            <a href="#sign-up" class="button" id="signup">Contact</a>
+            </li>-->
+        </ul>
+        </div>
+    </nav>
+
+    <h2>Har rullet knapperne</h2>
+    <p  id="diceRoll">Her står hvad man ruller</p>
+    <button id="trueBtn">Truth</button>
+    <button id="lieBtn">Lie</button>
+    <select name="dice1" id="dice1">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+    <select name="dice2" id="dice2">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+    </select>
+    <button id="deroverBtn">GO AGAINE</button>
+    <br><br>
+    <h2>Før man ruller knapperne</h2>
+    <button id="rollBtn">Roll</button>
+    <button id="liftBtn">Call Bullshit</button>
+
+
+    <div id="videoPlacement"></div>
+
+    <script defer src="../js/mejer.js" id="pageScript"></script>
+</body>
+</html>

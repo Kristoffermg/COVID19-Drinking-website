@@ -11,6 +11,7 @@ const pathApi = require('path');
 const fs = require('fs');
 const { debug } = require('console');
 const { CLOSING } = require('ws');
+const { emit } = require('process');
 
 const io = require('socket.io')(server, {
     pingInterval: 1000,
@@ -30,16 +31,16 @@ console.log(path);
 app.use(express.static(path));
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    // fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    // fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
     //     if (err) throw err;
     //     //console.log(data);
     //     res.send(data);
     // });
-    res.sendFile(__dirname + '/PublicResources/html/createlobby.html');
+    res.sendFile(__dirname + '/PublicResources/htmlLocal/createlobby.html');
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
@@ -49,7 +50,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     if (idArr.length <= 0) {
         // res.redirect('/');      //Changed from /node0/
         console.log("No rooms exist");
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
     }
 
     for (let i = 0; i < idArr.length; i++) {
@@ -57,19 +58,19 @@ app.get('/Lobby/:lobbyId', function(req, res) {
             let htmlPath;
             switch (idArr[i].startedGame) {
                 case 'prompt':
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     break;
 
                 case 'card':
-                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';  //Midlertidig          
                     break;
 
                 case 'dice':
-                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig
+                    htmlPath = '/PublicResources/htmlLocal/dummyMejer.html';  //Midlertidig
                     break;
 
                 default:
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
             }
 
@@ -88,12 +89,12 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 
     if (!fileSent) {
         console.log("Else in switch");
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
     }
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -120,6 +121,15 @@ function idObj(roomId, amountConnected) {
         this.votingRight = 0;
         this.answerArr = [];
     }
+
+    this.mejer = function MejerObj(ranks) {
+        this.lastRoll = [0,0];
+        this.rollToBeat = [0,0];
+        this.lieRoll = [0,0];
+        this.wasLastLie = false;
+        this.mejerRanks = ranks;
+    }
+    
 }
 
 //Don't Touch :)
@@ -179,7 +189,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -243,7 +253,7 @@ io.on('connection', (socket) => {
                 case 'prompt':
                     console.log("Prompt game chosen");
                     //Throw prompt html
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -259,26 +269,64 @@ io.on('connection', (socket) => {
                             console.log("pog");
                         }
                     }
+
+                    switch(roundtime) {
+                        case '1s':
+                            roundtimeValue = 1;
+                            nextPromptCountdown = 1;
+                            break;
+                        case '10s':
+                            roundtimeValue = 10;
+                            nextPromptCountdown = 10;
+                            break;
+                        case '15s':
+                            roundtimeValue = 15;
+                            nextPromptCountdown = 15;
+                            break;
+                        case '30s':
+                            roundtimeValue = 30;
+                            nextPromptCountdown = 30;
+                            break;
+                    }
                     break;
                 
                 case 'card':
                     console.log("Card game chosen");
                     //Throw card html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
     
                 case 'dice':
                     console.log("Dice game chosen");
                     //Throw dice html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/dummyMejer.html'; //<-- Midlertidig path så ting ikk explodere
+                    
+                    for (let i = 0; i < idArr.length; i++) {
+                        if (idArr[i].roomId == socket.room) {
+                            idArr[i].startedGame = gameType;
+                            fs.readFile(__dirname + "/MiscFiles/MejerRanks.txt", "utf8", function(err, data) {
+                                if (err) throw err;
+                                //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
+                                let mejerRanks = data.split(/\r?\n/);
+                                for (let i = 0; i < mejerRanks.length; i++) {
+                                    mejerRanks[i] = mejerRanks[i].split(',');
+                                }
+                                idArr[i].mejer(mejerRanks);
+                                console.log("RANKS!!!!!!!!!!!");
+                                console.log(idArr[i].mejerRanks);
+                                //console.log(idArr[i]);
+                            });
+                            console.log("pog");
+                        }
+                    }
                     break;
                 
                 case 'test1':
-                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
                     break;
                 
                 case 'test2':
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
     
                 default:
@@ -286,24 +334,7 @@ io.on('connection', (socket) => {
                     break;
             }
 
-            switch(roundtime) {
-                case '1s':
-                    roundtimeValue = 1;
-                    nextPromptCountdown = 1;
-                    break;
-                case '10s':
-                    roundtimeValue = 10;
-                    nextPromptCountdown = 10;
-                    break;
-                case '15s':
-                    roundtimeValue = 15;
-                    nextPromptCountdown = 15;
-                    break;
-                case '30s':
-                    roundtimeValue = 30;
-                    nextPromptCountdown = 30;
-                    break;
-            }
+
 
             //io.to(socket.room).emit('setRoundtime', 3);
             //Reads the relevent html file, and sends it to the frontend
@@ -314,7 +345,7 @@ io.on('connection', (socket) => {
 
         }
 
-        console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
+        //console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
 
     });
 
@@ -364,10 +395,91 @@ io.on('connection', (socket) => {
                 console.log(idArr[i].answerArr);
             }
         }
+    });
+
+    //---------------------------DICE SHIT----------------------------
+
+    socket.on('mejerRoll', () => {
+        let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        let id;
+
+        for (let i = 0; i < idArr.length; i++) {
+            if (idArr[i].roomId == socket.room) {
+                id = i;
+            }
+        }
+
+        if(idArr[id].wasLastLie){
+            idArr[id].rollToBeat = idArr[id].lieRoll;
+        }else{
+            idArr[id].rollToBeat = idArr[id].lastRoll;
+        }
+
+        idArr[id].lastRoll = diceSort(dice1, dice2);
+        console.log(idArr[id].lastRoll);
+
+        socket.emit("mejerRoll", idArr[id].lastRoll);
+    });
+
+    socket.on('mejerTrue', () => {
+        let id;
+
+        for (let i = 0; i < idArr.length; i++) {
+            if (idArr[i].roomId == socket.room) {
+                id = i;
+            }
+        }
 
         
-
+        idArr[id].wasLastLie = false;
     });
+
+    socket.on('mejerLie', (dice1, dice2) => {
+        let id;
+
+        for (let i = 0; i < idArr.length; i++) {
+            if (idArr[i].roomId == socket.room) {
+                id = i;
+            }
+        }
+        
+        idArr[id].lieRoll = diceSort(dice1, dice2);
+        console.log(idArr[id].lieRoll);
+
+        if(!cmpRoll(idArr[id].lieRoll, idArr[id].rollToBeat, id)){
+            socket.emit('lieError');
+        }else{
+
+            console.log('mejerLie else triggered');
+            //næste tur
+
+            idArr[id].wasLastLie = true;
+        }
+    });
+
+    socket.on('mejerDerover', () => {
+        cmpRoll([1,1], [5,4], 0);
+    });
+
+    socket.on('mejerLift', () => {
+        
+    }); 
+    
+    /*
+
+    dialogbox skal yeetes
+    næste tur funktionalitet
+    løft
+    det eller derover
+    liv
+    fællesskål?
+    true funktion
+
+    */
+
+
+    //-------------------------DICE SHIT END----------------------------
 
     //Actually does nothing, but i am too scared to deletus this fetus
     socket.on('randomRoom', () => {
@@ -471,6 +583,60 @@ function promptHasBeenUsed(randomPromptIndex, id) {
     }
     return false;
 }
+
+//---------------------------------DICE SHIT----------------------
+
+function diceSort(dice1, dice2) {
+    let tempArr = [dice1, dice2];
+
+    if (dice1 < dice2) {
+        tempArr = [dice2, dice1];
+    }
+
+    if ((tempArr[0] == 2 && tempArr[1] == 1) || (tempArr[0] == 3 && tempArr[1] == 1)) {
+        tempArr.reverse();
+    }
+
+    return tempArr;
+}
+
+//returns true if arrNew is a better roll than arrAgainst
+function cmpRoll(arrNew, arrAgainst, id) {
+    let i;
+    let j;
+
+    console.log('enter compare');
+    console.log(arrNew);
+    console.log(arrAgainst);
+
+    for(i = 0; i < idArr[id].mejerRanks.length; i++){
+        if(arrNew[0] == idArr[id].mejerRanks[i][0] && arrNew[1] == idArr[id].mejerRanks[i][1]) {
+            console.log("It werk i");
+            console.log(i);
+            break;
+        }
+    }
+
+    for(j = 0; j < idArr[id].mejerRanks.length; j++){
+        if(arrAgainst[0] == idArr[id].mejerRanks[j][0] && arrAgainst[1] == idArr[id].mejerRanks[j][1]) {
+            console.log("It werk j");
+            console.log(j);
+            break;
+        }
+    }
+
+    if(i > j){
+        console.log('true');
+        return true;
+    }else{
+        console.log('false');
+        return false;
+    }
+
+}
+
+
+//------------------------------DICE SHIT END-------------------------
 
 //Creates a new random room
 function randomRoom(socket, id) {
