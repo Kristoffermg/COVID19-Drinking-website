@@ -8,88 +8,96 @@ if (!socket.connected) {
 
 //Requests backend socket id
 socket.emit('getId');
+const videoGrid = document.getElementById('video-grid');
+
+socket.on('user-connected', userId => {
+    console.log('Enter user-connected');
+    connectToNewUser(userId, true);
+});
+
+socket.on('ringring', answerID => {
+    console.log('Enter ringring');
+    connectToNewUser(userId, false);
+});
 
 //Setup for the videochat
-const videoGrid = document.getElementById('video-grid');
-const myPeer = new Peer({
-    pingInterval: 2000,
-    config: {'iceServers': [
-      { url: 'stun:stun.l.google.com:19302'},
-      { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
-    ]} 
-  });
-const localVideo = document.createElement('video');
-localVideo.muted = true; 
-const peers = {};
+// const videoGrid = document.getElementById('video-grid');
+// const myPeer = new Peer({
+//     pingInterval: 2000,
+//     config: {'iceServers': [
+//       { url: 'stun:stun.l.google.com:19302'},
+//       { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
+//     ]} 
+//   });
+// const localVideo = document.createElement('video');
+// localVideo.muted = true; 
+// const peers = {};
 
 //Creates a video and audio stream
-navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
-    video: true,
-    audio: true
-}).then(stream => { // Sets up the peer to peer connection and video streams
-    addVideoStream(localVideo, stream, clientSocketId)
+// navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
+//     video: true,
+//     audio: true
+// }).then(stream => { // Sets up the peer to peer connection and video streams
+//     addVideoStream(localVideo, stream, clientSocketId)
 
-    //Establishes connection between clients, when getting called
-    myPeer.on('call', call => {
-        console.log('getting called...');
-        call.answer(stream);
-        const video = document.createElement('video');
-        call.on('stream', userVideoStream => {
-            console.log("In call, pre add");
-            addVideoStream(video, userVideoStream, call.peer);
-        });
-    });
+//     //Establishes connection between clients, when getting called
+//     myPeer.on('call', call => {
+//         console.log('getting called...');
+//         call.answer(stream);
+//         const video = document.createElement('video');
+//         call.on('stream', userVideoStream => {
+//             console.log("In call, pre add");
+//             addVideoStream(video, userVideoStream, call.peer);
+//         });
+//     });
 
-    //Connects user to each other
-    socket.on('user-connected', userId => {
-        connectToNewUser(userId, stream);
-    });
-});
+//     //Connects user to each other
+//     socket.on('user-connected', userId => {
+//         connectToNewUser(userId, stream);
+//     });
+// });
 
 //Disconnects users from each other
-socket.on('user-disconnected', userId => {
-    if (peers[userId]) peers[userId].close();
-});
+// socket.on('user-disconnected', userId => {
+//     if (peers[userId]) peers[userId].close();
+// });
 
 //Error cather
-myPeer.on('error', err =>{
-    console.log('myPeer error: ' + err);
-});
+// myPeer.on('error', err =>{
+//     console.log('myPeer error: ' + err);
+// });
 
 //Connects players to the right lobby
-myPeer.on('open', id => {
-    console.log('ja det er scuffed');
-    clientPeerId = id;
-    console.log("client id: " + id);
-    // let clientDiv = document.getElementById("idclient");
-    // console.log(clientDiv);
-    // clientDiv.setAttribute("id", "id" + id);
-    socket.emit('joinRoom', ROOM_ID, id, idFlag);
-});
+// myPeer.on('open', id => {
+//     console.log('ja det er scuffed');
+//     clientPeerId = id;
+//     console.log("client id: " + id);
+//     // let clientDiv = document.getElementById("idclient");
+//     // console.log(clientDiv);
+//     // clientDiv.setAttribute("id", "id" + id);
+//     
+// });
 
 //The helper function for connecting to new users
-function connectToNewUser(userId, stream) {
+function connectToNewUser(userId, flag) {
     console.log('calling. ring ring ring');
-    console.log('id to call: ' + userId);
-    const call = myPeer.call(userId, stream);
+    let check = document.querySelector("div.videoDiv#id" + clientSocketId);
+    console.log('flagSmile: ' + flag);
+    if (check == dontTouch || flag) {
+        socket.emit('answerCall', userId);
+    }
     console.log('post myPeer.call!!!!!');
-    const video = document.createElement('video');
-    call.on('stream', userVideoStream => {
-        console.log(userVideoStream);
-        console.log("Er det her????");
-        addVideoStream(video, userVideoStream, userId);
-        let clientName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p");
-        socket.emit('changeName', clientName.innerText, clientPeerId);
-    });
-    call.on('close', () => {
+    const video = document.createElement('img');
+    addVideoStream(video, userId);
+    socket.on('user-disconnected', () => {
         video.parentElement.remove();
     });
 
-    peers[userId] = call;
+    // peers[userId] = call;
 }
 
 //Creates videostream html element
-function addVideoStream(video, stream, userId) {
+function addVideoStream(video, userId) {
     let scuffedFix = document.getElementById("id" + userId);
     console.log("Scuffed Fix: " + scuffedFix);
     if (scuffedFix != dontTouch) {
@@ -99,17 +107,17 @@ function addVideoStream(video, stream, userId) {
     let videoDiv = document.createElement("div");
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
-    video.srcObject = stream;
-    video.addEventListener('loadedmetadata', () => {
-        video.play();
-    });
+
+    video.src = '../img/Dummy.png'; // skal være billede
+    
+    
     video.setAttribute("id", "id" + userId);
     videoDiv.append(video);
     let userPara = document.createElement("p");
     userPara.setAttribute("id", 'userNamePara');
     userPara.innerText = 'Guest';
     videoDiv.append(userPara);
-    console.log(videoGrid);
+    //console.log(videoGrid);
     videoGrid.append(videoDiv);
     console.log("DONESO");
 }
@@ -118,6 +126,8 @@ function addVideoStream(video, stream, userId) {
 socket.on('getId', id => {
     clientSocketId = id;
     console.log('clientSocketId: ' + clientSocketId);
+    const videoLOCAL = document.createElement('img');
+    addVideoStream(videoLOCAL, clientSocketId);
 });
 
 //Gets the roomID from the backend
@@ -141,6 +151,7 @@ socket.on('roomId', (roomId) => {
         if (lobbyUrl != dontTouch) lobbyUrl.value = document.URL;            
     }
 
+    socket.emit('joinRoom', ROOM_ID, idFlag);
     console.log('ROOOOOOOM ' + ROOM_ID);
 
     //ROOM_ID = roomId;
@@ -180,7 +191,7 @@ socket.on('changeName', (name, userId, userSocketId) =>{
 });
 
 //Changes the html page dynamically
-socket.on('changeHTML', meme => {
+socket.on('changeHTML', meme=> {
     //Getting body and head elements
     let body = document.body;
     let head = document.getElementById("head");

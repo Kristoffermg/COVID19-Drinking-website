@@ -184,7 +184,7 @@ io.on('connection', (socket) => {
     });
 
     //Joins an existing room based on the url, or creates one if nessesary
-    socket.on('joinRoom', (roomId, userId, idFlag) => {
+    socket.on('joinRoom', (roomId, idFlag) => {
         var d2 = new Date();
         console.log("");
         console.log(d2.toLocaleTimeString() + '  ' + d2.toLocaleDateString());
@@ -211,10 +211,14 @@ io.on('connection', (socket) => {
             }
         }
 
-        socket.to(roomId).broadcast.emit("user-connected", userId);
+        socket.to(roomId).broadcast.emit("user-connected", socket.id);
         socket.on('disconnect', () => {
-            socket.to(roomId).broadcast.emit('user-disconnected', userId);
+            socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
         });
+    });
+
+    socket.on('answerCall', (callerID) => {
+        io.to(callerID).emit('ringring', socket.id);
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
