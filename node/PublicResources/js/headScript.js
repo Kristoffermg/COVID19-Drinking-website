@@ -113,7 +113,7 @@ function addVideoStream(video, userId) {
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
 
-    video.src = '../img/Dummy.png'; // skal være billede
+    video.src = '../img/avatar.png'; // skal være billede
     
 
     video.setAttribute("id", "id" + userId);
