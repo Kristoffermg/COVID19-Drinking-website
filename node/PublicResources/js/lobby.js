@@ -9,8 +9,9 @@ usernameButton = document.getElementById("setUsername");
 settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
-let addPromt = document.getElementById("addPromt")
-let promtInput = document.getElementById('custompromttext')
+let addPrompt = document.getElementById("addPrompt")
+let promptInput = document.getElementById('customprompttext')
+let customPromptsList = document.getElementById('customPromptList');
 // newDebugMeme = document.getElementById("newDebugMeme");
 
 debug = document.querySelector("div.videoDiv#idclient");
@@ -59,8 +60,12 @@ usernameButton.addEventListener("click", () => {
 })
 
 //Adds promt
-addPromt.addEventListener("click", () => {
-    promtInput.value = "";
+addPrompt.addEventListener("click", () => {
+    let newPrompt = document.createElement("P");
+    newPrompt.innerText = promptInput.value;
+    customPromptsList.appendChild(newPrompt);
+    socket.emit('insertPromptQuery', promptInput.value);
+    //promptInput.value = "";
 });
 
 //PAAAAAAAAAAAAAAAAAAAAAAAAUSE!
