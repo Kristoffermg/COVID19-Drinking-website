@@ -33,11 +33,13 @@
         </div>
     </nav>
 
-    <h2>Har rullet knapperne</h2>
+    <h2>Memer</h2>
+    <p id="error" hidden='true'>ErrorMessage</p>
+    <br>
     <p  id="diceRoll">Her står hvad man ruller</p>
-    <button id="trueBtn">Truth</button>
-    <button id="lieBtn">Lie</button>
-    <select name="dice1" id="dice1">
+    <button id="trueBtn" hidden='true'>Truth</button>
+    <button id="lieBtn" hidden='true'>Lie</button>
+    <select name="dice1" id="dice1" hidden='true'>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -45,7 +47,7 @@
         <option value="5">5</option>
         <option value="6">6</option>
     </select>
-    <select name="dice2" id="dice2">
+    <select name="dice2" id="dice2" hidden='true'>
         <option value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -53,11 +55,9 @@
         <option value="5">5</option>
         <option value="6">6</option>
     </select>
-    <button id="deroverBtn">GO AGAINE</button>
-    <br><br>
-    <h2>Før man ruller knapperne</h2>
-    <button id="rollBtn">Roll</button>
-    <button id="liftBtn">Call Bullshit</button>
+    <button id="deroverBtn" hidden='true'>GO AGAINE</button>
+    <button id="rollBtn" hidden='true'>Roll</button>
+    <button id="liftBtn" hidden='true'>Call Bullshit</button>
 
 
     <div id="videoPlacement"></div>

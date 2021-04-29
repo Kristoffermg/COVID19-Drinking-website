@@ -128,6 +128,8 @@ function idObj(roomId, amountConnected) {
         this.lieRoll = [0,0];
         this.wasLastLie = false;
         this.mejerRanks = ranks;
+        this.currTurn = 0;
+        this.mejerLives = [];
     }
     
 }
@@ -264,6 +266,7 @@ io.on('connection', (socket) => {
                                 //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
                                 let neverHaveIEverPrompts = data.split(/\r?\n/);
                                 idArr[i].neverGame(neverHaveIEverPrompts);
+                                
                                 //console.log(idArr[i]);
                             });
                             console.log("pog");
@@ -314,6 +317,7 @@ io.on('connection', (socket) => {
                                 idArr[i].mejer(mejerRanks);
                                 console.log("RANKS!!!!!!!!!!!");
                                 console.log(idArr[i].mejerRanks);
+                                mejerLivesSetup(i);
                                 //console.log(idArr[i]);
                             });
                             console.log("pog");
@@ -398,17 +402,15 @@ io.on('connection', (socket) => {
     });
 
     //---------------------------DICE SHIT----------------------------
+    socket.on('mejerFirstTurn', () => {
+        let id = findID(socket.room);
+        io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
+    });
 
     socket.on('mejerRoll', () => {
         let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-        let id;
-
-        for (let i = 0; i < idArr.length; i++) {
-            if (idArr[i].roomId == socket.room) {
-                id = i;
-            }
-        }
+        let id = findID(socket.room);
 
         if(idArr[id].wasLastLie){
             idArr[id].rollToBeat = idArr[id].lieRoll;
@@ -423,26 +425,29 @@ io.on('connection', (socket) => {
     });
 
     socket.on('mejerTrue', () => {
-        let id;
+        let id = findID(socket.room);
 
-        for (let i = 0; i < idArr.length; i++) {
-            if (idArr[i].roomId == socket.room) {
-                id = i;
-            }
+
+
+        if(!cmpRoll(idArr[id].lastRoll, idArr[id].rollToBeat, id)){
+            socket.emit('trueError');
+        }else{
+            nextTurn(id);
+            socket.emit('notTurn');
+
+            let result = (String(idArr[id].lastRoll[0]) + String(idArr[id].lastRoll[1]));
+
+            //socket.emit('incomingRoll', (result));
+            io.to(socket.room).emit('incomingRoll', (result));
+
+            idArr[id].wasLastLie = false;
         }
 
-        
-        idArr[id].wasLastLie = false;
     });
 
     socket.on('mejerLie', (dice1, dice2) => {
-        let id;
+        let id = findID(socket.room);
 
-        for (let i = 0; i < idArr.length; i++) {
-            if (idArr[i].roomId == socket.room) {
-                id = i;
-            }
-        }
         
         idArr[id].lieRoll = diceSort(dice1, dice2);
         console.log(idArr[id].lieRoll);
@@ -452,29 +457,88 @@ io.on('connection', (socket) => {
         }else{
 
             console.log('mejerLie else triggered');
-            //næste tur
+            nextTurn(id);
+            socket.emit('notTurn');
+
+            let result = (String(idArr[id].lieRoll[0]) + String(idArr[id].lieRoll[1]));
+
+            io.to(socket.room).emit('incomingRoll', (result));
+
 
             idArr[id].wasLastLie = true;
         }
     });
 
     socket.on('mejerDerover', () => {
-        cmpRoll([1,1], [5,4], 0);
+        //cmpRoll([1,1], [5,4], 0);
+        let id = findID(socket.room);
+
+        let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        
+        idArr[id].lastRoll = diceSort(dice1, dice2);
+        console.log('Det eller derover roll');
+        console.log(idArr[id].lastRoll);
+
+        nextTurn(id);
+        socket.emit('notTurn');
+
+        io.to(socket.room).emit('incomingRoll', ('Det eller derover'));
+
     });
 
     socket.on('mejerLift', () => {
-        
+        let id = findID(socket.room);
+
+        console.log('mejerLift');
+
+        if(idArr[id].wasLastLie){
+            //ham der løftede vandt
+
+            for(let i = 0; i < idArr[id].mejerLives.length; i++){
+                if(idArr[id].mejerLives[i][0] == socket.id){
+
+                    if(i == 0){
+                        i = idArr[id].mejerLives.length-1;
+                    }else{
+                        i--;
+                    }
+
+                    mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+
+                    for(let j = 0; j < 2; j++){
+
+                        if(idArr[id].currTurn == 0){
+                            idArr[id].currTurn = idArr[id].mejerLives.length-1;
+                        }else{
+                            idArr[id].currTurn--;
+                        }
+                    }
+                    nextTurn(id);
+                    socket.emit('notTurn');
+                    break;
+                }
+            }
+            console.log('mejerLift true');
+        }else{
+            mejerLivesDecrement(socket.id, id);
+            console.log('mejerLift false');
+
+            if(idArr[id].currTurn == 0){
+                idArr[id].currTurn = idArr[id].mejerLives.length-1;
+            }else{
+                idArr[id].currTurn--;
+            }
+
+            nextTurn(id);
+        }
+
+
     }); 
     
     /*
 
-    dialogbox skal yeetes
-    næste tur funktionalitet
-    løft
-    det eller derover
-    liv
     fællesskål?
-    true funktion
 
     */
 
@@ -498,6 +562,7 @@ io.on('connection', (socket) => {
 
     socket.on('makeAdmin', () => {
         socket.admin = true;
+        console.log("post make admin true");
     });
 
     //Runs when socket disconnects from a room
@@ -533,8 +598,10 @@ function disconnectHandler (socket) {
                         console.log(idArr[i].userIdArr);
                         let newAdmin = Math.floor(Math.random() * (idArr[0].userIdArr.length));
                         io.to(idArr[i].userIdArr[newAdmin]).emit("makeAdmin");
+                        console.log("Print i slutning af if");
                     }
-		        }
+                    break;
+                }
 	        }
 	        if(idArr[i].amountConnected == 0){
                 delete idArr[i];
@@ -544,6 +611,15 @@ function disconnectHandler (socket) {
 	        }
 	    }
 	}
+}
+
+//finder index på rum i idArr
+function findID(roomId){
+    for (let i = 0; i < idArr.length; i++) {
+        if (idArr[i].roomId == roomId) {
+            return i;
+        }
+    }
 }
 
 function countdown(time, socket, id) {
@@ -632,6 +708,62 @@ function cmpRoll(arrNew, arrAgainst, id) {
         console.log('false');
         return false;
     }
+
+}
+
+function nextTurn(id) {
+    console.log('currTurn');
+    console.log(idArr[id].currTurn);
+    if (idArr[id].currTurn < idArr[id].mejerLives.length - 1) {
+        idArr[id].currTurn++;
+    } else {
+        idArr[id].currTurn = 0;
+    }
+
+    io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('clientTurn');
+}
+
+function mejerLivesSetup(id){
+    let tempArray = [];
+
+    for(let i = 0; i < idArr[id].userIdArr.length; i++){
+
+        tempArray = [idArr[id].userIdArr[i], 6];
+
+        idArr[id].mejerLives[i] = tempArray;
+    }
+    console.log('mejerLivesSetup');
+    console.log(idArr[id].mejerLives);
+}
+
+function mejerLivesDecrement(playerID, roomID){
+
+    for(let i = 0; i < idArr[roomID].mejerLives.length; i++){
+        if(playerID == idArr[roomID].mejerLives[i][0]){
+            idArr[roomID].mejerLives[i][1]--;
+            io.to(idArr[roomID].roomId).emit('looseLife', idArr[roomID].mejerLives[i][0]);
+            if(idArr[roomID].mejerLives[i][1] == 0){
+                console.log('he die');
+                //here people die
+                io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0]);
+                delete idArr[roomID].mejerLives[i];
+                pushArray(idArr[roomID].mejerLives, i);
+                idArr[roomID].mejerLives.pop();
+                io.to(playerID).emit('notTurn');
+                if(idArr[roomID].mejerLives.length == 1) {
+                    console.log("GAME OVER SMILE");
+                    io.to(idArr[roomID].roomId).emit('gameOver');
+                }
+            }
+        }
+    }
+    idArr[roomID].rollToBeat = [0,0];
+    idArr[roomID].lastRoll = [0,0];
+    idArr[roomID].lieRoll = [0,0];
+    idArr[roomID].wasLastLie = false;
+
+    console.log('mejerLivesDecrement');
+    console.log(idArr[roomID].mejerLives);
 
 }
 
