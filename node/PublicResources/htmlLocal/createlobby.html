@@ -51,6 +51,7 @@
                 <input type="text" id="username" name="username" placeholder="Type you username here!">
                 <input type="button" value="Set Username" id="setUsername" name="setUsername">
             </form>
+            <p style="display: none;" id="usernameSet">Username set</p>
         </div>
 
     <div id="settingstab">
@@ -70,12 +71,12 @@
           <option value="30s">30s</option>
         </select>
       </form>
-      <div class="customPrompt">
-        <label for="customPromtText">Add custom prompts</label><br>
+      <div class="customPromptContainer">
+        <h3>Custom Promts</h3>
         <input type="text" class="customPromptText" name="customPromptText" placeholder="Type you custom promtps here!" id="customprompttext">
         <input type="button" value="Add prompt" id="addPrompt" name="Add prompt">
         <div id="customPromptList">
-          <p>List of custom prompts</p>
+          <h4>Custom promt list</h4>
         </div>
       </div>
       

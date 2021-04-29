@@ -15,6 +15,8 @@ document.getElementById("timer").style.setProperty("--duration", 10)
 */ 
 console.log("Admin status: " + isAdmin);
 
+socket.emit('mixCustomAndWrittenPrompts');
+
 // Prevents an issue where a new prompt would be generated when people other than the admin joins
 if (isAdmin) socket.emit('neverLogic', true);
 
@@ -97,6 +99,13 @@ socket.on('nextPrompt', prompt => {
 
 socket.on('gameOver', () => {
     neverText.innerHTML = "GAME OVER LOSERS";
+});
+
+socket.on('voting', (voteCount, votingRight, firstTurn) => {
+    if (firstTurn == false) {
+        let votes = document.getElementById("votes");
+        votes.innerHTML = `${voteCount}/${votingRight} votes`;
+    }
 });
 
 iHave.addEventListener("click", () => {

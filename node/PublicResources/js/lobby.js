@@ -57,15 +57,36 @@ usernameButton.addEventListener("click", () => {
     console.log("name: " + newUserName);
     socket.emit("changeName", newUserName);
     newUserName.value = "";
+
+    let usernameSet = document.getElementById("usernameSet");
+    usernameSet.style.display = "block";
+    let op = 1;
+    let timer = setInterval(function () {
+        if(op <= 0.1) {
+            clearInterval(timer);
+            usernameSet.style.display = "none";
+        }
+        usernameSet.style.opacity = op;
+        usernameSet.style.filter = "alpha(opacity=" + op * 100 + ")";
+        op -= op * 0.1;
+    }, 100);
+
 })
 
 //Adds promt
 addPrompt.addEventListener("click", () => {
     let newPrompt = document.createElement("P");
+    newPrompt.classList.add("customPromtListText");
     newPrompt.innerText = promptInput.value;
     customPromptsList.appendChild(newPrompt);
-    socket.emit('insertPromptQuery', promptInput.value);
-    //promptInput.value = "";
+
+    let deletebutton = document.createElement("button");
+    deletebutton.innerText = "";
+    deletebutton.classList.add("deleteBtn");
+    newPrompt.appendChild(deletebutton);
+
+    socket.emit('storeCustomPrompt', promptInput.value);
+    promptInput.value = "";
 });
 
 //PAAAAAAAAAAAAAAAAAAAAAAAAUSE!

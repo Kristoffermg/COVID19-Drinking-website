@@ -39,8 +39,7 @@ const con = mysql.createConnection({
 
 con.connect(function(err) {
     if(err) console.log(err);
-    console.log("Connected to database established");
-    con.query("insert into NeverHaveIEverPrompts(roomID, promptID, prompt) values(0, 1, 'asdjas')");
+    else console.log("Connected to database established");
 });
 
 app.get('/', function(req, res) {
@@ -127,7 +126,9 @@ function idObj(roomId, amountConnected) {
     this.startedGame = 'none';
 
     this.neverGame = function NeverObj(neverPrompts) {
+        this.mixCustomAndWrittenPrompts = true;
         this.neverHaveIEverPrompts = neverPrompts;
+        this.customPrompts = [];
         this.usedPrompts = [];
         this.counter = 0;
         this.voteCount = 0;
@@ -147,6 +148,7 @@ let idArr = [];
 //All the socket functions
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
+    idArr[i].neverGame(neverHaveIEverPrompts);
 
     //Leaves own id-room
     console.log(socket.rooms);
@@ -341,13 +343,13 @@ io.on('connection', (socket) => {
                 id = i;
             }
         }
-
+        console.log("IDWORKS ->>>>>>>>>>>>" + id);
         idArr[id].voteCount++;
         console.log("votes: " + idArr[id].voteCount);
         console.log("People with voting right: " + idArr[id].votingRight);
+        io.to(socket.room).emit('voting', idArr[id].voteCount, idArr[id].votingRight, firstTurn);
 
         if ((idArr[id].voteCount > (idArr[id].votingRight / 2)) || firstTurn) {
-            console.log("TRIGGER");
             if(unusedPromptsLeft(id)) {
                 let randomPromptIndex = randomPrompt(id);
                 idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
@@ -416,6 +418,31 @@ io.on('connection', (socket) => {
         disconnectHandler(socket);
     });
 
+    socket.on('storeCustomPrompt', prompt => {
+        let id;
+        for(let i = 0; i < idArr.length; i++) {
+            if(idArr[i].roomId === socket.room) {
+                id = i;
+            }
+        }
+        console.log("IDNOWORK ->>>>>>>>>>>>" + id);
+        // Ternary operator in case the customPrompts array has no values (undefined)
+        let storeIndex = idArr[id].customPrompts !== undefined ? idArr[id].customPrompts.length: 0;
+        console.log(`Index ${storeIndex} is prompt ${prompt}`);
+        idArr[id].customPrompts[storeIndex] = prompt;
+        console.log(idArr[id].customPrompts);
+        console.log("wassup does this worki? " + idArr[id].customPrompts[storeIndex]);
+    });
+
+    socket.on('mixCustomAndWrittenPrompts', () => {
+        let id = getRoomID(socket);
+        //neverHaveIEverPrompts.length + i + 1
+        for(let i = 0; i < idArr[id].customPrompts.length; i++) {
+            idArr[id].neverHaveIEverPrompts[i] = idArr[id].customPrompts[i];
+        }
+        console.log(idArr[id].neverHaveIEverPrompts);
+    });
+
     socket.on('insertPromptQuery', prompt => {
         con.query("INSERT INTO NeverHaveIEverPrompts(roomID, promptID, prompt) VALUES(?, ?, ?)", [
             getRoomID(socket),
@@ -432,6 +459,10 @@ io.on('connection', (socket) => {
         });
     });
 });
+
+function yoo(id) {
+    idArr[id].customPrompts[0] = "wtf";
+}
 
 function getRoomID(socket) {
     for(let i = 0; i < idArr.length; i++) {
@@ -495,7 +526,8 @@ function countdown(time, socket, id) {
 }
 
 function unusedPromptsLeft(id) {
-    if(idArr[id].usedPrompts.length === undefined) idArr[id].usedPrompts[0] = -1;
+    idArr[id].customPrompts[0] = "wtf";
+    console.log("->>>>>>>>>>>>>>>" + idArr[id].customPrompts[0]);
     if(idArr[id].usedPrompts.length !== idArr[id].neverHaveIEverPrompts.length) {
         return true;
     }
@@ -504,8 +536,9 @@ function unusedPromptsLeft(id) {
 
 function randomPrompt(id) {
     let randomPromptIndex;
+    let promptArrLength = idArr[id].mixCustomAndWrittenPrompts === true ? idArr[id].neverHaveIEverPrompts.length : idArr[id].customPrompts.length;
     do {
-        randomPromptIndex = Math.floor(Math.random() * idArr[id].neverHaveIEverPrompts.length);
+        randomPromptIndex = Math.floor(Math.random() * promptArrLength);
     } while(promptHasBeenUsed(randomPromptIndex, id));
     idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
     idArr[id].counter++;

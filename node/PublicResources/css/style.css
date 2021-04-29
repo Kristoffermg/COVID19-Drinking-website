@@ -634,6 +634,10 @@ a.link{
   top: 0.1rem;
 }
 
+#usernameSet {
+  margin-top: 3px;
+}
+
 #videos {
   position: relative;
   margin-top: 30px;
@@ -704,8 +708,50 @@ video {
   top: -4.5rem;
 }
 
-.customPromtText {
+.customPromptContainer {
+  margin-top: 10px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#customprompttext {
+  margin: 5px;
   width: 50%;
+}
+
+#customPromptList {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 10px;
+  font-weight: normal;
+}
+
+.customPromtListText {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin: auto;
+}
+
+.deleteBtn {
+  text-align: center;
+  margin: 0 0 0 5px;
+  height: 1.5em;
+  width: 1.5em;
+  font-family: Arial, Verdana;   
+  background: #f0f0f0 url(https://www.logolynx.com/images/logolynx/ab/abb9ce94099701e3a9b62d2d0700f193.png);
+  background-size: 8px 8px;
+  background-position: center;
+  background-repeat: no-repeat; 
+  border: none;
+  border-radius: 100%;
+}
+
+.deleteBtn:hover {
+  cursor: pointer;
+  height: 1.6em;
+  width: 1.6em;
 }
 
 #startGame, #copyURL, #setUsername, #nexttext, #addPromt {
@@ -725,6 +771,7 @@ video {
 
 #startGame, #backToFrontpage {
   margin: auto;
+
   margin-top: 50px;
   padding: 25px 40px 25px 40px;
   border: solid 3px black;
@@ -789,6 +836,11 @@ overflow: auto;
   flex-direction: column;
 }
 
+#votes {
+  margin: 0 0 5% 0;
+  color: white;
+}
+
 #neverText {
   font-size: 30px;
   color: white;
@@ -819,7 +871,7 @@ overflow: auto;
 
 #nextText {
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .promt {
@@ -889,4 +941,5 @@ overflow: auto;
   font-size: 40px;
   padding: 4%;
 }
+
 
