@@ -15,8 +15,6 @@ document.getElementById("timer").style.setProperty("--duration", 10)
 */ 
 console.log("Admin status: " + isAdmin);
 
-socket.emit('mixCustomAndWrittenPrompts');
-
 // Prevents an issue where a new prompt would be generated when people other than the admin joins
 if (isAdmin) socket.emit('neverLogic', true);
 
@@ -41,6 +39,8 @@ socket.on('activateNextRoundBtn', () => {
     iHave.disabled = true;
     iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
+
+    if (neverAnswer == true) sipText.style.display = "block";
 })
 
 socket.on('revealAnswer', (answerArray) => {
@@ -98,7 +98,7 @@ socket.on('nextPrompt', prompt => {
 });
 
 socket.on('gameOver', () => {
-    neverText.innerHTML = "GAME OVER LOSERS";
+    neverText.innerHTML = "GAME OVER, CHEERS!!";
 });
 
 socket.on('voting', (voteCount, votingRight, firstTurn) => {

@@ -898,10 +898,27 @@ overflow: auto;
 }
 
 .chat {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   height: 100%;
   border-right: solid 2px white;
   color: white;
-  align-self: center;
+}
+
+#message {
+  height: 100%;
+  border-top: solid 2px white;
+  border-bottom: solid 2px white;
+}
+
+#sendBTN {
+  border: none;
+}
+
+#sendBTN:hover {
+  cursor: pointer;
+  background-color: rgb(97, 97, 97);
 }
 
 @keyframes roundtime {

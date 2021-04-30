@@ -9,9 +9,10 @@ usernameButton = document.getElementById("setUsername");
 settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
-let addPrompt = document.getElementById("addPrompt")
-let promptInput = document.getElementById('customprompttext')
-let customPromptsList = document.getElementById('customPromptList');
+const addPrompt = document.getElementById("addPrompt")
+const promptInput = document.getElementById('customprompttext')
+const customPromptsList = document.getElementById('customPromptList');
+const useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
 // newDebugMeme = document.getElementById("newDebugMeme");
 
 debug = document.querySelector("div.videoDiv#idclient");
@@ -34,7 +35,8 @@ debug = document.querySelector("div.videoDiv#idclient");
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
     let roundtimeSelect = document.getElementById("roundtimeSelect");
-    socket.emit('startGame', gameSelect.value, roundtimeSelect.value);
+    console.log("CHECKBOX:" + useCustomPromptsExclusively.checked)
+    socket.emit('startGame', gameSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
 });
 
 
@@ -85,7 +87,15 @@ addPrompt.addEventListener("click", () => {
     deletebutton.classList.add("deleteBtn");
     newPrompt.appendChild(deletebutton);
 
+    console.log("LOL ->" + promptInput.value);
     socket.emit('storeCustomPrompt', promptInput.value);
+
+    deletebutton.addEventListener("click", () => {
+        let prompt = deletebutton.parentElement.innerText;
+        socket.emit('deleteCustomPrompt', prompt);
+        newPrompt.remove();
+    });
+
     promptInput.value = "";
 });
 
