@@ -407,20 +407,15 @@ io.on('connection', (socket) => {
         io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
 
         io.to(idArr[id].roomId).emit('getUserName');
-        io.to(idArr[id].roomId).emit('setTurnOrder');
+        //io.to(idArr[id].roomId).emit('setTurnOrder');
     });
 
     socket.on('mejerRoll', () => {
         let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let id = findID(socket.room);
-        let screenName;
 
-        for (let i = 0; i < idArr[id].mejerLives.length; i++) {
-            if (idArr[id].mejerLives[i][0] == socket.id) {
-                screenName = idArr[id].mejerLives[i][2];
-            }
-        }
+        console.log(idArr[id]);
 
         if(idArr[id].wasLastLie){
             idArr[id].rollToBeat = idArr[id].lieRoll;
@@ -431,7 +426,7 @@ io.on('connection', (socket) => {
         idArr[id].lastRoll = diceSort(dice1, dice2);
         console.log(idArr[id].lastRoll);
 
-        socket.emit("mejerRoll", idArr[id].lastRoll, screenName);
+        socket.emit("mejerRoll", idArr[id].lastRoll);
     });
 
     socket.on('mejerTrue', () => {

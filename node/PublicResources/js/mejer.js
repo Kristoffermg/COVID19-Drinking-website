@@ -68,9 +68,9 @@ socket.on('firstTurn', () => {
     rollEnabled = true;
 });
 
-socket.on('setTurnOrder')
+//socket.on('setTurnOrder')
 
-socket.on('mejerRoll', (lastRoll, screenName) => {
+socket.on('mejerRoll', (lastRoll) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
 });
 
