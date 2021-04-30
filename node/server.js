@@ -407,7 +407,20 @@ io.on('connection', (socket) => {
         io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
 
         io.to(idArr[id].roomId).emit('getUserName');
-        //io.to(idArr[id].roomId).emit('setTurnOrder');
+        io.to(idArr[id].roomId).emit('setTurnOrder', idArr[id].mejerLives);
+    });
+
+    socket.on('turnIndicator',(turnStart) => {
+        let id = findID(socket.room);
+        console.log(socket.id);
+        console.log(turnStart);
+        console.log("-------");
+        if (turnStart) {
+            io.to(idArr[id].roomId).emit('turnIndicator', idArr[id].mejerLives[idArr[id].currTurn][0], idArr[id].mejerLives, turnStart);
+        } else {
+            io.to(idArr[id].roomId).emit('turnIndicator', socket.id, idArr[id].mejerLives, turnStart);
+        }
+
     });
 
     socket.on('mejerRoll', () => {
@@ -444,6 +457,8 @@ io.on('connection', (socket) => {
             socket.emit('trueError');
         }else{
             nextTurn(id);
+            console.log("_-----------------------------------------------");
+            console.log('SocketID: ' + socket.id);
             socket.emit('notTurn');
 
             let result = (String(idArr[id].lastRoll[0]) + String(idArr[id].lastRoll[1]));
@@ -544,7 +559,13 @@ io.on('connection', (socket) => {
                         }
                     }
                     nextTurn(id);
+                    io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
                     socket.emit('notTurn');
+                    console.log('-------------');
+                    console.log("currTurn");
+                    console.log(idArr[id].currTurn);
+                    console.log(idArr[id].mejerLives);
+                    console.log('-------------');
                     break;
                 }
             }
@@ -560,6 +581,7 @@ io.on('connection', (socket) => {
             }
 
             nextTurn(id);
+            io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
         }
 
 
@@ -747,7 +769,7 @@ function cmpRoll(arrNew, arrAgainst, id) {
         }
     }
 
-    if(i > j){
+    if(i >= j){
         console.log('true');
         return true;
     }else{
@@ -794,12 +816,12 @@ function mejerLivesDecrement(playerID, roomID){
             if(idArr[roomID].mejerLives[i][1] == 0){
                 console.log('he die');
                 //here people die
+                io.to(playerID).emit('notTurn');
                 io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0], screenName);
                 io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} is dead`);
                 delete idArr[roomID].mejerLives[i];
                 pushArray(idArr[roomID].mejerLives, i);
                 idArr[roomID].mejerLives.pop();
-                io.to(playerID).emit('notTurn');
                 if(idArr[roomID].mejerLives.length == 1) {
                     console.log("GAME OVER SMILE");
                     io.to(idArr[roomID].roomId).emit('gameOver');
