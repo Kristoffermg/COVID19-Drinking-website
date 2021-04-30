@@ -141,9 +141,9 @@ textMsg.addEventListener("keyup", function(event) {
       // Cancel the default action, if needed
       event.preventDefault();
       // Trigger the button element with a click
-      document.getElementById("sendBTN").click();
+      sendBTN.click();
     }
-  });
+});
 
 sendBTN.addEventListener("click", () => {
     sendMessage();

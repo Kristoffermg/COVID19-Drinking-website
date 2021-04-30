@@ -9,10 +9,12 @@ usernameButton = document.getElementById("setUsername");
 settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
-const addPrompt = document.getElementById("addPrompt")
-const promptInput = document.getElementById('customprompttext')
-const customPromptsList = document.getElementById('customPromptList');
-const useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
+let addPrompt = document.getElementById("addPrompt")
+let promptInput = document.getElementById('customprompttext')
+let customPromptsList = document.getElementById('customPromptList');
+let useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
+let usernameInput = document.getElementById('username');
+
 // newDebugMeme = document.getElementById("newDebugMeme");
 
 debug = document.querySelector("div.videoDiv#idclient");
@@ -51,6 +53,14 @@ logo.addEventListener("click", () => {
     socket.emit("debug");
 });
 
+usernameInput.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      usernameButton.click();
+    }
+});
+
 //Changes the username
 usernameButton.addEventListener("click", () => {
     let newUserName = sanitize(document.getElementById("username").value);
@@ -72,6 +82,14 @@ usernameButton.addEventListener("click", () => {
     }, 100);
 
 })
+
+promptInput.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      addPrompt.click();
+    }
+});
 
 //Adds promt
 addPrompt.addEventListener("click", () => {
