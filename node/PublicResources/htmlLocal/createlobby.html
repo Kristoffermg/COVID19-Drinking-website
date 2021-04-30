@@ -32,16 +32,8 @@
                 <li class="navbar__item">
                     <a href="/GamesAndRules" class="navbar__links" id="Games rules">Game rules</a>
                 </li>
-                <!--<li class="navbar__btn">
-            <a href="#sign-up" class="button" id="signup">Contact</a>
-          </li>-->
             </ul>
         </div>
-    </nav>
-
-    <!-- <div class="settingstab">
-    <h2 class="Settingh" id="debugMeme">Settings</h2>
-    </div> -->
     </nav>
 
     <section class="contentSection">
@@ -53,52 +45,59 @@
             </form>
             <p style="display: none;" id="usernameSet">Username set</p>
         </div>
+    <div id="lobbyContainer">
+      <div class="lobbyContent">
+        <div id="settingstab">
+          <h2 class="Settingh">Settings</h2>
+          <form class="game_settings_form">
+            <label class="games__and__rounds">Choose a game:</label> 
+            <select class="gameselect" form="gameform" id="gameSelect">
+              <option value="prompt">Prompt</option>
+              <option value="dice">Dice</option>
+              <option value="card">Card</option>
+            </select><br>
+            <label class="games__and__rounds">Set roundtime:</label>
+            <select class="gameselect" form="timeform" id="roundtimeSelect">
+              <option value="1s">1s (testing purposes)</option>
+              <option value="10s">10s</option>
+              <option value="15s">15s</option>
+              <option value="30s">30s</option>
+            </select>
+          </form>
+          <div class="customPromptContainer">
+            <h3>Custom prompts</h3>
+            <div>
+              <input type="checkbox" id="useCustomPromptsExclusively" name="useCustomPromptsExclusively">
+              <label for="useCustomPromptsExclusively">Use custom prompts exclusively</label>
+            </div>
+            <input type="text" class="customPromptText" name="customPromptText" placeholder="Type you custom promtps here!" id="customprompttext">
+            <input type="button" value="Add prompt" id="addPrompt" name="Add prompt">
+            <div id="customPromptList">
+              <h4>Custom promt list</h4>
+            </div>
+          </div>
+          
+          <div class="url-div">
+            <label id="usernameLabel" for="lobbyurl">Lobby URL:</label>
+            <input type="text" id="lobbyurl" name="lobbyurl" readonly="readonly">
+            <script>
+              const lobbyURL = document.getElementById("lobbyurl")
+              lobbyURL.value = window.location
+            </script>
+            <input type="button" value="Copy URL" id="copyURL" name="copyURL">
+          </div>
+        </div>
+      </div>
 
-    <div id="settingstab">
-      <h2 class="Settingh">Settings</h2>
-      <form class="game_settings_form">
-        <label class="games__and__rounds">Choose a game:</label> 
-        <select class="gameselect" form="gameform" id="gameSelect">
-          <option value="prompt">Prompt</option>
-          <option value="dice">Dice</option>
-          <option value="card">Card</option>
-        </select><br>
-        <label class="games__and__rounds">Set roundtime:</label>
-        <select class="gameselect" form="timeform" id="roundtimeSelect">
-          <option value="1s">1s (testing purposes)</option>
-          <option value="10s">10s</option>
-          <option value="15s">15s</option>
-          <option value="30s">30s</option>
-        </select>
-      </form>
-      <div class="customPromptContainer">
-        <h3>Custom prompts</h3>
-        <div>
-          <input type="checkbox" id="useCustomPromptsExclusively" name="useCustomPromptsExclusively">
-          <label for="useCustomPromptsExclusively">Use custom prompts exclusively</label>
-        </div>
-        <input type="text" class="customPromptText" name="customPromptText" placeholder="Type you custom promtps here!" id="customprompttext">
-        <input type="button" value="Add prompt" id="addPrompt" name="Add prompt">
-        <div id="customPromptList">
-          <h4>Custom promt list</h4>
-        </div>
+      <div class="lobbyContent">
+        <div id="videos">
+          <div id="video-grid"></div>
+        </div> 
       </div>
       
-      <div class="url-div">
-        <label id="usernameLabel" for="lobbyurl">Lobby URL:</label>
-        <input type="text" id="lobbyurl" name="lobbyurl" readonly="readonly">
-        <script>
-          const lobbyURL = document.getElementById("lobbyurl")
-          lobbyURL.value = window.location
-        </script>
-        <input type="button" value="Copy URL" id="copyURL" name="copyURL">
-      </div>
     </div>
     <input type="button" value="Start game" id="startGame" name="startGame">
   </section>
-  <div id="videos">
-      <div id="video-grid"></div>
-  </div> 
   
   <footer>
     <div class="footer">

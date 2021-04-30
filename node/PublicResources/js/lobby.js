@@ -35,7 +35,6 @@ debug = document.querySelector("div.videoDiv#idclient");
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
     let roundtimeSelect = document.getElementById("roundtimeSelect");
-    console.log("CHECKBOX:" + useCustomPromptsExclusively.checked)
     socket.emit('startGame', gameSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
 });
 
@@ -55,7 +54,6 @@ logo.addEventListener("click", () => {
 //Changes the username
 usernameButton.addEventListener("click", () => {
     let newUserName = sanitize(document.getElementById("username").value);
-    //console.log("username: " + newUserName);
     console.log("name: " + newUserName);
     socket.emit("changeName", newUserName);
     newUserName.value = "";
@@ -111,7 +109,6 @@ socket.on('checkAdminStatus', status => {
 });
 
 socket.on('makeAdmin', () => {
-    console.log("U is admin :)");
     settingsTab.hidden = false;
     startGame.hidden = false;
     isAdmin = true; 

@@ -578,18 +578,17 @@ a.link{
 }
 
 #settingstab {
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
   background-color: rgb(129, 224, 224);
-  margin: auto;
-  margin-top: 30px;
   border-style: solid;
   border-width: .5rem;
   border-radius: 1rem;
-  width: 700px;
-  padding-bottom: 20px;
-  text-align: center;
 }
 
 .Settingh {
+  align-self: center;
   margin-bottom: 40px;
   /*padding: 8px 12px;
   right: 30%;
@@ -639,13 +638,8 @@ a.link{
 }
 
 #videos {
-  position: relative;
-  margin-top: 30px;
-  margin-bottom: 50px;
-  /*border: 3px solid black;*/
-  left: 22%;
-  width: 56%;
   height: fit-content;
+  margin: 10px;
 }
 
 #video-grid, #videoPlacement {
@@ -754,7 +748,7 @@ video {
   width: 1.6em;
 }
 
-#startGame, #copyURL, #setUsername, #nexttext, #addPromt {
+#startGame, #copyURL, #setUsername, #nexttext, #addPrompt {
   background-color: white;
   color: black;
   border: solid 1px;
@@ -763,7 +757,7 @@ video {
   cursor: pointer;
 }
 
-#startGame:hover, #copyURL:hover, #setUsername:hover, #nexttext:hover, #addPromt:hover {
+#startGame:hover, #copyURL:hover, #setUsername:hover, #nexttext:hover, #addPrompt:hover {
   background-color: rgb(0, 204, 255);
   box-shadow: 2px 2px rgb(0, 0, 0);
   transform: translateY(-2%);
@@ -800,16 +794,17 @@ overflow: auto;
   margin: auto;
   text-align: center;
   justify-content: center;
-  width: 50%;
+  width: 70%;
   margin-top: 5%;
 }
 
-.container {
-  margin: auto;
-  background-color: rgb(129, 224, 193);
-  margin-top: 20px;
-  border-radius: 10px;
-  padding: 10px;
+#lobbyContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.lobbyContent {
+  width: 50%;
 }
 
 .Container {
@@ -827,13 +822,22 @@ overflow: auto;
 }
 
 .chatContainer {
-  width: 30%;
+  width: 20%;
+  border: solid 2px white;
 }
 
 .promtContainer {
-  width: 70%;
+  width: 60%;
   display: flex;
   flex-direction: column;
+  border: solid 2px white;
+  transform: translateX(-30%);
+  background: linear-gradient(to bottom, rgb(129, 224, 224), rgb(129, 150, 224));
+}
+
+#videoContainer {
+  display: flex;
+  justify-content: space-between;
 }
 
 #votes {
@@ -912,7 +916,7 @@ overflow: auto;
 }
 
 #message {
-  height: 400px;
+  height: 420px;
   border-top: solid 2px rgb(255, 255, 255);
   border-bottom: solid 2px rgb(255, 255, 255);
   overflow: auto;
