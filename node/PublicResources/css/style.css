@@ -889,6 +889,59 @@ overflow: auto;
 p#diceRoll{
   color: #fff;
   font-size: 50px;
-  -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: black;
+  
+  width: 90%;
+  position: relative;
+  text-align: center;
+  margin: auto;
+}
+
+div.main{
+  position: relative;
+  align-items: center;
+  width: 30%;
+  height: 20%;
+  top: 75px;
+  margin-left: auto;
+  margin-right: auto;
+  background: rgb(68, 183, 212);
+  border: solid 2px white;
+}
+
+div.clickersMeyer{
+  background-color: #4CAF50; 
+}
+
+#logBox{
+  width: 15%;
+  height: 10%;
+  margin-left: 25px;
+  margin-bottom: 100px;
+  background: rgb(68, 183, 212);
+  border: solid 2px white;
+  position: relative;
+  left: 65%;
+  justify-content: center;
+  align-items: center;
+}
+
+.logBoxTag{
+color: white;
+}
+
+h2.meyer{
+  position: relative;
+  top: -75px;
+}
+
+.Meyerbuttons{
+  background-color: #ffffff;
+  border: none;
+  color: rgb(0, 0, 0);
+  padding: 12px 18px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  border: solid 2px black;
+  font-size: 16px;
 }
