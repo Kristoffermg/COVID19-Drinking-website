@@ -769,7 +769,7 @@ function cmpRoll(arrNew, arrAgainst, id) {
         }
     }
 
-    if(i > j){
+    if(i >= j){
         console.log('true');
         return true;
     }else{
