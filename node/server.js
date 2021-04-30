@@ -398,6 +398,11 @@ io.on('connection', (socket) => {
 
     });
 
+    socket.on('chatMessage', (message, userid) => {
+        console.log("User: " + userid + ", send:" + message);
+        io.to(socket.room).emit('newMessage', message, userid);
+    });
+
     //Actually does nothing, but i am too scared to deletus this fetus
     socket.on('randomRoom', () => {
 
@@ -433,7 +438,6 @@ io.on('connection', (socket) => {
 
     socket.on('storeCustomPrompt', prompt => {
         let id = getRoomID(socket);
-        console.log("IDNOWORK ->>>>>>>>>>>>" + id);
         // Ternary operator in case the customPrompts array has no values (undefined)
         idArr[id].customPrompts.push(prompt);
         console.log(idArr[id].customPrompts);
@@ -448,6 +452,7 @@ io.on('connection', (socket) => {
         console.log(idArr[id].customPrompts)
     });
 
+    // remove if we wont upload profile pictures to the database
     socket.on('insertPromptQuery', prompt => {
         con.query("INSERT INTO NeverHaveIEverPrompts(roomID, promptID, prompt) VALUES(?, ?, ?)", [
             getRoomID(socket),

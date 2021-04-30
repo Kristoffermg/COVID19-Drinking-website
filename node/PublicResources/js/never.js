@@ -9,6 +9,10 @@ let nextText = document.getElementById("nextText")
 let iHave = document.getElementById("iHave");
 let iHaveNever = document.getElementById("iHaveNever");
 let sipText = document.getElementById("sipText");
+let sendBTN = document.getElementById("sendBTN");
+let textMsg = document.getElementById("textMessage");
+
+let whiteBackground = true;
 
 /* change the timer bar seconds whatever 
 document.getElementById("timer").style.setProperty("--duration", 10)
@@ -40,7 +44,7 @@ socket.on('activateNextRoundBtn', () => {
     iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
 
-    if (neverAnswer == true) sipText.style.display = "block";
+    if (neverAnswer == true) sipText.style.opacity = 1;
 })
 
 socket.on('revealAnswer', (answerArray) => {
@@ -73,7 +77,7 @@ socket.on('nextPrompt', prompt => {
 
     for (let i = 0; i < allVideoDiv.length; i++) {
         console.log(allVideoDiv[i]);
-        allVideoDiv[i].childNodes[0].style.outlineColor = 'grey';
+        allVideoDiv[i].childNodes[0].style.outlineColor = 'white';
     }
 
     console.log("nextPromptTriggger");
@@ -88,7 +92,7 @@ socket.on('nextPrompt', prompt => {
     nextText.disabled = true;
     nextText.value = "Next round";
 
-    sipText.style.display = "none";
+    sipText.style.opacity = 0;
 
     iHave.style.opacity = 1;
     iHave.disabled = false;
@@ -129,3 +133,44 @@ iHaveNever.addEventListener("click", () => {
     neverAnswer = false;
     socket.emit('neverAnswer', neverAnswer);
 });
+
+// Execute a function when the user releases a key on the keyboard
+textMsg.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("sendBTN").click();
+    }
+  });
+
+sendBTN.addEventListener("click", () => {
+    sendMessage();
+    textMsg.value = "";
+});
+
+socket.on('newMessage', (chatMessage, userId) => {
+    let newMessage = document.createElement("P");
+    newMessage.classList.add("newMessage");
+    newMessage.innerText = `${userId}: ${chatMessage}`;
+    message.appendChild(newMessage);
+    if(whiteBackground) newMessage.style.backgroundColor = "white";
+    whiteBackground = !whiteBackground;
+})
+
+function sendMessage() {
+    let textMessage = sanitize(textMsg.value);
+    console.log("Message" + textMessage);
+    let userNamePara = document.getElementById("userNamePara");
+    let userid = userNamePara.innerText;
+    socket.emit("chatMessage", textMessage, userid);
+}
+// Get the input field
+var input = document.getElementById("myInput");
+
+
+// Avoids HTML injection
+function sanitize(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}

@@ -54,7 +54,7 @@ logo.addEventListener("click", () => {
 
 //Changes the username
 usernameButton.addEventListener("click", () => {
-    let newUserName = document.getElementById("username").value;
+    let newUserName = sanitize(document.getElementById("username").value);
     //console.log("username: " + newUserName);
     console.log("name: " + newUserName);
     socket.emit("changeName", newUserName);
@@ -79,7 +79,7 @@ usernameButton.addEventListener("click", () => {
 addPrompt.addEventListener("click", () => {
     let newPrompt = document.createElement("P");
     newPrompt.classList.add("customPromtListText");
-    newPrompt.innerText = promptInput.value;
+    newPrompt.innerText = sanitize(promptInput.value);
     customPromptsList.appendChild(newPrompt);
 
     let deletebutton = document.createElement("button");
@@ -127,6 +127,11 @@ socket.on('yeetAdminStuff', () => {
     settingsTab.hidden = true;
     startGame.hidden = true; 
 });
+
+// Avoids HTML injection
+function sanitize(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
 
 // The code below serves the purpose of making a push of the enter button, set one's username so a click
