@@ -7,13 +7,14 @@ const testFelt = document.getElementById('diceRoll');
 const dice1 = document.getElementById('dice1');
 const dice2 = document.getElementById('dice2');
 const errorMes = document.getElementById('error');
+const gameLog = document.getElementById('gameLog');
 let rollEnabled = false;
 let trueEnabled = false;
 let lieEnabled = false;
 let deroverEnabled = false;
 let liftEnabled = false;
 
-socket.emit('mejerFirstTurn');
+if (isAdmin) socket.emit('mejerFirstTurn');
 
 trueBtn.addEventListener("click", () => {
     if(trueEnabled){
@@ -67,7 +68,9 @@ socket.on('firstTurn', () => {
     rollEnabled = true;
 });
 
-socket.on('mejerRoll', (lastRoll) => {
+socket.on('setTurnOrder')
+
+socket.on('mejerRoll', (lastRoll, screenName) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
 });
 
@@ -112,12 +115,14 @@ socket.on('incomingRoll', (roll) => {
     testFelt.innerText = roll;
 });
 
-socket.on('looseLife', (id) => {
-    testFelt.innerText = `${id}, lost a life`;
+socket.on('looseLife', (id, screenName) => {
+    testFelt.innerText = `${screenName}, lost a life`;
+    //socket.emit('updateGameLog', `${id}, lost a life`);
 });
 
-socket.on('ded', (id) => {
-    testFelt.innerText = `${id}, is ded smile`;
+socket.on('ded', (id, screenName) => {
+    testFelt.innerText = `${screenName}, is ded smile`;
+    //socket.emit('updateGameLog', `${id}, is ded smile`);
 });
 
 socket.on('gameOver', () => {
@@ -126,11 +131,25 @@ socket.on('gameOver', () => {
     window.location.href = '/';
 });
 
+socket.on('updateGameLog', str => {
+    const element = document.createElement('li');
+    element.innerHTML = str;
+    gameLog.appendChild(element);
+});
+
+socket.on('getUserName', () => {
+    let userName = [];
+    console.log('getUserName');
+    userName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p").innerText;
+    //userName = document.getElementById('userNamePara');
+    console.log(userName);
+    socket.emit('getUserName', (userName));
+});
+
 /*
 
-html/css
+html/css <-- kaster vi til Jeppe
 Scoreboard
 bruge boaders til at vise hvis tur det er og sådan noget
-Kort text log så man kan se hvad der foregår
 
 */

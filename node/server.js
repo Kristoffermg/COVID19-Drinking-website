@@ -405,12 +405,22 @@ io.on('connection', (socket) => {
     socket.on('mejerFirstTurn', () => {
         let id = findID(socket.room);
         io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
+
+        io.to(idArr[id].roomId).emit('getUserName');
+        io.to(idArr[id].roomId).emit('setTurnOrder');
     });
 
     socket.on('mejerRoll', () => {
         let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let id = findID(socket.room);
+        let screenName;
+
+        for (let i = 0; i < idArr[id].mejerLives.length; i++) {
+            if (idArr[id].mejerLives[i][0] == socket.id) {
+                screenName = idArr[id].mejerLives[i][2];
+            }
+        }
 
         if(idArr[id].wasLastLie){
             idArr[id].rollToBeat = idArr[id].lieRoll;
@@ -421,12 +431,18 @@ io.on('connection', (socket) => {
         idArr[id].lastRoll = diceSort(dice1, dice2);
         console.log(idArr[id].lastRoll);
 
-        socket.emit("mejerRoll", idArr[id].lastRoll);
+        socket.emit("mejerRoll", idArr[id].lastRoll, screenName);
     });
 
     socket.on('mejerTrue', () => {
         let id = findID(socket.room);
+        let screenName;
 
+        for (let i = 0; i < idArr[id].mejerLives.length; i++) {
+            if (idArr[id].mejerLives[i][0] == socket.id) {
+                screenName = idArr[id].mejerLives[i][2];
+            }
+        }
 
 
         if(!cmpRoll(idArr[id].lastRoll, idArr[id].rollToBeat, id)){
@@ -441,13 +457,21 @@ io.on('connection', (socket) => {
             io.to(socket.room).emit('incomingRoll', (result));
 
             idArr[id].wasLastLie = false;
+
+            io.to(socket.room).emit('updateGameLog', `${screenName} rolled '${result}'`);
         }
 
     });
 
     socket.on('mejerLie', (dice1, dice2) => {
         let id = findID(socket.room);
+        let screenName;
 
+        for (let i = 0; i < idArr[id].mejerLives.length; i++) {
+            if (idArr[id].mejerLives[i][0] == socket.id) {
+                screenName = idArr[id].mejerLives[i][2];
+            }
+        }
         
         idArr[id].lieRoll = diceSort(dice1, dice2);
         console.log(idArr[id].lieRoll);
@@ -466,12 +490,21 @@ io.on('connection', (socket) => {
 
 
             idArr[id].wasLastLie = true;
+
+            io.to(socket.room).emit('updateGameLog', `${screenName} rolled '${result}'`);
         }
     });
 
     socket.on('mejerDerover', () => {
         //cmpRoll([1,1], [5,4], 0);
         let id = findID(socket.room);
+        let screenName;
+
+        for (let i = 0; i < idArr[id].mejerLives.length; i++) {
+            if (idArr[id].mejerLives[i][0] == socket.id) {
+                screenName = idArr[id].mejerLives[i][2];
+            }
+        }
 
         let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
@@ -484,6 +517,7 @@ io.on('connection', (socket) => {
         socket.emit('notTurn');
 
         io.to(socket.room).emit('incomingRoll', ('Det eller derover'));
+        io.to(socket.room).emit('updateGameLog', `${screenName} rolled 'Det eller Derover`);
 
     });
 
@@ -534,7 +568,24 @@ io.on('connection', (socket) => {
         }
 
 
-    }); 
+    });
+    
+    socket.on('updateGameLog', (str) => {
+        io.to(socket.room).emit('updateGameLog', str);
+    });
+
+    socket.on('getUserName', (userName) => {
+        let id = findID(socket.room);
+
+
+        for(let i = 0; i < idArr[id].mejerLives.length; i++){
+            if(socket.id == idArr[id].mejerLives[i][0]){
+                idArr[id].mejerLives[i][2] = userName;
+                console.log('userNames');
+                console.log(idArr[id].mejerLives[i][2]);
+            }
+        }
+    });
     
     /*
 
@@ -724,7 +775,7 @@ function nextTurn(id) {
 }
 
 function mejerLivesSetup(id){
-    let tempArray = [];
+    let tempArray = [];    
 
     for(let i = 0; i < idArr[id].userIdArr.length; i++){
 
@@ -737,15 +788,19 @@ function mejerLivesSetup(id){
 }
 
 function mejerLivesDecrement(playerID, roomID){
+    let screenName;
 
     for(let i = 0; i < idArr[roomID].mejerLives.length; i++){
         if(playerID == idArr[roomID].mejerLives[i][0]){
+            screenName = idArr[roomID].mejerLives[i][2];
             idArr[roomID].mejerLives[i][1]--;
-            io.to(idArr[roomID].roomId).emit('looseLife', idArr[roomID].mejerLives[i][0]);
+            io.to(idArr[roomID].roomId).emit('looseLife', idArr[roomID].mejerLives[i][0], screenName);
+            io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} lost a life, and now has ${idArr[roomID].mejerLives[i][1]} left`);
             if(idArr[roomID].mejerLives[i][1] == 0){
                 console.log('he die');
                 //here people die
-                io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0]);
+                io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0], screenName);
+                io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} is dead`);
                 delete idArr[roomID].mejerLives[i];
                 pushArray(idArr[roomID].mejerLives, i);
                 idArr[roomID].mejerLives.pop();
