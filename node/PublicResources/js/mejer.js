@@ -68,7 +68,44 @@ socket.on('firstTurn', () => {
     rollEnabled = true;
 });
 
-//socket.on('setTurnOrder')
+socket.on('startOfNewRound', () => {
+    rollBtn.hidden = false;
+    liftBtn.hidden = true;
+
+    rollEnabled = true;
+    liftEnabled = false;
+    socket.emit('turnIndicator', true);
+});
+
+socket.on('setTurnOrder', (mejerLives) => {
+    let avatarArr = document.querySelectorAll('.videoDiv');
+    let newArr = [];
+    let tempAva;
+    let vidGrid = document.getElementById('video-grid');
+    console.log(avatarArr);
+
+    for (let i = 0; i < mejerLives.length; i++) {
+        for (let j = 0; j < avatarArr.length; j++) {
+            if ('id' + mejerLives[i][0] == avatarArr[j].getAttribute('id')) {
+                //console.log('Player: ' + avatarArr[j].getAttribute('id'));
+                tempAva = document.createElement('div');
+                tempAva = avatarArr[j];
+                newArr.push(tempAva);
+            }
+        }
+    }
+
+    for (let i = 0; i < avatarArr.length; i++) {
+        avatarArr[i].remove();
+    }
+
+    for (let i = 0; i < newArr.length; i++) {
+        newArr[i].childNodes[0].style.outlineColor = 'grey';
+        vidGrid.append(newArr[i]);
+    }
+    newArr[0].childNodes[0].style.outlineColor = 'green';
+    console.log(newArr);
+});
 
 socket.on('mejerRoll', (lastRoll) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
@@ -90,6 +127,7 @@ socket.on('clientTurn', () => {
 
     rollEnabled = true;
     liftEnabled = true;
+    socket.emit('turnIndicator', true);
 });
 
 socket.on('notTurn', () => {
@@ -108,6 +146,7 @@ socket.on('notTurn', () => {
     trueEnabled = false;
     lieEnabled = false;
     deroverEnabled = false;
+    socket.emit('turnIndicator', false);
 });
 
 socket.on('incomingRoll', (roll) => {
@@ -122,6 +161,8 @@ socket.on('looseLife', (id, screenName) => {
 
 socket.on('ded', (id, screenName) => {
     testFelt.innerText = `${screenName}, is ded smile`;
+    let dedEl = document.querySelector("div.videoDiv#id" + id);
+    dedEl.childNodes[0].style.outlineColor = 'red';
     //socket.emit('updateGameLog', `${id}, is ded smile`);
 });
 
@@ -146,10 +187,28 @@ socket.on('getUserName', () => {
     socket.emit('getUserName', (userName));
 });
 
+socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
+    let turnEl;
+    console.log('ENTERED TURN INDICATOR!');
+    console.log('turnId: ' + turnId);
+    console.log('mejerLives: ');
+    console.log(mejerLives);
+    console.log('turnStart: ' + turnStart);
+
+    for (let i = 0; i < mejerLives.length; i++) {
+        if (turnId == mejerLives[i][0]) {
+            turnEl = document.querySelector("div.videoDiv#id" + turnId);
+            if (turnStart) {
+                turnEl.childNodes[0].style.outlineColor = 'green';
+            } else {
+                turnEl.childNodes[0].style.outlineColor = 'grey';
+            }
+        }
+    }
+});
+
 /*
 
 html/css <-- kaster vi til Jeppe
-Scoreboard
-bruge boaders til at vise hvis tur det er og sådan noget
 
 */
