@@ -1,8 +1,6 @@
 //Import functions to test
 const { diceSort, checkDrink, cmpRoll } = require('./server');
 
-
-
 //Test enviroment for the 'Meyer' game
 describe('Meyer Tests', () => {
     //Make a mock-up of global variables
@@ -45,7 +43,7 @@ describe('Meyer Tests', () => {
     });
 
     //checkDrink Test
-    test('should determine if everyone should drink', () => {
+    test('Should determine if everyone should drink', () => {
         const drink1 = checkDrink([3, 2]);
         expect(drink1).toBe(true);
         const drink2 = checkDrink([6, 5]);
@@ -53,7 +51,7 @@ describe('Meyer Tests', () => {
     });
 
     //cmpRoll Test
-    test('should find the best dice roll', () => {
+    test('Should find the best dice roll', () => {
         const test1 = cmpRoll([1, 2], [1, 3], 0, idArr);
         expect(test1).toBe(true);
         const test2 = cmpRoll([6, 5], [2, 2], 0, idArr);
