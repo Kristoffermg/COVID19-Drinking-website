@@ -80,6 +80,7 @@ socket.on('startOfNewRound', () => {
 socket.on('setTurnOrder', (mejerLives) => {
     let avatarArr = document.querySelectorAll('.videoDiv');
     let newArr = [];
+    let livesPara;
     let tempAva;
     let vidGrid = document.getElementById('video-grid');
     console.log(avatarArr);
@@ -100,11 +101,17 @@ socket.on('setTurnOrder', (mejerLives) => {
     }
 
     for (let i = 0; i < newArr.length; i++) {
+        livesPara = document.createElement('p');
+        livesPara.innerText = '6';
+        livesPara.setAttribute('id', 'userNamePara');
         newArr[i].childNodes[0].style.outlineColor = 'grey';
+        newArr[i].append(livesPara);
         vidGrid.append(newArr[i]);
     }
     newArr[0].childNodes[0].style.outlineColor = 'green';
     console.log(newArr);
+
+
 });
 
 socket.on('mejerRoll', (lastRoll) => {
@@ -155,7 +162,18 @@ socket.on('incomingRoll', (roll) => {
 });
 
 socket.on('looseLife', (id, screenName) => {
+    let memeArr = [];
+    let lives;
+    let counter;
     testFelt.innerText = `${screenName}, lost a life`;
+
+    memeArr = document.querySelectorAll('div.videoDiv#id' + id + ' > p');
+    lives = memeArr[1];
+
+    counter = Number(lives.innerText);
+    counter--;
+    lives.innerText = counter;
+
     //socket.emit('updateGameLog', `${id}, lost a life`);
 });
 
@@ -173,9 +191,16 @@ socket.on('gameOver', () => {
 });
 
 socket.on('updateGameLog', str => {
+    let maxElements = 4;
     const element = document.createElement('li');
+    element.setAttribute('id', 'listElement');
     element.innerHTML = str;
     gameLog.appendChild(element);
+
+    let allListEl = document.querySelectorAll('#listElement');
+    if (allListEl.length > maxElements) {
+        allListEl[0].remove();
+    }
 });
 
 socket.on('getUserName', () => {
@@ -205,6 +230,10 @@ socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
             }
         }
     }
+});
+
+socket.on('everyoneDrink', () => {
+    testFelt.innerText = '32! Everyone drink!'
 });
 
 /*

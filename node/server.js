@@ -1,7 +1,5 @@
 //UwUbuntu
 
-const { DH_UNABLE_TO_CHECK_GENERATOR } = require('constants');
-
 //Server setup
 const http = require('http');
 const express = require('express');
@@ -9,9 +7,6 @@ const app = express();
 const server = http.createServer(app);
 const pathApi = require('path');
 const fs = require('fs');
-const { debug } = require('console');
-const { CLOSING } = require('ws');
-const { emit } = require('process');
 
 const io = require('socket.io')(server, {
     pingInterval: 1000,
@@ -438,8 +433,24 @@ io.on('connection', (socket) => {
 
         idArr[id].lastRoll = diceSort(dice1, dice2);
         console.log(idArr[id].lastRoll);
+        if(checkDrink(idArr[id].lastRoll)){
+            io.to(socket.room).emit('everyoneDrink');
+            idArr[id].rollToBeat = [0,0];
+            idArr[id].lastRoll = [0,0];
+            idArr[id].lieRoll = [0,0];
+            idArr[id].wasLastLie = false;
+        
+            if(idArr[id].currTurn == 0){
+                idArr[id].currTurn = idArr[id].mejerLives.length-1;
+            }else{
+                idArr[id].currTurn--;
+            }
 
-        socket.emit("mejerRoll", idArr[id].lastRoll);
+            nextTurn(id);
+            
+        } else {
+            socket.emit("mejerRoll", idArr[id].lastRoll);
+        }
     });
 
     socket.on('mejerTrue', () => {
@@ -520,6 +531,7 @@ io.on('connection', (socket) => {
         let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         
         idArr[id].lastRoll = diceSort(dice1, dice2);
+        idArr[id].wasLastLie = false;
         console.log('Det eller derover roll');
         console.log(idArr[id].lastRoll);
 
@@ -571,17 +583,34 @@ io.on('connection', (socket) => {
             }
             console.log('mejerLift true');
         }else{
-            mejerLivesDecrement(socket.id, id);
-            console.log('mejerLift false');
+            if (checkDrink(idArr[id].lastRoll)) {
+                io.to(socket.room).emit('everyoneDrink');
+                idArr[id].rollToBeat = [0,0];
+                idArr[id].lastRoll = [0,0];
+                idArr[id].lieRoll = [0,0];
+                idArr[id].wasLastLie = false;
+            
+                if(idArr[id].currTurn == 0){
+                    idArr[id].currTurn = idArr[id].mejerLives.length-1;
+                }else{
+                    idArr[id].currTurn--;
+                }
+    
+                nextTurn(id);
 
-            if(idArr[id].currTurn == 0){
-                idArr[id].currTurn = idArr[id].mejerLives.length-1;
-            }else{
-                idArr[id].currTurn--;
+            } else {
+                mejerLivesDecrement(socket.id, id);
+                console.log('mejerLift false');
+    
+                if(idArr[id].currTurn == 0){
+                    idArr[id].currTurn = idArr[id].mejerLives.length-1;
+                }else{
+                    idArr[id].currTurn--;
+                }
+    
+                nextTurn(id);
+                io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
             }
-
-            nextTurn(id);
-            io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
         }
 
 
@@ -838,6 +867,14 @@ function mejerLivesDecrement(playerID, roomID){
     console.log(idArr[roomID].mejerLives);
 
 }
+
+function checkDrink(diceArr) {
+    if (diceArr[0] == 3 && diceArr[1] == 2) {
+        return true;
+    } else {
+        return false;
+    }
+};
 
 
 //------------------------------DICE SHIT END-------------------------
