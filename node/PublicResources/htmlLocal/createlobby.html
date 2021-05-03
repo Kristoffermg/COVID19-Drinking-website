@@ -37,53 +37,63 @@
     </nav>
 
     <section class="contentSection">
-        <div id="usernameInput">
-            <label for="username">Username</label><br>
-            <input type="text" id="username" name="username" placeholder="Type you username here!">
-            <input type="button" value="Set Username" id="setUsername" name="setUsername">
-            <p style="display: none;" id="usernameSet">Username set</p>
-        </div>
+    <div id="userAppearanceConfig">
+        <h2 class="usernameHeader">Username</h2>
+        <input type="text" id="username" name="username" placeholder="Type you username here!">
+        <input type="button" value="Set Username" id="setUsername" name="setUsername">
+        <p style="display: none;" id="usernameSet">Username set</p>
+
+        <h3 class="usernameHeader">Change profile picture</h3>
+        <form class="form" id="uploadPfp">
+          <input type="file" id="inpFile"><br>
+          <button type="submit">Upload File</button>
+        </form>
+    </div>
+
     <div id="lobbyContainer">
       <div class="lobbyContent">
         <div id="settingstab">
+
           <h2 class="Settingh">Settings</h2>
-          <form class="game_settings_form">
-            <label class="games__and__rounds">Choose a game:</label> 
-            <select class="gameselect" form="gameform" id="gameSelect">
-              <option value="prompt">Prompt</option>
-              <option value="dice">Dice</option>
-              <option value="card">Card</option>
-            </select><br>
-            <label class="games__and__rounds">Set roundtime:</label>
-            <select class="gameselect" form="timeform" id="roundtimeSelect">
-              <option value="1s">1s (testing purposes)</option>
-              <option value="10s">10s</option>
-              <option value="15s">15s</option>
-              <option value="30s">30s</option>
-            </select>
-          </form>
+
+          <div class="settings">
+            <div class="optionDiv">
+              <label class="games__and__rounds">Choose a game</label> 
+              <select class="gameselect" form="gameform" id="gameSelect">
+                <option value="prompt">Prompt</option>
+                <option value="dice">Dice</option>
+                <option value="card">Card</option>
+              </select>
+              <span class="focus"></span>
+            </div>
+
+            <div class="optionDiv">
+              <label class="games__and__rounds">Set roundtime</label>
+              <select class="gameselect" form="timeform" id="roundtimeSelect">
+                <option value="1s">1s (testing purposes)</option>
+                <option value="10s">10s</option>
+                <option value="15s">15s</option>
+                <option value="30s">30s</option>
+              </select>
+              <span class="focus"></span>
+            </div>
+          </div>
+
           <div class="customPromptContainer">
             <h3>Custom prompts</h3>
-            <div>
-              <input type="checkbox" id="useCustomPromptsExclusively" name="useCustomPromptsExclusively">
-              <label for="useCustomPromptsExclusively">Use custom prompts exclusively</label>
+            <div class="inputDiv">
+              <input type="text" class="customPromptText" name="customPromptText" placeholder="Type you custom promtps here!" id="customprompttext">
+              <input type="button" value="Add prompt" id="addPrompt" name="Add prompt">
             </div>
-            <input type="text" class="customPromptText" name="customPromptText" placeholder="Type you custom promtps here!" id="customprompttext">
-            <input type="button" value="Add prompt" id="addPrompt" name="Add prompt">
             <div id="customPromptList">
               <h4>Custom promt list</h4>
             </div>
+            <div class="checkboxDiv">
+              <input type="checkbox" id="useCustomPromptsExclusively" name="useCustomPromptsExclusively">
+              <label for="useCustomPromptsExclusively">Use custom prompts exclusively</label>
+            </div>
           </div>
-          
-          <div class="url-div">
-            <label id="usernameLabel" for="lobbyurl">Lobby URL:</label>
-            <input type="text" id="lobbyurl" name="lobbyurl" readonly="readonly">
-            <script>
-              const lobbyURL = document.getElementById("lobbyurl")
-              lobbyURL.value = window.location
-            </script>
-            <input type="button" value="Copy URL" id="copyURL" name="copyURL">
-          </div>
+          <input type="button" value="Start game" id="startGame" name="startGame">
         </div>
       </div>
 
@@ -92,9 +102,18 @@
           <div id="video-grid"></div>
         </div> 
       </div>
-      
     </div>
-    <input type="button" value="Start game" id="startGame" name="startGame">
+
+    <div class="url-div">
+      <h2>Invite your friends</h2>
+      <label id="urlLabel" for="lobbyurl">Lobby URL:</label>
+      <input type="text" id="lobbyurl" name="lobbyurl" readonly="readonly">
+      <script>
+        const lobbyURL = document.getElementById("lobbyurl")
+        lobbyURL.value = window.location
+      </script>
+      <input type="button" value="Copy URL" id="copyURL" name="copyURL">
+    </div>
   </section>
   
   <footer>

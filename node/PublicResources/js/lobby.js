@@ -14,6 +14,8 @@ let promptInput = document.getElementById('customprompttext')
 let customPromptsList = document.getElementById('customPromptList');
 let useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
 let usernameInput = document.getElementById('username');
+const uploadPfp = document.getElementById('uploadPfp');
+const inpFile = document.getElementById('inpFile');
 
 // newDebugMeme = document.getElementById("newDebugMeme");
 
@@ -40,6 +42,20 @@ startGame.addEventListener("click", () => {
     socket.emit('startGame', gameSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
 });
 
+uploadPfp.addEventListener("submit", e => {
+    // prevents the page from refreshing
+    e.preventDefault(); 
+
+
+    const formData = new FormData();
+
+    // appends the first file in inpFile (the selected file)
+    formData.append("inpFile", inpFile.files[0]);
+
+    console.log(formData);
+    console.log(inpFile.files[0]);
+    socket.emit('insertProfilePictureQuery', inpFile.files[0]);
+});
 
 //Adds the lobby URL to the clipboard
 copyUrl.addEventListener("click", () => {

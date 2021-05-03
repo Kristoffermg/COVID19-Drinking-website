@@ -450,16 +450,17 @@ io.on('connection', (socket) => {
             idArr[id].customPrompts.splice(index, 1);
         }
         console.log(idArr[id].customPrompts)
+
     });
 
     // remove if we wont upload profile pictures to the database
-    socket.on('insertPromptQuery', prompt => {
-        con.query("INSERT INTO NeverHaveIEverPrompts(roomID, promptID, prompt) VALUES(?, ?, ?)", [
+    socket.on('insertProfilePictureQuery', picture => {
+        con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
+            socket.id,
             getRoomID(socket),
-            getHighestPromptID() + 1,
-            prompt
+            picture
         ], function(err, result) {
-            console.log("Record inserted: " + prompt);
+            console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
         });
     });
 
