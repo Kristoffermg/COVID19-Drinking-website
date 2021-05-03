@@ -759,7 +759,7 @@ function promptHasBeenUsed(randomPromptIndex, id) {
 
 //---------------------------------DICE SHIT----------------------
 
-function diceSort(dice1, dice2) {
+let diceSort = function (dice1, dice2) {
     let tempArr = [dice1, dice2];
 
     if (dice1 < dice2) {
@@ -774,9 +774,14 @@ function diceSort(dice1, dice2) {
 }
 
 //returns true if arrNew is a better roll than arrAgainst
-function cmpRoll(arrNew, arrAgainst, id) {
+let cmpRoll = function(arrNew, arrAgainst, id, testObject) {
     let i;
     let j;
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+        console.log(testObject[0].mejerLives);
+    }
 
     console.log('enter compare');
     console.log(arrNew);
@@ -868,7 +873,7 @@ function mejerLivesDecrement(playerID, roomID){
 
 }
 
-function checkDrink(diceArr) {
+let checkDrink = function (diceArr) {
     if (diceArr[0] == 3 && diceArr[1] == 2) {
         return true;
     } else {
@@ -919,7 +924,12 @@ function pushArray (arr, index) {
 }
 
 //starts the server
-server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
+// server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
 
 var d = new Date();
 console.log(d.toLocaleTimeString() + '  ' + d.toLocaleDateString());
+
+//Test Exports
+module.exports.diceSort = diceSort;
+module.exports.checkDrink = checkDrink;
+module.exports.cmpRoll = cmpRoll;
