@@ -959,6 +959,11 @@ overflow: auto;
   /*border: solid 1px white;*/
 }
 
+#quitGame {
+  left: 82%;
+  position: fixed;
+}
+
 .chat {
   background-color: rgb(129, 224, 224);
   display: flex;

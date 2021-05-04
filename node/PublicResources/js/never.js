@@ -12,6 +12,8 @@ let sipText = document.getElementById("sipText");
 let sendBTN = document.getElementById("sendBTN");
 let textMsg = document.getElementById("textMessage");
 let votes = document.getElementById("votes");
+let messageBox = document.getElementById("message");
+let quitGame = document.getElementById("quitGame");
 
 let whiteBackground = true;
 let firstTurn_ = true;
@@ -153,6 +155,10 @@ iHaveNever.addEventListener("click", () => {
     socket.emit('neverAnswer', neverAnswer);
 });
 
+quitGame.addEventListener("click", () => {
+    if(isAdmin) socket.emit('quitToLobby');
+});
+
 // Execute a function when the user releases a key on the keyboard
 textMsg.addEventListener("keyup", function(event) {
     // Number 13 is the "Enter" key on the keyboard
@@ -188,14 +194,19 @@ socket.on('newMessage', (chatMessage, userId) => {
         if(whiteBackground) newMessage.style.backgroundColor = "white";
         whiteBackground = !whiteBackground;
     }
+
+    // Automatically scrolls down to the bottom in the message box
+    messageBox.scrollTop = messageBox.scrollHeight;
 })
 
 function sendMessage() {
     let textMessage = sanitize(textMsg.value);
     console.log("Message" + textMessage);
-    let userNamePara = document.getElementById("userNamePara");
-    let userid = userNamePara.innerText;
-    socket.emit("chatMessage", textMessage, userid);
+    if(textMessage.length > 0) {
+        let userNamePara = document.getElementById("userNamePara");
+        let userid = userNamePara.innerText;
+        socket.emit("chatMessage", textMessage, userid);
+    }
 }
 // Get the input field
 var input = document.getElementById("myInput");

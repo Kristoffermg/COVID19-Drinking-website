@@ -341,6 +341,13 @@ io.on('connection', (socket) => {
 
     });
 
+    socket.on('quitToLobby', () => {
+        fs.readFile(__dirname + `/PublicResources/htmlLocal/createlobby.html`, 'utf8', function(err, data) {
+            if (err) throw err;
+            io.to(socket.room).emit('changeHTML', data);
+        });
+    });
+
     //Handles 'Never have I ever' logic
     socket.on('neverLogic', firstTurn => {
         let id, prompt;
