@@ -889,7 +889,7 @@ overflow: auto;
 p#diceRoll{
   color: #fff;
   font-size: 50px;
-  
+  padding-bottom: 18px;
   width: 90%;
   position: relative;
   text-align: center;
@@ -899,30 +899,30 @@ p#diceRoll{
 div.main{
   position: relative;
   align-items: center;
-  width: 30%;
+  width: 51%;
   height: 20%;
   top: 75px;
   margin-left: auto;
   margin-right: auto;
-  background: rgb(68, 183, 212);
+  margin-bottom: 100px;
+  background:transparent;
   border: solid 2px white;
-}
-
-div.clickersMeyer{
-  background-color: #4CAF50; 
 }
 
 #logBox{
   width: 15%;
-  height: 10%;
+  height: 50%;
   margin-left: 25px;
   margin-bottom: 100px;
-  background: rgb(68, 183, 212);
+  background:transparent;
+  color: white;
   border: solid 2px white;
-  position: relative;
-  left: 65%;
+  position: absolute;
+  left: 76%;
+  top: 200px;
   justify-content: center;
   align-items: center;
+  
 }
 
 .logBoxTag{
@@ -935,13 +935,63 @@ h2.meyer{
 }
 
 .Meyerbuttons{
-  background-color: #ffffff;
+  background-color: transparent;
   border: none;
-  color: rgb(0, 0, 0);
+  color: white;
   padding: 12px 18px;
+  height: 47px;
   text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  border: solid 2px black;
+  border: solid 2px white;
   font-size: 16px;
+  border-radius: 5px;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dice{
+  color: black;
+  width: 50px;
+  height: 47px;
+  border: solid 2px white;
+  border-radius: 5px;
+  cursor: pointer;
+  position: relative;
+  left: 28%;
+
+}
+
+.dice:focus, .dice:hover{
+  outline: none;
+  border: 1px solid rgb(44, 199, 238);
+}
+
+.dice option{
+  background: white;
+}
+
+div.clickersMeyer{
+  background-color: transparent; 
+}
+
+#rollBtn {
+  position: relative;
+  top: 21px; 
+  left: 46%;
+  transform: translate(0, -50%);
+}
+
+#trueBtn{
+  position: relative;
+  left: 28%;
+}
+
+#lieBtn{
+  position: relative;
+  left: 28%;
+}
+
+#deroverBtn{
+  position: relative;
+  left: 28%;
 }
