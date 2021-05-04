@@ -39,7 +39,7 @@ h3 {
 }
 
 .navbar {
-  background:	rgb(18, 35, 46);
+  background:	#12232e;
   height: 80px;
   display: flex;
   justify-content: center;
@@ -914,6 +914,7 @@ overflow: auto;
   border: solid 1px white;
   border-radius: 10px;
   cursor: pointer;
+  background-color: #efefef;
 }
 
 #iHave:hover {
@@ -929,6 +930,7 @@ overflow: auto;
 }
 
 #nextText {
+  background-color: #efefef4d;
   margin-top: 0;
   margin-bottom: 0;
 }

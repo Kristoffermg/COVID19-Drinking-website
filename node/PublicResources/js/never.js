@@ -11,8 +11,12 @@ let iHaveNever = document.getElementById("iHaveNever");
 let sipText = document.getElementById("sipText");
 let sendBTN = document.getElementById("sendBTN");
 let textMsg = document.getElementById("textMessage");
+let votes = document.getElementById("votes");
 
 let whiteBackground = true;
+let firstTurn_ = true;
+
+let answerPressed
 
 /* change the timer bar seconds whatever 
 document.getElementById("timer").style.setProperty("--duration", 10)
@@ -25,9 +29,14 @@ if (isAdmin) socket.emit('neverLogic', true);
 nextText.addEventListener("click", () => {
     socket.emit('neverLogic', false);
     
-    nextText.style.opacity = 0.9;
+    nextText.style.backgroundColor = "#efefef4d";
     nextText.disabled = true;
     nextText.value = "Next round";
+
+    iHave.style.backgroundColor = "#efefef";
+    iHaveNever.style.backgroundColor ="#efefef";
+
+    neverAnswer = false;
 });
 
 socket.on('setRoundtime', roundtime => {
@@ -36,18 +45,24 @@ socket.on('setRoundtime', roundtime => {
 });
 
 socket.on('activateNextRoundBtn', () => {
-    nextText.style.opacity = 1;
     nextText.disabled = false;
-
-    iHave.style.opacity = 0.9;
+    nextText.style.backgroundColor = "#efefef";
     iHave.disabled = true;
-    iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = true;
+    votes.style.opacity = 1;
 
-    if (neverAnswer == true) sipText.style.opacity = 1;
+    if (answerPressed == false) {
+        iHave.style.backgroundColor = "#efefef4d"
+        iHaveNever.style.backgroundColor = "#efefef4d"
+    } 
+    
+    if (neverAnswer == true) {
+        sipText.style.opacity = 1;
+    }
 })
 
 socket.on('revealAnswer', (answerArray) => {
+    votes.innerHTML = `0/${Math.ceil(votingRight_ / 2)} Votes`;
     //answerArr 0 = id, 1 = svar
     let border;
     for (let i = 0; i < answerArray.length; i++) {
@@ -73,6 +88,7 @@ socket.on('revealAnswer', (answerArray) => {
 });
 
 socket.on('nextPrompt', prompt => {
+    answerPressed = false;
     let allVideoDiv = document.querySelectorAll('div#video-grid > div.videoDiv');
 
     for (let i = 0; i < allVideoDiv.length; i++) {
@@ -94,11 +110,12 @@ socket.on('nextPrompt', prompt => {
 
     sipText.style.opacity = 0;
 
-    iHave.style.opacity = 1;
     iHave.disabled = false;
-
-    iHaveNever.style.opacity = 0.9;
     iHaveNever.disabled = false;
+
+    votes.style.opacity = 0;
+
+    votes.innerHTML = `${voteCount_}/${Math.ceil((votingRight_ / 2))} Votes`;
 });
 
 socket.on('gameOver', () => {
@@ -106,28 +123,30 @@ socket.on('gameOver', () => {
 });
 
 socket.on('voting', (voteCount, votingRight, firstTurn) => {
-    if (firstTurn == false) {
-        let votes = document.getElementById("votes");
-        votes.innerHTML = `${voteCount}/${votingRight} votes`;
-    }
+    voteCount_ = voteCount;
+    votingRight_ = votingRight;
+    firstTurn_ = false;
+    votes.innerHTML = `${voteCount}/${Math.ceil(votingRight_ / 2)} Votes`;
 });
 
 iHave.addEventListener("click", () => {
-    //sipText.style.display = "block";
-
-    iHave.style.opacity = 0.9;
+    answerPressed = true;
+    iHave.style.backgroundColor ="rgb(9, 255, 0)"
     iHave.disabled = true;
-    iHaveNever.style.opacity = 0.9;
+
     iHaveNever.disabled = true;
+    iHaveNever.style.backgroundColor = "#efefef4d";
 
     neverAnswer = true;
     socket.emit('neverAnswer', neverAnswer, clientPeerId);
 });
 
 iHaveNever.addEventListener("click", () => {
-    iHave.style.opacity = 0.9;
+    answerPressed = true;
+    iHave.style.backgroundColor ="#efefef4d"
     iHave.disabled = true;
-    iHaveNever.style.opacity = 0.9;
+
+    iHaveNever.style.backgroundColor = "rgb(255, 0, 0)";
     iHaveNever.disabled = true;
 
     neverAnswer = false;
@@ -151,12 +170,24 @@ sendBTN.addEventListener("click", () => {
 });
 
 socket.on('newMessage', (chatMessage, userId) => {
-    let newMessage = document.createElement("P");
-    newMessage.classList.add("newMessage");
-    newMessage.innerText = `${userId}: ${chatMessage}`;
-    message.appendChild(newMessage);
-    if(whiteBackground) newMessage.style.backgroundColor = "white";
-    whiteBackground = !whiteBackground;
+    let userNamePara = document.getElementById("userNamePara");
+    let userid = userNamePara.innerText;
+
+    if (userId == userid) {
+        let newMessage = document.createElement("P");
+        newMessage.classList.add("newMessage");
+        newMessage.innerText = `Me: ${chatMessage}`;
+        message.appendChild(newMessage);
+        if(whiteBackground) newMessage.style.backgroundColor = "white";
+        whiteBackground = !whiteBackground;
+    } else {
+        let newMessage = document.createElement("P");
+        newMessage.classList.add("newMessage");
+        newMessage.innerText = `${userId}: ${chatMessage}`;
+        message.appendChild(newMessage);
+        if(whiteBackground) newMessage.style.backgroundColor = "white";
+        whiteBackground = !whiteBackground;
+    }
 })
 
 function sendMessage() {

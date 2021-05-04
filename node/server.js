@@ -125,6 +125,8 @@ function idObj(roomId, amountConnected) {
     this.userIdArr = [];
     this.startedGame = 'none';
     this.customPrompts = [];
+    this.roundtimeValue = 0;
+    this.nextPromptCountdown = 0;
 
     this.neverGame = function NeverObj(neverPrompts) {
         this.useCustomPromptsExclusively = false;
@@ -144,9 +146,6 @@ let dontTouchTwo;
 let idBase;
 
 let idArr = [];
-
-let roundtimeValue;
-let nextPromptCountdown;
 
 //All the socket functions
 io.on('connection', (socket) => {
@@ -312,20 +311,20 @@ io.on('connection', (socket) => {
 
             switch(roundtime) {
                 case '1s':
-                    roundtimeValue = 1;
-                    nextPromptCountdown = 1;
+                    idArr[id].roundtimeValue = 1;
+                    idArr[id].nextPromptCountdown = 1;
                     break;
                 case '10s':
-                    roundtimeValue = 10;
-                    nextPromptCountdown = 10;
+                    idArr[id].roundtimeValue = 10;
+                    idArr[id].nextPromptCountdown = 10;
                     break;
                 case '15s':
-                    roundtimeValue = 15;
-                    nextPromptCountdown = 15;
+                    idArr[id].roundtimeValue = 15;
+                    idArr[id].nextPromptCountdown = 15;
                     break;
                 case '30s':
-                    roundtimeValue = 30;
-                    nextPromptCountdown = 30;
+                    idArr[id].roundtimeValue = 30;
+                    idArr[id].nextPromptCountdown = 30;
                     break;
             }
 
@@ -335,7 +334,7 @@ io.on('connection', (socket) => {
                 if (err) throw err;
                 io.to(socket.room).emit('changeHTML', data);
             });
-
+            socket.emit
         }
 
         console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
@@ -344,20 +343,21 @@ io.on('connection', (socket) => {
 
     //Handles 'Never have I ever' logic
     socket.on('neverLogic', firstTurn => {
-        io.to(socket.room).emit("setRoundtime", roundtimeValue);
         let id, prompt;
         for(let i = 0; i < idArr.length; i++) {
             if(idArr[i].roomId === socket.room) {
                 id = i;
             }
         }
+        io.to(socket.room).emit("setRoundtime", idArr[id].roundtimeValue);
         console.log("IDWORKS ->>>>>>>>>>>>" + id);
         idArr[id].voteCount++;
         console.log("votes: " + idArr[id].voteCount);
+        idArr[id].votingRight = idArr[id].amountConnected;
         console.log("People with voting right: " + idArr[id].votingRight);
         io.to(socket.room).emit('voting', idArr[id].voteCount, idArr[id].votingRight, firstTurn);
 
-        if ((idArr[id].voteCount > (idArr[id].votingRight / 2)) || firstTurn) {
+        if ((idArr[id].voteCount >= (idArr[id].votingRight / 2)) || firstTurn) {
             if(unusedPromptsLeft(id)) {
                 let randomPromptIndex = randomPrompt(id);
                 idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
@@ -369,7 +369,7 @@ io.on('connection', (socket) => {
                 }
                 console.log("Prompt to send: '" + prompt + "'");
                 io.to(socket.room).emit("nextPrompt", prompt);
-                countdown(nextPromptCountdown, socket, id);
+                countdown(idArr[id].nextPromptCountdown, socket, id);
                 idArr[id].voteCount = 0;
                 console.log("votes reset to: " + idArr[id].voteCount);
             } else {
@@ -532,7 +532,6 @@ function countdown(time, socket, id) {
         setTimeout(function() { countdown(--time, socket, id) }, 1000);
     } else {    
         console.log(`counter for room ${id} ended`);
-        idArr[id].votingRight = idArr[id].amountConnected;
         io.to(socket.room).emit("activateNextRoundBtn");
         io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
         idArr[id].answerArr = [];
@@ -575,6 +574,7 @@ function randomRoom(socket, id) {
         id = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(id));
     */
+
     let room = new idObj(id, 0);
 
     idArr.push(room);
