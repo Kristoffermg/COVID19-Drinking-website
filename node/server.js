@@ -374,7 +374,8 @@ io.on('connection', (socket) => {
                 idArr[id].voteCount = 0;
                 console.log("votes reset to: " + idArr[id].voteCount);
             } else {
-                io.to(socket.room).emit("gameOver"); 
+                io.to(socket.room).emit("gameOver");
+                console.log(idArr[id].usedPrompts);
             }
         }
         
@@ -711,7 +712,13 @@ function disconnectHandler (socket) {
 }
 
 //finder index på rum i idArr
-function findID(roomId){
+let findID = function(roomId, testObject) {
+    if(testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+        console.log(testObject[0].roomId);
+    }
+
     for (let i = 0; i < idArr.length; i++) {
         if (idArr[i].roomId == roomId) {
             return i;
@@ -732,7 +739,16 @@ function countdown(time, socket, id) {
     }
 }
 
-function unusedPromptsLeft(id) {
+let unusedPromptsLeft = function(id, testObject) {
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+        console.log(testObject[0].unusedPromptsLeft);
+    }
+
+    console.log("never length: " + idArr[id].neverHaveIEverPrompts.length);
+    console.log("used length: " + idArr[id].usedPrompts);
+
     if(idArr[id].usedPrompts.length === undefined) idArr[id].usedPrompts[0] = -1;
     if(idArr[id].usedPrompts.length !== idArr[id].neverHaveIEverPrompts.length) {
         return true;
@@ -740,17 +756,27 @@ function unusedPromptsLeft(id) {
     return false;
 }
 
-function randomPrompt(id) {
+let randomPrompt = function(id, testObject) {
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
+
     let randomPromptIndex;
     do {
         randomPromptIndex = Math.floor(Math.random() * idArr[id].neverHaveIEverPrompts.length);
     } while(promptHasBeenUsed(randomPromptIndex, id));
     idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
-    idArr[id].counter++;
+    //idArr[id].counter++;
     return randomPromptIndex;
 }
 
-function promptHasBeenUsed(randomPromptIndex, id) {
+let promptHasBeenUsed = function(randomPromptIndex, id, testObject) {
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
+
     if(idArr[id].usedPrompts.includes(randomPromptIndex)) {
       return true;
     }
@@ -813,7 +839,12 @@ let cmpRoll = function(arrNew, arrAgainst, id, testObject) {
 
 }
 
-function nextTurn(id) {
+let nextTurn = function(id, testObject) {
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
+    
     console.log('currTurn');
     console.log(idArr[id].currTurn);
     if (idArr[id].currTurn < idArr[id].mejerLives.length - 1) {
@@ -822,10 +853,17 @@ function nextTurn(id) {
         idArr[id].currTurn = 0;
     }
 
+    if(testObject != dontTouch) return idArr[id].mejerLives[idArr[id].currTurn][0];
+
     io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('clientTurn');
 }
 
-function mejerLivesSetup(id){
+let mejerLivesSetup = function(id, testObject){
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
+    
     let tempArray = [];    
 
     for(let i = 0; i < idArr[id].userIdArr.length; i++){
@@ -834,8 +872,10 @@ function mejerLivesSetup(id){
 
         idArr[id].mejerLives[i] = tempArray;
     }
-    console.log('mejerLivesSetup');
+    console.log('----------------------mejerLivesSetup--------------------');
     console.log(idArr[id].mejerLives);
+    
+    if (testObject != dontTouch) return idArr[id].mejerLives;
 }
 
 function mejerLivesDecrement(playerID, roomID){
@@ -933,3 +973,9 @@ console.log(d.toLocaleTimeString() + '  ' + d.toLocaleDateString());
 module.exports.diceSort = diceSort;
 module.exports.checkDrink = checkDrink;
 module.exports.cmpRoll = cmpRoll;
+module.exports.findID = findID;
+module.exports.unusedPromptsLeft = unusedPromptsLeft;
+module.exports.randomPrompt = randomPrompt;
+module.exports.promptHasBeenUsed = promptHasBeenUsed;
+module.exports.nextTurn = nextTurn;
+module.exports.mejerLivesSetup = mejerLivesSetup;
