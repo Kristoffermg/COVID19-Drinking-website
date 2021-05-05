@@ -878,7 +878,7 @@ let mejerLivesSetup = function(id, testObject){
     if (testObject != dontTouch) return idArr[id].mejerLives;
 }
 
-function mejerLivesDecrement(playerID, roomID){
+let mejerLivesDecrement = function(playerID, roomID){
     let screenName;
 
     for(let i = 0; i < idArr[roomID].mejerLives.length; i++){
@@ -979,3 +979,4 @@ module.exports.randomPrompt = randomPrompt;
 module.exports.promptHasBeenUsed = promptHasBeenUsed;
 module.exports.nextTurn = nextTurn;
 module.exports.mejerLivesSetup = mejerLivesSetup;
+module.exports.mejerLivesDecrement = mejerLivesDecrement;
