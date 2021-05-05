@@ -107,6 +107,7 @@ socket.on('setTurnOrder', (mejerLives) => {
     let livesPara;
     let tempAva;
     let vidGrid = document.getElementById('video-grid');
+    console.log('TURN ORDER START!!!!!!!');
     console.log(avatarArr);
 
     for (let i = 0; i < mejerLives.length; i++) {
@@ -134,6 +135,8 @@ socket.on('setTurnOrder', (mejerLives) => {
     }
     newArr[0].childNodes[0].style.outlineColor = 'green';
     console.log(newArr);
+    console.log('TURN ORDER END!!!!!!!');
+
 
     // socket.emit('dontMindMe');
 
