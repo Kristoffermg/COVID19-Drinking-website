@@ -228,15 +228,6 @@ socket.on('updateGameLog', str => {
     }
 });
 
-socket.on('getUserName', () => {
-    let userName = [];
-    console.log('getUserName');
-    userName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p").innerText;
-    //userName = document.getElementById('userNamePara');
-    console.log(userName);
-    socket.emit('getUserName', (userName));
-});
-
 socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
     let turnEl;
     console.log('ENTERED TURN INDICATOR!');

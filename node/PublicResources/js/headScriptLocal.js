@@ -29,6 +29,15 @@ socket.on('user-disconnected', (disconnectID) => {
         meme.remove();
 });
 
+socket.on('getUserName', () => {
+    let userName = [];
+    console.log('getUserName');
+    userName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p").innerText;
+    //userName = document.getElementById('userNamePara');
+    console.log(userName);
+    socket.emit('getUserName', (userName));
+});
+
 //Setup for the videochat
 // const videoGrid = document.getElementById('video-grid');
 // const myPeer = new Peer({
