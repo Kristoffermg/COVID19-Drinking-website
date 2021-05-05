@@ -229,10 +229,6 @@ io.on('connection', (socket) => {
         }
 
         socket.to(roomId).broadcast.emit("user-connected", socket.id);
-        
-        // socket.on('disconnect', () => {
-        //     socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
-        // });
     });
 
     socket.on('answerCall', (callerID) => {
