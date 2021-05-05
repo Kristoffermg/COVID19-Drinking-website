@@ -438,7 +438,7 @@ io.on('connection', (socket) => {
         io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
 
         console.log("MEJER FIRST TURN SMILE!!!!!!!!!!!");
-        io.to(socket.room).emit("debugGoBrrrr");
+        io.to(idArr[id].roomId).emit("debugGoBrrrr");
 
         io.to(idArr[id].roomId).emit('getUserName');
         io.to(idArr[id].roomId).emit('setTurnOrder', idArr[id].mejerLives);
