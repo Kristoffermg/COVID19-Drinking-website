@@ -229,9 +229,10 @@ io.on('connection', (socket) => {
         }
 
         socket.to(roomId).broadcast.emit("user-connected", socket.id);
-        socket.on('disconnect', () => {
-            socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
-        });
+        
+        // socket.on('disconnect', () => {
+        //     socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
+        // });
     });
 
     socket.on('answerCall', (callerID) => {
@@ -674,6 +675,7 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         console.log(socket.userName + " has disconnected.");
         io.emit('message', `${socket.userName} has disconnected`);
+        socket.to(socket.room).broadcast.emit('user-disconnected', socket.id);
         disconnectHandler(socket);
     });
 });
@@ -982,7 +984,7 @@ let pushArray = function(arr, index, testBool) {
 }
 
 //starts the server
-// server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
+server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
 
 var d = new Date();
 console.log(d.toLocaleTimeString() + '  ' + d.toLocaleDateString());
