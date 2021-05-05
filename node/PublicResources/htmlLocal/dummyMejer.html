@@ -34,42 +34,53 @@
     </nav>
 
     <h2 id="meyer">Meyer</h2>
-    <div class="main">
-        <p id="error" hidden='true'>ErrorMessage</p>
-        <br>
-        <p  id="diceRoll">Her står hvad man ruller</p>
-        <div class="clickersMeyer">
-            <button class="Meyerbuttons" id="trueBtn" hidden='true'>Truth</button>
-            <button class="Meyerbuttons" id="lieBtn" hidden='true'>Lie</button>
-            <select name="dice1" id="dice1" hidden='true' class="dice">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-            <select name="dice2" id="dice2" hidden='true' class="dice">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-            </select>
-            <button class="Meyerbuttons" id="deroverBtn" hidden='true'>Same or higher</button>
-            <button class="Meyerbuttons" id="rollBtn" hidden='true'>Roll</button>
-            <button class="Meyerbuttons" id="liftBtn" hidden='true'>Lift</button>
+    <div class="meyerContainer">
+        <div class="chatContainerMeyer">
+            <div class="chat">
+                <p id="chatSystem">Chat</p>
+                <div id="message">
+
+                </div>
+                <input type="text" id="textMessage" placeholder="Message">
+                <input type="button" value="Send" id="sendBTN">
+            </div>
+        </div>
+        <div class="main">
+            <p id="error" hidden='true'>ErrorMessage</p>
+            <br>
+            <p  id="diceRoll">Her står hvad man ruller</p>
+            <div class="clickersMeyer">
+                <button class="Meyerbuttons" id="trueBtn" hidden='true'>Truth</button>
+                <button class="Meyerbuttons" id="lieBtn" hidden='true'>Lie</button>
+                <select name="dice1" id="dice1" hidden='true' class="dice">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+                <select name="dice2" id="dice2" hidden='true' class="dice">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                </select>
+                <button class="Meyerbuttons" id="deroverBtn" hidden='true'>Same or higher</button>
+                <button class="Meyerbuttons" id="rollBtn" hidden='true'>Roll</button>
+                <button class="Meyerbuttons" id="liftBtn" hidden='true'>Lift</button>
+            </div>
+            <div id="videoPlacement"></div>
+        </div>
+        <div id="logBox">
+            <h2 id="logBoxTag">Log Box</h2>
+            <ul id='gameLog'>
+                <ul></ul>
+            </ul>
         </div>
     </div>
-    <div id="logBox">
-        <h2 id="logBoxTag">Log Box</h2>
-        <ul id='gameLog'>
-            <ul></ul>
-        </ul>
-    </div>
-
-    <div id="videoPlacement"></div>
 
     <script defer src="../js/mejer.js" id="pageScript"></script>
 </body>

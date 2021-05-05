@@ -46,6 +46,10 @@ socket.on('setRoundtime', roundtime => {
     roundtimeBar.style.setProperty('--duration', roundtime);
 });
 
+socket.on('setSipText', amountOfSips => {
+    sipText.innerText = `Take ${amountOfSips} of your drink`;
+});
+
 socket.on('activateNextRoundBtn', () => {
     nextText.disabled = false;
     nextText.style.backgroundColor = "#efefef";
@@ -121,7 +125,7 @@ socket.on('nextPrompt', prompt => {
 });
 
 socket.on('gameOver', () => {
-    neverText.innerHTML = "GAME OVER, CHEERS!!";
+    neverText.innerHTML = "GAME OVER, CHEERS!! Down your drink!";
 });
 
 socket.on('voting', (voteCount, votingRight, firstTurn) => {
@@ -176,23 +180,27 @@ sendBTN.addEventListener("click", () => {
 });
 
 socket.on('newMessage', (chatMessage, userId) => {
-    let userNamePara = document.getElementById("userNamePara");
-    let userid = userNamePara.innerText;
+    let userNameDiv = document.getElementById("id" + userId);
+    let userNamePara = userNameDiv.childNodes[1];
+    let username = userNamePara.innerText;
 
-    if (userId == userid) {
+    if (userId == clientSocketId) {
+        let newMessageDiv = document.createElement("div");
+        newMessageDiv.classList.add("newMessageDiv")
         let newMessage = document.createElement("P");
         newMessage.classList.add("newMessage");
-        newMessage.innerText = `Me: ${chatMessage}`;
-        message.appendChild(newMessage);
-        if(whiteBackground) newMessage.style.backgroundColor = "white";
-        whiteBackground = !whiteBackground;
+        newMessage.innerText = `${chatMessage}`;
+        message.appendChild(newMessageDiv)
+        newMessageDiv.appendChild(newMessage);
+        newMessageDiv.style.justifyContent = "flex-end";
+        newMessage.style.background = "linear-gradient(to bottom, rgb(29, 109, 214), rgb(29, 150, 214)";
     } else {
         let newMessage = document.createElement("P");
         newMessage.classList.add("newMessage");
-        newMessage.innerText = `${userId}: ${chatMessage}`;
+        newMessage.innerText = `${username}: ${chatMessage}`;
         message.appendChild(newMessage);
-        if(whiteBackground) newMessage.style.backgroundColor = "white";
-        whiteBackground = !whiteBackground;
+        newMessage.style.backgroundColor = "white";
+        newMessage.style.color = "black";
     }
 
     // Automatically scrolls down to the bottom in the message box
@@ -203,9 +211,7 @@ function sendMessage() {
     let textMessage = sanitize(textMsg.value);
     console.log("Message" + textMessage);
     if(textMessage.length > 0) {
-        let userNamePara = document.getElementById("userNamePara");
-        let userid = userNamePara.innerText;
-        socket.emit("chatMessage", textMessage, userid);
+        socket.emit("chatMessage", textMessage, clientSocketId);
     }
 }
 // Get the input field

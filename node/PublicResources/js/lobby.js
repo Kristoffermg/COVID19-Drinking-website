@@ -6,9 +6,13 @@ socket.emit('insertPromptQuery', "done this right first try");
 //Sets different variables
 logo = document.getElementById("navbar__logo");
 usernameButton = document.getElementById("setUsername");
-settingsTab = document.getElementById("settingstab");
+settingsTab = document.getElementById("contentLobby");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
+let gameSelect = document.getElementById("gameSelect");
+let neverHaveIEeverSettings = document.getElementById('neverHaveIEverSettings');
+let ruleSelect = document.getElementById('ruleSelect');
+let roundtimeSelect = document.getElementById("roundtimeSelect");
 let addPrompt = document.getElementById("addPrompt")
 let promptInput = document.getElementById('customprompttext')
 let customPromptsList = document.getElementById('customPromptList');
@@ -37,9 +41,7 @@ debug = document.querySelector("div.videoDiv#idclient");
 // });
 
 startGame.addEventListener("click", () => {
-    let gameSelect = document.getElementById("gameSelect");
-    let roundtimeSelect = document.getElementById("roundtimeSelect");
-    socket.emit('startGame', gameSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
+    socket.emit('startGame', gameSelect.value, ruleSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
 });
 
 uploadPfp.addEventListener("submit", e => {
@@ -99,6 +101,15 @@ usernameButton.addEventListener("click", () => {
 
 })
 
+// Displays the settings for the games when they are selected
+gameSelect.addEventListener('change', () => {
+    if(gameSelect.value === 'prompt') {
+        neverHaveIEeverSettings.style.display = 'block';
+    } else if(gameSelect.value === 'dice') {
+        neverHaveIEeverSettings.style.display = 'none';
+    }
+});
+
 promptInput.addEventListener("keyup", function(event) {
     // Number 13 is the "Enter" key on the keyboard
     if (event.keyCode === 13) {
@@ -109,9 +120,11 @@ promptInput.addEventListener("keyup", function(event) {
 
 //Adds promt
 addPrompt.addEventListener("click", () => {
+    if(promptInput.value.length === 0) return; 
+
     let newPrompt = document.createElement("P");
     newPrompt.classList.add("customPromtListText");
-    newPrompt.innerText = sanitize(promptInput.value);
+    newPrompt.innerText = sanitize(`Never have I ever ${promptInput.value}`);
     customPromptsList.appendChild(newPrompt);
 
     let deletebutton = document.createElement("button");
@@ -119,7 +132,7 @@ addPrompt.addEventListener("click", () => {
     deletebutton.classList.add("deleteBtn");
     newPrompt.appendChild(deletebutton);
 
-    console.log("LOL ->" + promptInput.value);
+    console.log("LEN: " + promptInput.value.length);
     socket.emit('storeCustomPrompt', promptInput.value);
 
     deletebutton.addEventListener("click", () => {

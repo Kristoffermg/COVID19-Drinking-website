@@ -124,6 +124,7 @@ function idObj(roomId, amountConnected) {
     this.nextPromptCountdown = 0;
 
     this.neverGame = function NeverObj(neverPrompts) {
+        this.amountOfSipsRule = "";
         this.useCustomPromptsExclusively = false;
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
@@ -256,7 +257,7 @@ io.on('connection', (socket) => {
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
-    socket.on('startGame', (gameType, roundtime, _useCustomPromptsExclusively) => {
+    socket.on('startGame', (gameType, amountOfSips, roundtime, _useCustomPromptsExclusively) => {
         let id;
         if (!socket.admin) {
             socket.emit('noAdminPerm');
@@ -280,6 +281,8 @@ io.on('connection', (socket) => {
                                 let neverHaveIEverPrompts = data.split(/\r?\n/);
                                 idArr[i].neverGame(neverHaveIEverPrompts);
 
+                                idArr[i].amountOfSipsRule = amountOfSips;
+
                                 idArr[id].useCustomPromptsExclusively = _useCustomPromptsExclusively;
                                 if(_useCustomPromptsExclusively === false) {
                                     mixCustomAndWrittenPrompts(id);
@@ -291,20 +294,20 @@ io.on('connection', (socket) => {
 
                     switch(roundtime) {
                         case '1s':
-                            roundtimeValue = 1;
-                            nextPromptCountdown = 1;
+                            idArr[id].roundtimeValue = 1;
+                            idArr[id].nextPromptCountdown = 1;
                             break;
                         case '10s':
-                            roundtimeValue = 10;
-                            nextPromptCountdown = 10;
+                            idArr[id].roundtimeValue = 10;
+                            idArr[id].nextPromptCountdown = 10;
                             break;
                         case '15s':
-                            roundtimeValue = 15;
-                            nextPromptCountdown = 15;
+                            idArr[id].roundtimeValue = 15;
+                            idArr[id].nextPromptCountdown = 15;
                             break;
                         case '30s':
-                            roundtimeValue = 30;
-                            nextPromptCountdown = 30;
+                            idArr[id].roundtimeValue = 30;
+                            idArr[id].nextPromptCountdown = 30;
                             break;
                     }
                     break;
@@ -361,7 +364,6 @@ io.on('connection', (socket) => {
                 if (err) throw err;
                 io.to(socket.room).emit('changeHTML', data);
             });
-            socket.emit
         }
 
         //console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
@@ -384,7 +386,8 @@ io.on('connection', (socket) => {
             }
         }
         io.to(socket.room).emit("setRoundtime", idArr[id].roundtimeValue);
-        console.log("IDWORKS ->>>>>>>>>>>>" + id);
+        console.log("SIPS ->>>>>>>>>>>>>>>>>>>>" + idArr[id].amountOfSipsRule)
+        io.to(socket.room).emit('setSipText', idArr[id].amountOfSipsRule);
         idArr[id].voteCount++;
         console.log("votes: " + idArr[id].voteCount);
         idArr[id].votingRight = idArr[id].amountConnected;
@@ -821,8 +824,14 @@ function countdown(time, socket, id) {
     } else {    
         console.log(`counter for room ${id} ended`);
         io.to(socket.room).emit("activateNextRoundBtn");
-        io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
-        idArr[id].answerArr = [];
+        // Prevents server crash when refreshing the page and starting games over and over (answerArr undefined)
+        try {
+            io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
+            idArr[id].answerArr = [];
+        }
+        catch(err) {
+            console.log(err);
+        }
     }
 }
 
