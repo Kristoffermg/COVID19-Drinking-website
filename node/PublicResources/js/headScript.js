@@ -20,6 +20,15 @@ socket.on('ringring', answerID => {
     connectToNewUser(answerID, false);
 });
 
+socket.on('debugGoBrrrr', () => {
+    console.log("DEBUG GO BRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
+});
+
+socket.on('user-disconnected', (disconnectID) => {
+    let meme = document.querySelector("div.videoDiv#id" + disconnectID);
+        meme.remove();
+});
+
 //Setup for the videochat
 // const videoGrid = document.getElementById('video-grid');
 // const myPeer = new Peer({
@@ -93,10 +102,7 @@ function connectToNewUser(userId, flag) {
     console.log('post myPeer.call!!!!!');
     const video = document.createElement('img');
     addVideoStream(video, userId);
-    socket.on('user-disconnected', (disconnectID) => {
-    let meme = document.querySelector("div.videoDiv#id" + disconnectID);
-        meme.remove();
-    });
+
 
     // peers[userId] = call;
 }
