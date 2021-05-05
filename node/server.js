@@ -658,12 +658,14 @@ io.on('connection', (socket) => {
 
     socket.on('getUserName', (userName) => {
         let id = findID(socket.room);
+        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        console.log('userNames');
 
-
+        console.log('Socket ID: ');
+        console.log(socket.id);
         for(let i = 0; i < idArr[id].mejerLives.length; i++){
             if(socket.id == idArr[id].mejerLives[i][0]){
                 idArr[id].mejerLives[i][2] = userName;
-                console.log('userNames');
                 console.log(idArr[id].mejerLives[i][2]);
             }
         }
