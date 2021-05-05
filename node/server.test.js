@@ -8,10 +8,13 @@ const {
     randomPrompt,
     promptHasBeenUsed,
     nextTurn,
-    mejerLivesSetup
+    mejerLivesSetup,
+    mejerLivesDecrement,
+    randomRoom,
+    pushArray
 } = require('./server');
 
-//Test enviroment for the 'Meyer' game
+//----------------------Test enviroment for the 'Meyer' game----------------------
 describe('Meyer Tests', () => {
     //Make a mock-up of global variables
     let idArr = [{
@@ -65,7 +68,7 @@ describe('Meyer Tests', () => {
         ],
         currTurn: 3,
         mejerLives: [['user1Id', 6, 'user1Name'], ['user2Id', 4, 'user2Name'],
-                     ['user3Id', 2, 'user3Name'], ['user4Id', 5, 'user4Name']]
+                     ['user3Id', 1, 'user3Name'], ['user4Id', 5, 'user4Name']]
     },
     {
         roomId: "testRoomId3",
@@ -147,9 +150,17 @@ describe('Meyer Tests', () => {
         const setupTest2 = mejerLivesSetup(0, idArr);
         expect(setupTest2).toStrictEqual([['user1Id', 6], ['user2Id', 6]]);
     });
+
+    //mejerLivesDecrement Test
+    test('Should return the mejerLives array, post decrement', () => {
+        const decrement1 = mejerLivesDecrement('user1Id', 0, idArr);
+        expect(decrement1).toStrictEqual([['user1Id', 5], ['user2Id', 6]]);
+        const decrement2 = mejerLivesDecrement('user3Id', 1, idArr);
+        expect(decrement2).toStrictEqual([['user1Id', 6, 'user1Name'], ['user2Id', 4, 'user2Name'], ['user4Id', 5, 'user4Name']])
+    });
 });
 
-//Test enviroment for the 'Never Have I Ever' game
+//----------------------Test enviroment for the 'Never Have I Ever' game----------------------
 describe('NHIE Tests', () => {    
     //Make a mock-up of global variables
     let idArr = [{
@@ -231,5 +242,29 @@ describe('NHIE Tests', () => {
 
         const randomTest2 = randomPrompt(1, idArr);
         expect(randomTest2).toBe(6);
+    });
+});
+
+//----------------------Test enviroment for generic functions----------------------
+describe('Generic tests', () => {
+    //Make a mock-up of global variables
+    let idArr = [];
+    let testArr1 = ['test1',, 'test3', 'test4', 'test5'];
+    let testArr2 = ['test1', 'test2', 'test3',, 'test5'];
+
+    //randomRoom Test - Note: This test does not take the socket object into account since it would be near impossible to mock this object.
+    test('Should return the room id, extracted from the newly generated room', () => {
+        const randomRoom1 = randomRoom(undefined, 'thisIsARandomString', idArr);
+        expect(randomRoom1).toBe('thisIsARandomString');
+        const randomRoom2 = randomRoom(undefined, 'aiushiourhgdifugh', idArr);
+        expect(randomRoom2).toBe('aiushiourhgdifugh');
+    });
+
+    //pushArray Test
+    test('Should return the given array post push', () => {
+        const pushTest1 = pushArray(testArr1, 1, true);
+        expect(pushTest1).toStrictEqual(['test1', 'test3', 'test4', 'test5', undefined]);
+        const pushTest2 = pushArray(testArr2, 3, true);
+        expect(pushTest2).toStrictEqual(['test1', 'test2', 'test3','test5', undefined])
     });
 });

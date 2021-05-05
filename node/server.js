@@ -878,8 +878,13 @@ let mejerLivesSetup = function(id, testObject){
     if (testObject != dontTouch) return idArr[id].mejerLives;
 }
 
-let mejerLivesDecrement = function(playerID, roomID){
+let mejerLivesDecrement = function(playerID, roomID, testObject){
     let screenName;
+
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
 
     for(let i = 0; i < idArr[roomID].mejerLives.length; i++){
         if(playerID == idArr[roomID].mejerLives[i][0]){
@@ -911,6 +916,7 @@ let mejerLivesDecrement = function(playerID, roomID){
     console.log('mejerLivesDecrement');
     console.log(idArr[roomID].mejerLives);
 
+    if (testObject != dontTouch) return idArr[roomID].mejerLives;
 }
 
 let checkDrink = function (diceArr) {
@@ -925,7 +931,12 @@ let checkDrink = function (diceArr) {
 //------------------------------DICE SHIT END-------------------------
 
 //Creates a new random room
-function randomRoom(socket, id) {
+let randomRoom = function(socket, id, testObject) {
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
+
     //let id;
     /*
     do {
@@ -936,6 +947,10 @@ function randomRoom(socket, id) {
     let room = new idObj(id, 0);
 
     idArr.push(room);
+
+    //For the purpose of tests
+    if (testObject != dontTouch) return room.roomId;
+
     socket.join(room.roomId);
     socket.room = room.roomId;
     console.log("Det her burde være roomId: " + socket.room);
@@ -946,10 +961,11 @@ function randomRoom(socket, id) {
     console.log("Connected users: " + room.userIdArr);
 
     console.log("User " + socket.userName + " joined room " + id);
+    console.log(room.roomId);
 }
 
 //Removes "holes" in the array
-function pushArray (arr, index) {
+let pushArray = function(arr, index, testBool) {
     let SENTINAL = true;
 
     while (SENTINAL) {
@@ -961,6 +977,8 @@ function pushArray (arr, index) {
     }
     
     console.log("Post push: " + arr);
+
+    if (testBool) return arr;
 }
 
 //starts the server
@@ -980,3 +998,5 @@ module.exports.promptHasBeenUsed = promptHasBeenUsed;
 module.exports.nextTurn = nextTurn;
 module.exports.mejerLivesSetup = mejerLivesSetup;
 module.exports.mejerLivesDecrement = mejerLivesDecrement;
+module.exports.randomRoom = randomRoom;
+module.exports.pushArray = pushArray;
