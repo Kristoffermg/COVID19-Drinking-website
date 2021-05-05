@@ -237,12 +237,13 @@ h3 {
 
 .card__logo{
   height: 100%;
-  width: 100%;
+  /* width: 100%; */
   position: absolute;
   left: 55px;
-  image-resolution: 100px 100px;
+  bottom: 5px;
+  /* image-resolution: 100px 100px; */
   object-fit: cover;
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
 }
 
 
