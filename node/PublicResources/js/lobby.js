@@ -1,5 +1,6 @@
 console.log("lobby executed");
 
+socket.emit('insertPromptQuery', "done this right first try");
 
 
 //Sets different variables
@@ -8,6 +9,14 @@ usernameButton = document.getElementById("setUsername");
 settingsTab = document.getElementById("settingstab");
 copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
+let addPrompt = document.getElementById("addPrompt")
+let promptInput = document.getElementById('customprompttext')
+let customPromptsList = document.getElementById('customPromptList');
+let useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
+let usernameInput = document.getElementById('username');
+const uploadPfp = document.getElementById('uploadPfp');
+const inpFile = document.getElementById('inpFile');
+
 // newDebugMeme = document.getElementById("newDebugMeme");
 
 debug = document.querySelector("div.videoDiv#idclient");
@@ -30,9 +39,23 @@ debug = document.querySelector("div.videoDiv#idclient");
 startGame.addEventListener("click", () => {
     let gameSelect = document.getElementById("gameSelect");
     let roundtimeSelect = document.getElementById("roundtimeSelect");
-    socket.emit('startGame', gameSelect.value, roundtimeSelect.value);
+    socket.emit('startGame', gameSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
 });
 
+uploadPfp.addEventListener("submit", e => {
+    // prevents the page from refreshing
+    e.preventDefault(); 
+
+
+    const formData = new FormData();
+
+    // appends the first file in inpFile (the selected file)
+    formData.append("inpFile", inpFile.files[0]);
+
+    console.log(formData);
+    console.log(inpFile.files[0]);
+    socket.emit('insertProfilePictureQuery', inpFile.files[0]);
+});
 
 //Adds the lobby URL to the clipboard
 copyUrl.addEventListener("click", () => {
@@ -46,13 +69,67 @@ logo.addEventListener("click", () => {
     socket.emit("debug");
 });
 
+usernameInput.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      usernameButton.click();
+    }
+});
+
 //Changes the username
 usernameButton.addEventListener("click", () => {
-    let newUserName = document.getElementById("username").value;
-    //console.log("username: " + newUserName);
+    let newUserName = sanitize(document.getElementById("username").value);
     console.log("name: " + newUserName);
     socket.emit("changeName", newUserName);
+    newUserName.value = "";
+
+    let usernameSet = document.getElementById("usernameSet");
+    usernameSet.style.display = "block";
+    let op = 1;
+    let timer = setInterval(function () {
+        if(op <= 0.1) {
+            clearInterval(timer);
+            usernameSet.style.display = "none";
+        }
+        usernameSet.style.opacity = op;
+        usernameSet.style.filter = "alpha(opacity=" + op * 100 + ")";
+        op -= op * 0.1;
+    }, 100);
+
 })
+
+promptInput.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      addPrompt.click();
+    }
+});
+
+//Adds promt
+addPrompt.addEventListener("click", () => {
+    let newPrompt = document.createElement("P");
+    newPrompt.classList.add("customPromtListText");
+    newPrompt.innerText = sanitize(promptInput.value);
+    customPromptsList.appendChild(newPrompt);
+
+    let deletebutton = document.createElement("button");
+    deletebutton.innerText = "";
+    deletebutton.classList.add("deleteBtn");
+    newPrompt.appendChild(deletebutton);
+
+    console.log("LOL ->" + promptInput.value);
+    socket.emit('storeCustomPrompt', promptInput.value);
+
+    deletebutton.addEventListener("click", () => {
+        let prompt = deletebutton.parentElement.innerText;
+        socket.emit('deleteCustomPrompt', prompt);
+        newPrompt.remove();
+    });
+
+    promptInput.value = "";
+});
 
 //PAAAAAAAAAAAAAAAAAAAAAAAAUSE!
 
@@ -66,7 +143,6 @@ socket.on('checkAdminStatus', status => {
 });
 
 socket.on('makeAdmin', () => {
-    console.log("U is admin :)");
     settingsTab.hidden = false;
     startGame.hidden = false;
     isAdmin = true; 
@@ -82,6 +158,11 @@ socket.on('yeetAdminStuff', () => {
     settingsTab.hidden = true;
     startGame.hidden = true; 
 });
+
+// Avoids HTML injection
+function sanitize(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
 
 
 // The code below serves the purpose of making a push of the enter button, set one's username so a click

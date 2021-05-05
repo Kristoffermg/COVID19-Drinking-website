@@ -25,6 +25,18 @@ console.log(path);
 
 app.use(express.static(path));
 
+// const con = mysql.createConnection({
+//     host: "localhost",
+//     database: "sw2b2_3",
+//     user: "sw2b2-3",
+//     password: "wFGUZekJjvX7CVYn"
+// });
+
+// con.connect(function(err) {
+//     if(err) console.log(err);
+//     else console.log("Connected to database established");
+// });
+
 app.get('/', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
 });
@@ -107,8 +119,12 @@ function idObj(roomId, amountConnected) {
     this.amountConnected = amountConnected;
     this.userIdArr = [];
     this.startedGame = 'none';
+    this.customPrompts = [];
+    this.roundtimeValue = 0;
+    this.nextPromptCountdown = 0;
 
     this.neverGame = function NeverObj(neverPrompts) {
+        this.useCustomPromptsExclusively = false;
         this.neverHaveIEverPrompts = neverPrompts;
         this.usedPrompts = [];
         this.counter = 0;
@@ -140,6 +156,7 @@ let idArr = [];
 //All the socket functions
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
+    //idArr[i].neverGame(neverHaveIEverPrompts);
 
     //Leaves own id-room
     console.log(socket.rooms);
@@ -173,12 +190,12 @@ io.on('connection', (socket) => {
     });
 
     //Changes the username of the user who requested it
-    socket.on('changeName', (name, userId) => {
-        console.log("name: " + name + " id: " + userId);
+    socket.on('changeName', (name) => {
+        console.log("-------------------> name: " + name + " id: " + socket.id);
         let oldName = socket.userName;
         socket.userName = name;
         
-        io.to(socket.room).emit('changeName', socket.userName, userId, socket.id);
+        io.to(socket.room).emit('changeName', socket.userName, socket.id);
         
         //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
         console.log("succesfully changed to the name " + socket.userName);
@@ -239,7 +256,7 @@ io.on('connection', (socket) => {
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
-    socket.on('startGame', (gameType, roundtime) => {
+    socket.on('startGame', (gameType, roundtime, _useCustomPromptsExclusively) => {
         let id;
         if (!socket.admin) {
             socket.emit('noAdminPerm');
@@ -259,10 +276,14 @@ io.on('connection', (socket) => {
                             fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
                                 if (err) throw err;
                                 //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
+
                                 let neverHaveIEverPrompts = data.split(/\r?\n/);
                                 idArr[i].neverGame(neverHaveIEverPrompts);
-                                
-                                //console.log(idArr[i]);
+
+                                idArr[id].useCustomPromptsExclusively = _useCustomPromptsExclusively;
+                                if(_useCustomPromptsExclusively === false) {
+                                    mixCustomAndWrittenPrompts(id);
+                                }
                             });
                             console.log("pog");
                         }
@@ -334,43 +355,55 @@ io.on('connection', (socket) => {
             }
 
 
-
             //io.to(socket.room).emit('setRoundtime', 3);
             //Reads the relevent html file, and sends it to the frontend
             fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
                 if (err) throw err;
                 io.to(socket.room).emit('changeHTML', data);
             });
-
+            socket.emit
         }
 
         //console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
 
     });
 
+    socket.on('quitToLobby', () => {
+        fs.readFile(__dirname + `/PublicResources/htmlLocal/createlobby.html`, 'utf8', function(err, data) {
+            if (err) throw err;
+            io.to(socket.room).emit('changeHTML', data);
+        });
+    });
+
     //Handles 'Never have I ever' logic
     socket.on('neverLogic', firstTurn => {
-        io.to(socket.room).emit("setRoundtime", roundtimeValue);
-        let id;
+        let id, prompt;
         for(let i = 0; i < idArr.length; i++) {
             if(idArr[i].roomId === socket.room) {
                 id = i;
             }
         }
-
+        io.to(socket.room).emit("setRoundtime", idArr[id].roundtimeValue);
+        console.log("IDWORKS ->>>>>>>>>>>>" + id);
         idArr[id].voteCount++;
         console.log("votes: " + idArr[id].voteCount);
+        idArr[id].votingRight = idArr[id].amountConnected;
         console.log("People with voting right: " + idArr[id].votingRight);
+        io.to(socket.room).emit('voting', idArr[id].voteCount, idArr[id].votingRight, firstTurn);
 
-        if ((idArr[id].voteCount > (idArr[id].votingRight / 2)) || firstTurn) {
-            console.log("TRIGGER");
+        if ((idArr[id].voteCount >= (idArr[id].votingRight / 2)) || firstTurn) {
             if(unusedPromptsLeft(id)) {
                 let randomPromptIndex = randomPrompt(id);
                 idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
                 idArr[id].counter++;
-                console.log("Prompt to send: '" + idArr[id].neverHaveIEverPrompts[randomPromptIndex] + "'");
-                io.to(socket.room).emit("nextPrompt", idArr[id].neverHaveIEverPrompts[randomPromptIndex]);
-                countdown(nextPromptCountdown, socket, id);
+                if(idArr[id].useCustomPromptsExclusively === false) {
+                    prompt = idArr[id].neverHaveIEverPrompts[randomPromptIndex];
+                } else {
+                    prompt = idArr[id].customPrompts[randomPromptIndex];
+                }
+                console.log("Prompt to send: '" + prompt + "'");
+                io.to(socket.room).emit("nextPrompt", prompt);
+                countdown(idArr[id].nextPromptCountdown, socket, id);
                 idArr[id].voteCount = 0;
                 console.log("votes reset to: " + idArr[id].voteCount);
             } else {
@@ -641,6 +674,10 @@ io.on('connection', (socket) => {
 
 
     //-------------------------DICE SHIT END----------------------------
+    socket.on('chatMessage', (message, userid) => {
+        console.log("User: " + userid + ", send:" + message);
+        io.to(socket.room).emit('newMessage', message, userid);
+    });
 
     //Actually does nothing, but i am too scared to deletus this fetus
     socket.on('randomRoom', () => {
@@ -675,7 +712,65 @@ io.on('connection', (socket) => {
         io.emit('message', `${socket.userName} has disconnected`);
         disconnectHandler(socket);
     });
+
+    socket.on('storeCustomPrompt', prompt => {
+        let id = getRoomID(socket);
+        // Ternary operator in case the customPrompts array has no values (undefined)
+        idArr[id].customPrompts.push(prompt);
+        console.log(idArr[id].customPrompts);
+    });
+
+    socket.on('deleteCustomPrompt', prompt => {
+        let id = getRoomID(socket);
+        let index = idArr[id].customPrompts.indexOf(prompt); // If index is -1 then customPrompts doesn't contain the prompt
+        if(index > -1) {
+            idArr[id].customPrompts.splice(index, 1);
+        }
+        console.log(idArr[id].customPrompts)
+
+    });
+
+    // remove if we wont upload profile pictures to the database
+    socket.on('insertProfilePictureQuery', picture => {
+        con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
+            socket.id,
+            getRoomID(socket),
+            picture
+        ], function(err, result) {
+            console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
+        });
+    });
+
+    socket.on('selectQuery', query => {
+        con.query(query, function(err, result, fields) {
+            console.log(result);
+        });
+    });
 });
+
+function getRoomID(socket) {
+    for(let i = 0; i < idArr.length; i++) {
+        if(idArr[i].roomId === socket.room) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+function mixCustomAndWrittenPrompts(id) {
+    for(let i = 0; i < idArr[id].customPrompts.length; i++) {
+        idArr[id].neverHaveIEverPrompts.push(idArr[id].customPrompts[i])
+    }
+    console.log(idArr[id].neverHaveIEverPrompts);
+}
+
+function getHighestPromptID() {
+    con.query("SELECT * FROM NeverHaveIEverPrompts ORDER BY promptID DESC LIMIT 1", function(err, result) {
+        if(result === undefined) return 0;
+        return result;
+    });
+    return 0;
+}
 
 //Changes the idArr and removes a room object, if it has no user in it
 function disconnectHandler (socket) {
@@ -725,7 +820,6 @@ function countdown(time, socket, id) {
         setTimeout(function() { countdown(--time, socket, id) }, 1000);
     } else {    
         console.log(`counter for room ${id} ended`);
-        idArr[id].votingRight = idArr[id].amountConnected;
         io.to(socket.room).emit("activateNextRoundBtn");
         io.to(socket.room).emit('revealAnswer', idArr[id].answerArr);
         idArr[id].answerArr = [];
@@ -733,20 +827,22 @@ function countdown(time, socket, id) {
 }
 
 function unusedPromptsLeft(id) {
-    if(idArr[id].usedPrompts.length === undefined) idArr[id].usedPrompts[0] = -1;
-    if(idArr[id].usedPrompts.length !== idArr[id].neverHaveIEverPrompts.length) {
+    let promptArrLength = idArr[id].useCustomPromptsExclusively === false ? idArr[id].neverHaveIEverPrompts.length : idArr[id].customPrompts.length;
+    console.log(idArr[id].usedPrompts.length + " != " + promptArrLength);
+    if(idArr[id].usedPrompts.length !== promptArrLength) {
         return true;
     }
-    return false;
+    return false
 }
 
 function randomPrompt(id) {
     let randomPromptIndex;
+    let promptArrLength = idArr[id].useCustomPromptsExclusively === false ? idArr[id].neverHaveIEverPrompts.length : idArr[id].customPrompts.length;
+    console.log("Custom prompts: " + idArr[id].useCustomPromptsExclusively + " length: " + promptArrLength);
     do {
-        randomPromptIndex = Math.floor(Math.random() * idArr[id].neverHaveIEverPrompts.length);
+        randomPromptIndex = Math.floor(Math.random() * promptArrLength);
     } while(promptHasBeenUsed(randomPromptIndex, id));
     idArr[id].usedPrompts[idArr[id].counter] = randomPromptIndex;
-    idArr[id].counter++;
     return randomPromptIndex;
 }
 
@@ -888,6 +984,7 @@ function randomRoom(socket, id) {
         id = Buffer.from(`${i}`).toString('base64');
     } while (idArr.includes(id));
     */
+
     let room = new idObj(id, 0);
 
     idArr.push(room);

@@ -39,7 +39,7 @@ h3 {
 }
 
 .navbar {
-  background: #2c3e50;
+  background:	#12232e;
   height: 80px;
   display: flex;
   justify-content: center;
@@ -75,7 +75,9 @@ h3 {
 }
 
 .navbar__menu {
+  width: 25%;
   display: flex;
+  justify-content: space-between;
   align-items: center;
   list-style: none;
 }
@@ -85,14 +87,18 @@ h3 {
 }
 
 .navbar__links {
-  color: #fff;
+  box-sizing: border-box;
+  margin: 19px 0px 19px 0;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: white;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 125px;
   text-decoration: none;
-  height: 100%;
   transition: all 0.3s ease;
+  border-radius: 20px;
 }
 
 
@@ -123,7 +129,8 @@ h3 {
 }
 
 .navbar__links:hover {
-  color: #18f4fc;
+  background-color: #203647;
+  /*color: #18f4fc;*/
   transition: all 0.3s ease;
 }
 
@@ -552,8 +559,6 @@ a.link{
   }
 }
 
-
-
 @media screen and (max-width:900px) {
   .services__wrapper {
     grid-template-columns: 1fr;
@@ -563,7 +568,6 @@ a.link{
   }
   
 }
-
 
 .footer {
   font-family: 'Dela Gothic One', cursive;
@@ -578,25 +582,22 @@ a.link{
 }
 
 #settingstab {
-  background-color: rgb(129, 224, 224);
-  margin: auto;
-  margin-top: 30px;
-  border-style: solid;
-  border-width: .5rem;
-  border-radius: 1rem;
-  width: 700px;
-  padding-bottom: 20px;
-  text-align: center;
+  display: flex;
+  align-items: flex-start;
+  flex-direction: column;
 }
 
-.Settingh {
-  margin-bottom: 40px;
-  /*padding: 8px 12px;
-  right: 30%;
-  top: -2.2rem;*/
-  -webkit-text-stroke-width: 0px;
-  color: black;
-  font-weight: bold;
+.settings {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.optionDiv {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  color: white;
 }
 
 #testerino {
@@ -614,81 +615,78 @@ a.link{
   border-radius: 1rem;
 }
 
-#usernameInput {
-  background-color: rgb(129, 224, 224);
-  border: .2rem solid black;   
+#userAppearanceConfig {
+  background-color:#326181;
+  border: solid 1px black;
   border-radius: 1rem;
   text-align: center;
-  font-weight: bold;
+  font-weight: normal;
   margin: auto;
   margin-top: 50px;
   padding: 10px;
   width: 400px;
 }
 
-#usernameLabel {
-  position: relative;
-  font-weight: normal;
-  font-weight: 500;
-  font-size: 17px;
-  top: 0.1rem;
+.usernameHeader, .Settingh {
+  border: none;
+  margin: 0;
+  color: white;
+  -webkit-text-stroke-width: 0px;
+  font-size: 20px;
+  text-decoration: underline;
+}
+
+.Settingh {
+  align-self: center;
+  font-size: 25px;
+  width: 50%;
+
+}
+
+#usernameSet {
+  margin-top: 3px;
 }
 
 #videos {
-  position: relative;
-  margin-top: 30px;
-  margin-bottom: 50px;
-  /*border: 3px solid black;*/
-  left: 22%;
-  width: 56%;
   height: fit-content;
+  margin: 10px;
 }
 
 #video-grid, #videoPlacement {
   display: flex;
-  justify-content: center;
   flex-wrap: wrap;
-  grid-auto-rows: 300px;
+  justify-content: center;
+  width: fit-content;
 }
 
 video {
   outline-style: solid;
   outline-color: rgb(129, 224, 193);
   outline-width: thick;
-  width: 200px;
-  height: 200px;
+  width: 100px;
+  height: 100px;
   object-fit: cover;
-  margin: 0px 8px 0px 8px;
 }
 
 .avatar {
   outline-style: solid;
   outline-color: rgb(129, 224, 193);
   outline-width: thick;
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
-  margin: 0px 8px 0px 8px;
+  margin: 8px;
 }
 
 .games__and__rounds {
-  font-size: 20px;
-  padding: 8px 12px;
-  size: 4rem 6rem;
-  position: relative;
-  top: -1.2rem;
+  font-size: 17px;
 }
 
 .gameselect{
-  padding: 8px 12px;
-  font-size: 20px;
-  color: #333333;
-  border-color: #eeeeee;
-  border: 1px solid #dddddd;
-  cursor: pointer;
+  padding: 5px;
+  border: none;
   border-radius: 5px;
-  position: relative;
-  top: -1.2rem;
+  font-size: 17px;
 }
 
 .roundselect{
@@ -704,16 +702,78 @@ video {
   top: -4.5rem;
 }
 
-#startGame, #copyURL, #setUsername, #nexttext {
-  background-color: white;
-  color: black;
-  border: solid 1px;
+.customPromptContainer {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 25px;
+  text-align: center;
+  color: white;
+}
+
+.customPromptContainer h3 {
+  text-decoration: underline;
+}
+
+.checkboxDiv {
+  margin-top: 10px;
+}
+
+.inputDiv {
+  display: flex;
+  justify-content: center;
+}
+
+#customprompttext {
+  margin: 5px;
+  width: 50%;
+}
+
+#customPromptList {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  margin-top: 10px;
+  font-weight: normal;
+}
+
+.customPromtListText {
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  margin: auto;
+}
+
+.deleteBtn {
+  text-align: center;
+  margin: 0 0 0 5px;
+  height: 1.5em;
+  width: 1.5em;
+  font-family: Arial, Verdana;   
+  background: #f0f0f0 url(https://www.logolynx.com/images/logolynx/ab/abb9ce94099701e3a9b62d2d0700f193.png);
+  background-size: 8px 8px;
+  background-position: center;
+  background-repeat: no-repeat; 
+  border: none;
+  border-radius: 100%;
+}
+
+.deleteBtn:hover {
+  cursor: pointer;
+  height: 1.6em;
+  width: 1.6em;
+}
+
+#startGame, #copyURL, #setUsername, #nexttext, #addPrompt {
+  background-color: #4da8da;
+  color: white;
+  border: none;
   padding: 5px;
   border-radius: 5px;
   cursor: pointer;
 }
 
-#startGame:hover, #copyURL:hover, #setUsername:hover, #nexttext:hover {
+#startGame:hover, #copyURL:hover, #setUsername:hover, #nexttext:hover, #addPrompt:hover {
   background-color: rgb(0, 204, 255);
   box-shadow: 2px 2px rgb(0, 0, 0);
   transform: translateY(-2%);
@@ -732,8 +792,37 @@ video {
   background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 }
 
+#startGame {
+  align-self: center;
+  margin: 0;
+  margin-top: 10px;
+  padding: 5px;
+  width: 90%;
+  border-radius: 10px;
+}
+
 .url-div {
-  padding-top: 1rem;
+  margin: auto;
+  background-color: #326181;
+  margin-top: 10px;
+  width: 50%;
+  padding: 10px;
+  color: white;
+  border-radius: 20px;
+}
+
+.url-div h2 {
+  border: none;
+  margin: 0;
+  color: white;
+  -webkit-text-stroke-width: 0px;
+  font-size: 20px;
+  text-decoration: underline;
+  margin-bottom: 3px;
+} 
+
+.urlLabel {
+
 }
 
 .Rule_list {
@@ -749,16 +838,28 @@ overflow: auto;
   margin: auto;
   text-align: center;
   justify-content: center;
-  width: 50%;
+  width: 70%;
   margin-top: 5%;
 }
 
-.container {
+#lobbyContainer {
+  background-color:#326181;
+  border: solid 1px black;
+  border-radius: 5px;
   margin: auto;
-  background-color: rgb(129, 224, 193);
-  margin-top: 20px;
-  border-radius: 10px;
-  padding: 10px;
+  margin-top: 2%;
+  display: flex;
+  justify-content: center;
+  width: 80%;
+}
+
+.lobbyContent {
+  width: 50%;
+  padding: 5px;
+}
+
+.lobbyContent:first-of-type {
+  border-right: solid 1px black;
 }
 
 .Container {
@@ -777,12 +878,26 @@ overflow: auto;
 
 .chatContainer {
   width: 20%;
+  border: solid 2px white;
 }
 
 .promtContainer {
-  width: 80%;
+  width: 60%;
   display: flex;
   flex-direction: column;
+  border: solid 2px white;
+  transform: translateX(-30%);
+  background: linear-gradient(to bottom, rgb(129, 224, 224), rgb(129, 150, 224));
+}
+
+#videoContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+#votes {
+  margin: 0 0 5% 0;
+  color: white;
 }
 
 #neverText {
@@ -799,6 +914,7 @@ overflow: auto;
   border: solid 1px white;
   border-radius: 10px;
   cursor: pointer;
+  background-color: #efefef;
 }
 
 #iHave:hover {
@@ -814,38 +930,74 @@ overflow: auto;
 }
 
 #nextText {
+  background-color: #efefef4d;
   margin-top: 0;
-  margin-bottom: 20px;
+  margin-bottom: 0;
 }
 
 .promt {
   margin-top: 5%;
-  margin-bottom: 5%;
+  padding-bottom: 5%;
   height: fit-content;
   align-self: center;
   width: 100%;
+  border-bottom: solid 2px white;
 }
 
 #usernameContainer {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-top: solid 2px white;
-  border-right: solid 2px white;
-  border-bottom: solid 2px white;
+  border-top: solid 2px rgb(255, 255, 255);
+  border-right: solid 2px rgb(255, 255, 255);
+  border-bottom: solid 2px rgb(255, 255, 255);
 }
 
 .usernameText {
-  color: white;
+  color: rgb(255, 255, 255);
   font-size: 25px;
   /*border: solid 1px white;*/
 }
 
+#quitGame {
+  left: 82%;
+  position: fixed;
+}
+
 .chat {
+  background-color: rgb(129, 224, 224);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   height: 100%;
-  border-right: solid 2px white;
-  color: white;
-  align-self: center;
+  border-right: solid 2px rgb(255, 255, 255);
+}
+
+#chatSystem {
+  background: linear-gradient(to bottom, rgb(129, 224, 224), rgb(129, 150, 224));
+}
+
+#message {
+  height: 420px;
+  border-top: solid 2px rgb(255, 255, 255);
+  border-bottom: solid 2px rgb(255, 255, 255);
+  overflow: auto;
+}
+
+.newMessage {
+  color: black;
+  display: flex;
+  flex-wrap: wrap;
+  height: fit-content;
+}
+
+#sendBTN {
+  border: none;
+}
+
+#sendBTN:hover {
+  cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.541);
 }
 
 @keyframes roundtime {
@@ -880,7 +1032,6 @@ overflow: auto;
 
 #sipText {
   width: 100%;
-  border-top: solid 2px white;
   color: white;
   font-size: 40px;
   padding: 4%;
