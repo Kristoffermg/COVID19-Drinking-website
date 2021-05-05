@@ -437,6 +437,7 @@ io.on('connection', (socket) => {
         let id = findID(socket.room);
         io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
 
+        console.log("MEJER FIRST TURN SMILE!!!!!!!!!!!");
         io.to(idArr[id].roomId).emit('getUserName');
         io.to(idArr[id].roomId).emit('setTurnOrder', idArr[id].mejerLives);
     });
