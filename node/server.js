@@ -442,6 +442,14 @@ io.on('connection', (socket) => {
 
         io.to(idArr[id].roomId).emit('getUserName');
         io.to(idArr[id].roomId).emit('setTurnOrder', idArr[id].mejerLives);
+        //socket.emit('smile');
+    });
+
+    socket.on('dontMindMe', () => {
+        console.log("DONT MIND ME !!!!!!!");
+        let id = findID(socket.room);
+
+        io.to(idArr[id].roomId).emit('getUserName');
     });
 
     socket.on('turnIndicator',(turnStart) => {

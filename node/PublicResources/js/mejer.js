@@ -97,6 +97,10 @@ socket.on('startOfNewRound', () => {
     socket.emit('turnIndicator', true);
 });
 
+socket.on('smile', () => {
+    socket.emit('dontMindMe');
+});
+
 socket.on('setTurnOrder', (mejerLives) => {
     let avatarArr = document.querySelectorAll('.videoDiv');
     let newArr = [];
@@ -131,6 +135,7 @@ socket.on('setTurnOrder', (mejerLives) => {
     newArr[0].childNodes[0].style.outlineColor = 'green';
     console.log(newArr);
 
+    // socket.emit('dontMindMe');
 
 });
 
