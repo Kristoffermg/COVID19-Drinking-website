@@ -113,7 +113,7 @@ function addVideoStream(video, userId) {
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
 
-    video.src = '../img/avatar.png'; // skal være billede
+    video.src = '../img/Dummy.png'; // skal være billede
     
 
     video.setAttribute("id", "id" + userId);
@@ -164,7 +164,7 @@ socket.on('roomId', (roomId) => {
 });
 
 //Get's username from backend, so it can be updated on the site
-socket.on('changeName', (name, userSocketId) =>{
+socket.on('changeName', (name, userId, userSocketId) =>{
     let userPlace = document.getElementById("id"+userId);
     console.log("userId");
     console.log(userId);
