@@ -139,6 +139,7 @@ function idObj(roomId, amountConnected) {
         this.rollToBeat = [0,0];
         this.lieRoll = [0,0];
         this.wasLastLie = false;
+        this.wasLastDerOver = false;
         this.mejerRanks = ranks;
         this.currTurn = 0;
         this.mejerLives = [];
@@ -475,7 +476,9 @@ io.on('connection', (socket) => {
         if(idArr[id].wasLastLie){
             idArr[id].rollToBeat = idArr[id].lieRoll;
         }else{
-            idArr[id].rollToBeat = idArr[id].lastRoll;
+            if(!idArr[id].wasLastDerOver){
+                idArr[id].rollToBeat = idArr[id].lastRoll;
+            }
         }
 
         idArr[id].lastRoll = diceSort(dice1, dice2);
@@ -525,6 +528,7 @@ io.on('connection', (socket) => {
             io.to(socket.room).emit('incomingRoll', (result));
 
             idArr[id].wasLastLie = false;
+            idArr[id].wasLastDerOver = false;
 
             io.to(socket.room).emit('updateGameLog', `${screenName} rolled '${result}'`);
         }
@@ -558,6 +562,7 @@ io.on('connection', (socket) => {
 
 
             idArr[id].wasLastLie = true;
+            idArr[id].wasLastDerOver = false;
 
             io.to(socket.room).emit('updateGameLog', `${screenName} rolled '${result}'`);
         }
@@ -579,6 +584,7 @@ io.on('connection', (socket) => {
         
         idArr[id].lastRoll = diceSort(dice1, dice2);
         idArr[id].wasLastLie = false;
+        idArr[id].wasLastDerOver = true;
         console.log('Det eller derover roll');
         console.log(idArr[id].lastRoll);
 
@@ -645,8 +651,48 @@ io.on('connection', (socket) => {
     
                 nextTurn(id);
 
+            } else if(!cmpRoll(idArr[id].lastRoll, idArr[id].rollToBeat, id)){
+                
+                for(let i = 0; i < idArr[id].mejerLives.length; i++){
+                    if(idArr[id].mejerLives[i][0] == socket.id){
+    
+                        if(i == 0){
+                            i = idArr[id].mejerLives.length-1;
+                        }else{
+                            i--;
+                        }
+    
+                        mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                        if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
+                            mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                        }
+    
+                        for(let j = 0; j < 2; j++){
+    
+                            if(idArr[id].currTurn == 0){
+                                idArr[id].currTurn = idArr[id].mejerLives.length-1;
+                            }else{
+                                idArr[id].currTurn--;
+                            }
+                        }
+                        nextTurn(id);
+                        io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
+                        socket.emit('notTurn');
+                        console.log('-------------');
+                        console.log("currTurn");
+                        console.log(idArr[id].currTurn);
+                        console.log(idArr[id].mejerLives);
+                        console.log('-------------');
+                        break;
+                    }
+                }
+
+
             } else {
                 mejerLivesDecrement(socket.id, id);
+                if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
+                    mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                }
                 console.log('mejerLift false');
     
                 if(idArr[id].currTurn == 0){

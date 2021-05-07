@@ -103,6 +103,8 @@ socket.on('smile', () => {
 
 socket.on('mejerRoll', (lastRoll) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
+    if(lastRoll[0] == 1 && lastRoll[1] == 2) testFelt.innerText = "Meyer";
+    if(lastRoll[0] == 1 && lastRoll[1] == 3) testFelt.innerText = "Lil' Meyer";
 });
 
 socket.on('lieError', () => {
@@ -146,6 +148,8 @@ socket.on('notTurn', () => {
 socket.on('incomingRoll', (roll) => {
     console.log(roll);
     testFelt.innerText = roll;
+    if(roll[0] == 1 && roll[1] == 2) testFelt.innerText = "Meyer";
+    if(roll[0] == 1 && roll[1] == 3) testFelt.innerText = "Lil' Meyer";
 });
 
 socket.on('looseLife', (id, screenName) => {
@@ -211,6 +215,20 @@ socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
 });
 
 socket.on('everyoneDrink', () => {
+    rollBtn.hidden = true;
+    liftBtn.hidden = true;
+    trueBtn.hidden = true;
+    lieBtn.hidden = true;
+    dice1.hidden = true;
+    dice2.hidden = true;
+    deroverBtn.hidden = true;
+
+    rollEnabled = false;
+    liftEnabled = false;
+    trueEnabled = false;
+    lieEnabled = false;
+    deroverEnabled = false;
+
     testFelt.innerText = '32! Everyone drink!'
 });
 
@@ -256,6 +274,17 @@ function sanitize(input) {
 
 /*
 
-html/css <-- kaster vi til Jeppe
+--fællesskål fix knapper smile
+vis grunden til at miste liv
+vis det eller derover resultat på løft
+--Skriv lillemejer eller storemejer istedet for 13 eller 12
+--FIx det eller derover
+--Roll efter det eller derover skal ikke cmps med den
+--Mejer mister man 2 liv
+Death turn
+
+-------------------
+
+Custom rules: life amount
 
 */

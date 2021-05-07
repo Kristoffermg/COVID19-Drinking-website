@@ -38,6 +38,47 @@ socket.on('getUserName', () => {
     socket.emit('getUserName', (userName));
 });
 
+socket.on('setTurnOrder', (mejerLives) => {
+    let avatarArr = document.querySelectorAll('.videoDiv');
+    let newArr = [];
+    let livesPara;
+    let tempAva;
+    let vidGrid = document.getElementById('video-grid');
+    console.log('TURN ORDER START!!!!!!!');
+    console.log(avatarArr);
+
+    for (let i = 0; i < mejerLives.length; i++) {
+        for (let j = 0; j < avatarArr.length; j++) {
+            if ('id' + mejerLives[i][0] == avatarArr[j].getAttribute('id')) {
+                //console.log('Player: ' + avatarArr[j].getAttribute('id'));
+                tempAva = document.createElement('div');
+                tempAva = avatarArr[j];
+                newArr.push(tempAva);
+            }
+        }
+    }
+
+    for (let i = 0; i < avatarArr.length; i++) {
+        avatarArr[i].remove();
+    }
+
+    for (let i = 0; i < newArr.length; i++) {
+        livesPara = document.createElement('p');
+        livesPara.innerText = '6';
+        livesPara.setAttribute('id', 'userNamePara');
+        newArr[i].childNodes[0].style.outlineColor = 'grey';
+        newArr[i].append(livesPara);
+        vidGrid.append(newArr[i]);
+    }
+    newArr[0].childNodes[0].style.outlineColor = 'green';
+    console.log(newArr);
+    console.log('TURN ORDER END!!!!!!!');
+
+
+    // socket.emit('dontMindMe');
+
+});
+
 //Setup for the videochat
 // const videoGrid = document.getElementById('video-grid');
 // const myPeer = new Peer({
@@ -128,7 +169,7 @@ function addVideoStream(video, userId) {
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
 
-    video.src = '../img/Dummy.png'; // skal være billede
+    video.src = '../img/avatar.png'; // skal være billede
     
 
     video.setAttribute("id", "id" + userId);
