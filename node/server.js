@@ -38,16 +38,16 @@ app.use(express.static(path));
 // });
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    // fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
+    // fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
     //     if (err) throw err;
     //     //console.log(data);
     //     res.send(data);
     // });
-    res.sendFile(__dirname + '/PublicResources/html/createlobby.html');
+    res.sendFile(__dirname + '/PublicResources/htmlLocal/createlobby.html');
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
@@ -57,7 +57,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     if (idArr.length <= 0) {
         // res.redirect('/');      //Changed from /node0/
         console.log("No rooms exist");
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
     }
 
     for (let i = 0; i < idArr.length; i++) {
@@ -65,19 +65,19 @@ app.get('/Lobby/:lobbyId', function(req, res) {
             let htmlPath;
             switch (idArr[i].startedGame) {
                 case 'prompt':
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     break;
 
                 case 'card':
-                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';  //Midlertidig          
                     break;
 
                 case 'dice':
-                    htmlPath = '/PublicResources/html/dummyMejer.html';  //Midlertidig
+                    htmlPath = '/PublicResources/htmlLocal/dummyMejer.html';  //Midlertidig
                     break;
 
                 default:
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
             }
 
@@ -96,12 +96,12 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 
     if (!fileSent) {
         console.log("Else in switch");
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
     }
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -204,7 +204,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -268,7 +268,7 @@ io.on('connection', (socket) => {
                 case 'prompt':
                     console.log("Prompt game chosen");
                     //Throw prompt html
-                    htmlPath = '/PublicResources/html/never.html';
+                    htmlPath = '/PublicResources/htmlLocal/never.html';
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -315,13 +315,13 @@ io.on('connection', (socket) => {
                 case 'card':
                     console.log("Card game chosen");
                     //Throw card html
-                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
     
                 case 'dice':
                     console.log("Dice game chosen");
                     //Throw dice html
-                    htmlPath = '/PublicResources/html/dummyMejer.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/htmlLocal/dummyMejer.html'; //<-- Midlertidig path så ting ikk explodere
                     
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -345,11 +345,11 @@ io.on('connection', (socket) => {
                     break;
                 
                 case 'test1':
-                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
                     break;
                 
                 case 'test2':
-                    htmlPath = '/PublicResources/html/createlobby.html';
+                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
                     break;
     
                 default:
@@ -371,7 +371,7 @@ io.on('connection', (socket) => {
     });
 
     socket.on('quitToLobby', () => {
-        fs.readFile(__dirname + `/PublicResources/html/createlobby.html`, 'utf8', function(err, data) {
+        fs.readFile(__dirname + `/PublicResources/htmlLocal/createlobby.html`, 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('changeHTML', data);
         });

@@ -19,7 +19,7 @@ let customPromptsList = document.getElementById('customPromptList');
 let useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
 let usernameInput = document.getElementById('username');
 const uploadPfp = document.getElementById('uploadPfp');
-const inpFile = document.getElementById('inpFile');
+const profilePictureInput = document.getElementById('profile_picture');
 
 // newDebugMeme = document.getElementById("newDebugMeme");
 
@@ -48,16 +48,32 @@ uploadPfp.addEventListener("submit", e => {
     // prevents the page from refreshing
     e.preventDefault(); 
 
+    
+    console.log(profilePictureInput.files[0]); 
+    let pictureName = profilePictureInput.files[0].name;
+    let imgData = getBase64Image(profilePictureInput.files[0]);
+    console.log(imgData);
+    // Puts the base64 into localStorage and cuts ".png"/".jpg" off the end
+    localStorage.setItem(`${pictureName.substring(0, pictureName.length - 2)}`, imgData);
+    
+    //let pictureName = profilePictureInput.files[0].name
 
-    const formData = new FormData();
 
-    // appends the first file in inpFile (the selected file)
-    formData.append("inpFile", inpFile.files[0]);
-
-    console.log(formData);
-    console.log(inpFile.files[0]);
-    socket.emit('insertProfilePictureQuery', inpFile.files[0]);
+    //socket.emit('insertProfilePictureQuery', inpFile.files[0]);
 });
+
+function getBase64Image(profile_picture) {
+    let canvas = document.createElement("canvas");
+    canvas.width = profile_picture.width;
+    canvas.height = profile_picture.height;
+
+    let ctx = canvas.getContext("2d");
+    ctx.drawImage(profile_picture, 0, 0);
+
+    let dataURL = canvas.toDataURL("image/png");
+
+    return dataURL.replace(/^data:profile_picture\/(png|jpg);base64,/, "");
+}
 
 //Adds the lobby URL to the clipboard
 copyUrl.addEventListener("click", () => {
