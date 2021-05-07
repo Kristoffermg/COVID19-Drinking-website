@@ -103,8 +103,8 @@ socket.on('smile', () => {
 
 socket.on('mejerRoll', (lastRoll) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
-    if(lastRoll[0] == 1 && lastRoll[1] == 2) testFelt.innerText = "Meyer";
-    if(lastRoll[0] == 1 && lastRoll[1] == 3) testFelt.innerText = "Lil' Meyer";
+    if(lastRoll[0] == 1 && lastRoll[1] == 2) testFelt.innerText = "Meyer (12)";
+    if(lastRoll[0] == 1 && lastRoll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
 });
 
 socket.on('lieError', () => {
@@ -148,22 +148,23 @@ socket.on('notTurn', () => {
 socket.on('incomingRoll', (roll) => {
     console.log(roll);
     testFelt.innerText = roll;
-    if(roll[0] == 1 && roll[1] == 2) testFelt.innerText = "Meyer";
-    if(roll[0] == 1 && roll[1] == 3) testFelt.innerText = "Lil' Meyer";
+    if(roll[0] == 1 && roll[1] == 2) testFelt.innerText = "Meyer (12)";
+    if(roll[0] == 1 && roll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
 });
 
-socket.on('looseLife', (id, screenName) => {
+socket.on('looseLife', (id, text) => {
+    console.log("LOOOOOOOOOOOOOOOOSE LIIIIIIIIIIIIIIIIIFE");
     let memeArr = [];
     let lives;
     let counter;
-    testFelt.innerText = `${screenName}, lost a life`;
+    testFelt.innerText = text;
 
     memeArr = document.querySelectorAll('div.videoDiv#id' + id + ' > p');
     lives = memeArr[1];
 
-    counter = Number(lives.innerText);
+    counter = Number(lives.innerText.split(" ")[1]);
     counter--;
-    lives.innerText = counter;
+    lives.innerText = `Lives: ${counter}`;
 
     //socket.emit('updateGameLog', `${id}, lost a life`);
 });
@@ -274,17 +275,21 @@ function sanitize(input) {
 
 /*
 
---fællesskål fix knapper smile
-vis grunden til at miste liv
-vis det eller derover resultat på løft
+-----TODO-----
+Death turn
+implement noget der siger hvornår man skal get fucked up i meyer
+Custom rules: life amount
+
+
+-----DONE-----
 --Skriv lillemejer eller storemejer istedet for 13 eller 12
 --FIx det eller derover
 --Roll efter det eller derover skal ikke cmps med den
 --Mejer mister man 2 liv
-Death turn
-
--------------------
-
-Custom rules: life amount
+--Giv tal OG navn
+--fællesskål fix knapper smile
+--Den logger ikke fællestår
+--vis grunden til at miste liv
+--vis det eller derover resultat på løft
 
 */
