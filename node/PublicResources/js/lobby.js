@@ -47,33 +47,30 @@ startGame.addEventListener("click", () => {
 uploadPfp.addEventListener("submit", e => {
     // prevents the page from refreshing
     e.preventDefault(); 
+    // const reader = new FileReader();
 
+    // reader.addEventListener("load", () => {
+    //     localStorage.setItem(clientSocketId, reader.result); // replace pictureName with user id?
+    // });
     
-    console.log(profilePictureInput.files[0]); 
-    let pictureName = profilePictureInput.files[0].name;
-    let imgData = getBase64Image(profilePictureInput.files[0]);
-    console.log(imgData);
-    // Puts the base64 into localStorage and cuts ".png"/".jpg" off the end
-    localStorage.setItem(`${pictureName.substring(0, pictureName.length - 2)}`, imgData);
+    // reader.readAsDataURL(profilePictureInput.files[0]);
     
-    //let pictureName = profilePictureInput.files[0].name
+    // changePfp(clientSocketId);
 
+    let profilePictureBase64 = "";
+    const reader = new FileReader();
 
-    //socket.emit('insertProfilePictureQuery', inpFile.files[0]);
+    reader.addEventListener("load", () => {
+        profilePictureBase64 = reader.result;
+        socket.emit("userChangedProfilePicture", clientSocketId, profilePictureBase64);
+    });
+
+    reader.readAsDataURL(profilePictureInput.files[0]);
 });
 
-function getBase64Image(profile_picture) {
-    let canvas = document.createElement("canvas");
-    canvas.width = profile_picture.width;
-    canvas.height = profile_picture.height;
-
-    let ctx = canvas.getContext("2d");
-    ctx.drawImage(profile_picture, 0, 0);
-
-    let dataURL = canvas.toDataURL("image/png");
-
-    return dataURL.replace(/^data:profile_picture\/(png|jpg);base64,/, "");
-}
+socket.on('saveProfilePictureInLocalStorageAsBase64', (userId, profilePictureBase64) => {
+    localStorage.setItem(userId, profilePictureBase64);
+});
 
 //Adds the lobby URL to the clipboard
 copyUrl.addEventListener("click", () => {

@@ -143,6 +143,15 @@ function addVideoStream(video, userId) {
     console.log("DONESO");
 }
 
+socket.on('changeUsersProfilePicture', userId => {
+    // profilePicturePlaceholder is a div that contains the username and profile picture for the individual user
+    let profilePicturePlaceholder = document.getElementById("id" + userId);
+    let profilePicture = localStorage.getItem(userId);
+    if(profilePicture) {
+        profilePicturePlaceholder.firstChild.setAttribute("src", profilePicture);
+    }
+});
+
 //Gets own socket id from backend
 socket.on('getId', id => {
     clientSocketId = id;

@@ -377,6 +377,11 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('userChangedProfilePicture', (userId, profilePicture) => {
+        io.to(socket.room).emit('saveProfilePictureInLocalStorageAsBase64', userId, profilePicture);
+        io.to(socket.room).emit('changeUsersProfilePicture', userId);
+    });
+
     //Handles 'Never have I ever' logic
     socket.on('neverLogic', firstTurn => {
         let id, prompt;

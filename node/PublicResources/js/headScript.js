@@ -184,6 +184,15 @@ function addVideoStream(video, userId) {
     console.log("DONESO");
 }
 
+function changePfp(userId) {
+    // Userbox should be where the username and pfp is
+    let profilePicturePlaceholder = document.getElementById("id" + userId);
+    let profilePicture = localStorage.getItem(userId);
+    if(profilePicture) {
+        profilePicturePlaceholder.setAttribute("src", profilePicture)
+    }
+}
+
 //Gets own socket id from backend
 socket.on('getId', id => {
     clientSocketId = id;
@@ -236,20 +245,8 @@ socket.on('changeName', (name, userId, userSocketId) =>{
         console.log("userplace should be non-client: " + userPlace);
     }
     console.log("Check: " + check);
-    
-    if (check != dontTouch) {
-        check.remove();
-    }
-    console.log("User " + userId + "changed name to " + name);
 
-    console.log("userplace should be whatever: " + userPlace);
-    console.log(userPlace);
-    if (userPlace != dontTouch) {
-        let displayName = document.createElement("p");
-        displayName.setAttribute("id", "userNamePara");
-        displayName.innerText = name;
-        userPlace.append(displayName);
-    }
+    check.innerText = name;
 });
 
 //Changes the html page dynamically
