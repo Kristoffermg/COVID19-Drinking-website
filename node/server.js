@@ -591,8 +591,8 @@ io.on('connection', (socket) => {
         nextTurn(id);
         socket.emit('notTurn');
 
-        io.to(socket.room).emit('incomingRoll', ('Det eller derover'));
-        io.to(socket.room).emit('updateGameLog', `${screenName} rolled 'Det eller Derover`);
+        io.to(socket.room).emit('incomingRoll', ('Same or higher'));
+        io.to(socket.room).emit('updateGameLog', `${screenName} rolled 'Same or higher`);
 
     });
 
