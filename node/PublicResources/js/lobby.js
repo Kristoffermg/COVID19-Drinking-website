@@ -11,7 +11,9 @@ copyUrl = document.getElementById("copyURL");
 startGame = document.getElementById("startGame");
 let gameSelect = document.getElementById("gameSelect");
 let neverHaveIEeverSettings = document.getElementById('neverHaveIEverSettings');
+let meyerSettings = document.getElementById('meyerSettings');
 let ruleSelect = document.getElementById('ruleSelect');
+let meyerLifeAmount = document.getElementById('meyerLives');
 let roundtimeSelect = document.getElementById("roundtimeSelect");
 let addPrompt = document.getElementById("addPrompt")
 let promptInput = document.getElementById('customprompttext')
@@ -41,7 +43,7 @@ debug = document.querySelector("div.videoDiv#idclient");
 // });
 
 startGame.addEventListener("click", () => {
-    socket.emit('startGame', gameSelect.value, ruleSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked);
+    socket.emit('startGame', gameSelect.value, ruleSelect.value, roundtimeSelect.value, useCustomPromptsExclusively.checked, meyerLifeAmount.value);
 });
 
 uploadPfp.addEventListener("submit", e => {
@@ -105,8 +107,10 @@ usernameButton.addEventListener("click", () => {
 gameSelect.addEventListener('change', () => {
     if(gameSelect.value === 'prompt') {
         neverHaveIEeverSettings.style.display = 'block';
+        meyerSettings.style.display = 'none';
     } else if(gameSelect.value === 'dice') {
         neverHaveIEeverSettings.style.display = 'none';
+        meyerSettings.style.display = 'block';
     }
 });
 

@@ -258,7 +258,7 @@ io.on('connection', (socket) => {
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
-    socket.on('startGame', (gameType, amountOfSips, roundtime, _useCustomPromptsExclusively) => {
+    socket.on('startGame', (gameType, amountOfSips, roundtime, _useCustomPromptsExclusively, meyerLifeAmount) => {
         let id;
         if (!socket.admin) {
             socket.emit('noAdminPerm');
@@ -337,7 +337,14 @@ io.on('connection', (socket) => {
                                 idArr[i].mejer(mejerRanks);
                                 console.log("RANKS!!!!!!!!!!!");
                                 console.log(idArr[i].mejerRanks);
-                                mejerLivesSetup(i);
+                                if(meyerLifeAmount < 1){
+                                    meyerLifeAmount = 1;
+                                } else if(meyerLifeAmount > 99){
+                                    meyerLifeAmount = 99;
+                                }
+                                console.log('Meyer life amount::::: ' + meyerLifeAmount);
+                                mejerLivesSetup(i, meyerLifeAmount);
+                                
                                 //console.log(idArr[i]);
                             });
                             console.log("pog");
@@ -626,9 +633,9 @@ io.on('connection', (socket) => {
                             idArr[id].currTurn--;
                         }
                     }
+                    socket.emit('notTurn');
                     nextTurn(id);
                     io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
-                    socket.emit('notTurn');
                     console.log('-------------');
                     console.log("currTurn");
                     console.log(idArr[id].currTurn);
@@ -682,14 +689,14 @@ io.on('connection', (socket) => {
                                 idArr[id].currTurn--;
                             }
                         }
-                        nextTurn(id);
-                        io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
                         socket.emit('notTurn');
                         console.log('-------------');
                         console.log("currTurn");
                         console.log(idArr[id].currTurn);
                         console.log(idArr[id].mejerLives);
                         console.log('-------------');
+                        nextTurn(id);
+                        io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
                         break;
                     }
                 }
@@ -1013,12 +1020,12 @@ function nextTurn(id) {
     io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('clientTurn');
 }
 
-function mejerLivesSetup(id){
+function mejerLivesSetup(id, lifeAmount){
     let tempArray = [];    
 
     for(let i = 0; i < idArr[id].userIdArr.length; i++){
 
-        tempArray = [idArr[id].userIdArr[i], 6];
+        tempArray = [idArr[id].userIdArr[i], lifeAmount];
 
         idArr[id].mejerLives[i] = tempArray;
     }
@@ -1034,6 +1041,7 @@ function mejerLivesDecrement(playerID, roomID){
             screenName = idArr[roomID].mejerLives[i][2];
             idArr[roomID].mejerLives[i][1]--;
             io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} lost a life, and now has ${idArr[roomID].mejerLives[i][1]} left`);
+            io.to(playerID).emit('drink');
             if(idArr[roomID].mejerLives[i][1] == 0){
                 console.log('he die');
                 //here people die

@@ -8,6 +8,7 @@ const dice1 = document.getElementById('dice1');
 const dice2 = document.getElementById('dice2');
 const errorMes = document.getElementById('error');
 const gameLog = document.getElementById('gameLog');
+const sipText = document.getElementById('sipText');
 let rollEnabled = false;
 let trueEnabled = false;
 let lieEnabled = false;
@@ -41,6 +42,8 @@ deroverBtn.addEventListener("click", () => {
 
 rollBtn.addEventListener("click", () => {
     if(rollEnabled){
+        sipText.style.opacity = 0;
+
         socket.emit('mejerRoll');
         rollBtn.hidden = true;
         liftBtn.hidden = true;
@@ -170,6 +173,7 @@ socket.on('looseLife', (id, text) => {
 });
 
 socket.on('ded', (id, screenName) => {
+    console.log("---------------------------------DED---------------------------------");
     testFelt.innerText = `${screenName}, is ded smile`;
     let dedEl = document.querySelector("div.videoDiv#id" + id);
     dedEl.childNodes[0].style.outlineColor = 'red';
@@ -233,6 +237,10 @@ socket.on('everyoneDrink', () => {
     testFelt.innerText = '32! Everyone drink!'
 });
 
+socket.on('drink', () => {
+    sipText.style.opacity = 1;
+});
+
 socket.on('newMessage', (chatMessage, userId) => {
     let userNameDiv = document.getElementById("id" + userId);
     let userNamePara = userNameDiv.childNodes[1];
@@ -276,10 +284,6 @@ function sanitize(input) {
 /*
 
 -----TODO-----
-Death turn
-implement noget der siger hvornår man skal get fucked up i meyer
-Custom rules: life amount
-
 
 -----DONE-----
 --Skriv lillemejer eller storemejer istedet for 13 eller 12
@@ -291,5 +295,8 @@ Custom rules: life amount
 --Den logger ikke fællestår
 --vis grunden til at miste liv
 --vis det eller derover resultat på løft
+--Custom rules: life amount
+--implement noget der siger hvornår man skal get fucked up i meyer
+--Death turn
 
 */

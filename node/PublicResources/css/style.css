@@ -1177,3 +1177,7 @@ div.clickersMeyer{
   width: 90%;
   margin: auto;
 }
+
+#meyerSettings {
+  display: none;
+}
