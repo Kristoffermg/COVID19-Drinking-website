@@ -1181,3 +1181,12 @@ div.clickersMeyer{
 #meyerSettings {
   display: none;
 }
+
+#test {
+  border: solid 2px white;
+}
+
+#sipText {
+  display: flex;
+  justify-content: center;
+}
