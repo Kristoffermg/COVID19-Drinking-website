@@ -1,6 +1,8 @@
+/*Fonts*/
 @import url('https://fonts.googleapis.com/css2?family=Dela+Gothic+One&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 
+/*Standard*/
 body {
   background-color: rgb(255, 255, 255);
   background-image:url("../img/unknown.png") ;
@@ -101,7 +103,6 @@ h3 {
   border-radius: 20px;
 }
 
-
 .navbar__btn {
   display: flex;
   justify-content: center;
@@ -130,7 +131,6 @@ h3 {
 
 .navbar__links:hover {
   background-color: #203647;
-  /*color: #18f4fc;*/
   transition: all 0.3s ease;
 }
 
@@ -227,6 +227,8 @@ h3 {
     transform: translateY(-8px) rotate(-45deg);
   }
 }
+
+
 .card{
   height: 4rem;
   width: 4rem;
@@ -276,8 +278,8 @@ a.howTo{
   padding-left: 10mm;
   padding-right: 10mm;
   background: #23074d;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to left, #cc5333, #23074d);
+  background: linear-gradient(to left, #cc5333, #23074d);
   border-color: white;
   border-width: 3mm;
   border-style: solid;
@@ -296,8 +298,8 @@ a.gamesAndRules{
   padding-left: 10mm;
   padding-right: 10mm;
   background: #23074d;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to left, #cc5333, #23074d);   
+  background: linear-gradient(to left, #cc5333, #23074d); 
   border-color: white;
   border-width: 3mm;
   border-style: solid;
@@ -307,67 +309,6 @@ a.gamesAndRules{
   font-family: 'Dela Gothic One', cursive;
   text-decoration: none;
 }
-
-/*
-.buttons button.button1{
-  color: aliceblue;
-  font-family: 'Dela Gothic One', cursive;
-  font-size: large;
-  padding-top: 4.5mm;
-  padding-bottom: 4.5mm;
-  padding-left: 10mm;
-  padding-right: 10mm;
-  background: #23074d;  
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  
-  background: linear-gradient(to left, #cc5333, #23074d); 
-  border-width: 3mm;
-  border-style: solid;
-  border-radius: 10px ;
-  border-color: white;
-  position: relative;
-  left: 55%;
-  top: -26mm;
-  
-}
-.buttons button.button2{
-  color: aliceblue;
-  font-family: 'Dela Gothic One', cursive;
-  font-size: large;
-  padding-top: 4.5mm;
-  padding-bottom: 4.5mm;
-  padding-left: 10mm;
-  padding-right: 10mm;
-  background: #23074d;  
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);
-  background: linear-gradient(to left, #cc5333, #23074d); 
-  border-width: 3mm;
-  border-style: solid;
-  border-radius: 10px ;
-  border-color: white;
-  position: relative;
-  left: 57%;
-  top: -26mm;
-}
-.buttons button.button3{
-  color: aliceblue;
-  font-family: 'Dela Gothic One', cursive;
-  font-size: large;
-  padding-top: 4.5mm;
-  padding-bottom: 4.5mm;
-  padding-left: 10mm;
-  padding-right: 10mm;
-  background: #23074d;  
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  
-  background: linear-gradient(to left, #cc5333, #23074d); 
-  border-width: 3mm;
-  border-style: solid;
-  border-radius: 10px ;
-  border-color: white;
-  position: relative;
-  left: 59%;
-  top: -26mm;
-}
-*/
 
 a.link{
   position: relative;
@@ -384,8 +325,8 @@ a.link{
   font-size: large;
   padding: 1cm 2cm;
   background: #23074d;  /* fallback for old browsers */
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to left, #cc5333, #23074d);   
+  background: linear-gradient(to left, #cc5333, #23074d); 
   border-color: white;
   border-width: 3mm;
   border-style: solid;
@@ -484,32 +425,6 @@ a.link{
   transition: 0.4s ease-in;
 }
 
-/*
-.services__card:nth-child(2) {
-  background: #1fa2ff;  
-  background: -webkit-linear-gradient(
-    to right,
-    #a6ffcb,
-    #12d8fa,
-    #1fa2ff
-  ); 
-  background: linear-gradient(
-    to right,
-    #a6ffcb,
-    #12d8fa,
-    #1fa2ff
-  ); 
-}
-.services__card:nth-child(3) {
-  background-image: linear-gradient(
-    180deg,
-    #f5faf4 0%,
-    #107a6c 29%,
-    #1379ff 67%,
-    #3700ff 100%
-  );
-}
-*/
 .services__card h2 {
   text-align: center;
   position: relative;
@@ -570,6 +485,8 @@ a.link{
   
 }
 
+/*Footer*/
+
 .footer {
   font-family: 'Dela Gothic One', cursive;
   position: fixed;
@@ -581,6 +498,7 @@ a.link{
   color: white;
   text-align: center;
 }
+
 
 #settingstab {
   display: flex;
@@ -615,6 +533,8 @@ a.link{
   border-width: .5rem;
   border-radius: 1rem;
 }
+
+/* Users */
 
 #userAppearanceConfig {
   background-color:#326181;
@@ -677,6 +597,8 @@ video {
   object-fit: cover;
   margin: 8px;
 }
+
+
 
 .games__and__rounds {
   font-size: 17px;
@@ -788,8 +710,8 @@ video {
   font-weight: bolder;
   font-size: 20px;
   color: rgb(255, 255, 255);
-  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  /* Chrome 10-25, Safari 5.1-6 */
-  background: linear-gradient(to left, #cc5333, #23074d); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+  background: -webkit-linear-gradient(to left, #cc5333, #23074d);  
+  background: linear-gradient(to left, #cc5333, #23074d);
 }
 
 #startGame {
@@ -1047,6 +969,8 @@ overflow: auto;
   font-size: 20px;
   margin-bottom: 8px;
 }
+
+/* Meyer styling*/
 
 #sipText {
   width: 100%;
