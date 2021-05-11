@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const pathApi = require('path');
 const fs = require('fs');
+const mysql = require('mysql');
 
 const io = require('socket.io')(server, {
     pingInterval: 1000,
@@ -25,29 +26,29 @@ console.log(path);
 
 app.use(express.static(path));
 
-// const con = mysql.createConnection({
-//     host: "localhost",
-//     database: "sw2b2_3",
-//     user: "sw2b2-3",
-//     password: "wFGUZekJjvX7CVYn"
-// });
+const con = mysql.createConnection({
+    host: "localhost",
+    database: "sw2b2_3",
+    user: "sw2b2-3",
+    password: "wFGUZekJjvX7CVYn"
+});
 
-// con.connect(function(err) {
-//     if(err) console.log(err);
-//     else console.log("Connected to database established");
-// });
+con.connect(function(err) {
+    if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
+    else console.log("Connected to database established.");
+});
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
+    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
 });
 
 app.get('/Lobby', function(req, res) {
-    // fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobby.html', 'utf8', function(err, data) {
+    // fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
     //     if (err) throw err;
     //     //console.log(data);
     //     res.send(data);
     // });
-    res.sendFile(__dirname + '/PublicResources/htmlLocal/createlobby.html');
+    res.sendFile(__dirname + '/PublicResources/html/createlobby.html');
 });
 
 app.get('/Lobby/:lobbyId', function(req, res) {
@@ -57,7 +58,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     if (idArr.length <= 0) {
         // res.redirect('/');      //Changed from /node0/
         console.log("No rooms exist");
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
     }
 
     for (let i = 0; i < idArr.length; i++) {
@@ -65,19 +66,19 @@ app.get('/Lobby/:lobbyId', function(req, res) {
             let htmlPath;
             switch (idArr[i].startedGame) {
                 case 'prompt':
-                    htmlPath = '/PublicResources/htmlLocal/never.html';
+                    htmlPath = '/PublicResources/html/never.html';
                     break;
 
                 case 'card':
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';  //Midlertidig          
+                    htmlPath = '/PublicResources/html/createlobby.html';  //Midlertidig          
                     break;
 
                 case 'dice':
-                    htmlPath = '/PublicResources/htmlLocal/dummyMejer.html';  //Midlertidig
+                    htmlPath = '/PublicResources/html/dummyMejer.html';  //Midlertidig
                     break;
 
                 default:
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
+                    htmlPath = '/PublicResources/html/createlobby.html';
                     break;
             }
 
@@ -96,12 +97,12 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 
     if (!fileSent) {
         console.log("Else in switch");
-        res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/error.html'));
+        res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
     }
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/htmlLocal/gamesAndRules.html', 'utf8', function(err, data) {
+    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
         //console.log(data);
         res.send(data);
@@ -118,6 +119,7 @@ function idObj(roomId, amountConnected) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
+    this.customProfilePictureSet = [];
     this.startedGame = 'none';
     this.customPrompts = [];
     this.roundtimeValue = 0;
@@ -204,7 +206,7 @@ io.on('connection', (socket) => {
 
     //haha debug go brr
     socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/htmlLocal/createlobbyMeme.html', 'utf8', function(err, data) {
+        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('debugMeme', data);
         });
@@ -233,8 +235,11 @@ io.on('connection', (socket) => {
             console.log("User joined room " + socket.room);
         }
 
+
+        let Id = 0;
         for (let i = 0; i < idArr.length; i++) {
             if (idArr[i].roomId == socket.room) {
+                Id = i;
                 idArr[i].amountConnected++;
                 idArr[i].userIdArr.push(socket.id);
                 console.log("room: " + idArr[i].roomId);
@@ -247,13 +252,25 @@ io.on('connection', (socket) => {
         }
 
         socket.to(roomId).broadcast.emit("user-connected", socket.id);
+
+        for(let j = 0; j < idArr[Id].userIdArr.length - 1; j++) {
+            if(idArr[Id].customProfilePictureSet[j]) { // other user has set their profile picture
+                getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
+            }
+        }
+        // if(idArr[Id].amountConnected > 1) { // if theres other users in the room then it should retrieve the other users profile pictures
+        //     for(let j = 0; j < idArr[Id].userIdArr.length - 1; j++) {
+        //         getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
+        //     }
+        // }
         socket.on('disconnect', () => {
             socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
         });
     });
 
     socket.on('answerCall', (callerID) => {
-        io.to(callerID).emit('ringring', socket.id);
+        let roomId = getRoomID(socket), userId = getUserID(socket);
+        io.to(callerID).emit('ringring', socket.id, idArr[roomId].customProfilePictureSet[userId]);
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
@@ -268,7 +285,7 @@ io.on('connection', (socket) => {
                 case 'prompt':
                     console.log("Prompt game chosen");
                     //Throw prompt html
-                    htmlPath = '/PublicResources/htmlLocal/never.html';
+                    htmlPath = '/PublicResources/html/never.html';
                     //Initialize 'Never have I ever' variables
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -315,13 +332,13 @@ io.on('connection', (socket) => {
                 case 'card':
                     console.log("Card game chosen");
                     //Throw card html
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/html/createlobby.html'; //<-- Midlertidig path så ting ikk explodere
                     break;
     
                 case 'dice':
                     console.log("Dice game chosen");
                     //Throw dice html
-                    htmlPath = '/PublicResources/htmlLocal/dummyMejer.html'; //<-- Midlertidig path så ting ikk explodere
+                    htmlPath = '/PublicResources/html/dummyMejer.html'; //<-- Midlertidig path så ting ikk explodere
                     
                     for (let i = 0; i < idArr.length; i++) {
                         if (idArr[i].roomId == socket.room) {
@@ -345,11 +362,11 @@ io.on('connection', (socket) => {
                     break;
                 
                 case 'test1':
-                    htmlPath = '/PublicResources/htmlLocal/createlobbyMeme.html';
+                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
                     break;
                 
                 case 'test2':
-                    htmlPath = '/PublicResources/htmlLocal/createlobby.html';
+                    htmlPath = '/PublicResources/html/createlobby.html';
                     break;
     
                 default:
@@ -361,7 +378,6 @@ io.on('connection', (socket) => {
             //io.to(socket.room).emit('setRoundtime', 3);
             //Reads the relevent html file, and sends it to the frontend
             fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
-                if (err) throw err;
                 io.to(socket.room).emit('changeHTML', data);
             });
         }
@@ -371,15 +387,31 @@ io.on('connection', (socket) => {
     });
 
     socket.on('quitToLobby', () => {
-        fs.readFile(__dirname + `/PublicResources/htmlLocal/createlobby.html`, 'utf8', function(err, data) {
+        fs.readFile(__dirname + `/PublicResources/html/createlobby.html`, 'utf8', function(err, data) {
             if (err) throw err;
             io.to(socket.room).emit('changeHTML', data);
         });
     });
 
     socket.on('userChangedProfilePicture', (userId, profilePicture) => {
-        io.to(socket.room).emit('saveProfilePictureInLocalStorageAsBase64', userId, profilePicture);
-        io.to(socket.room).emit('changeUsersProfilePicture', userId);
+        //io.to(socket.room).emit('saveProfilePictureInLocalStorageAsBase64', userId, profilePicture);
+        insertProfilePictureIntoDatabase(socket, profilePicture);
+        io.to(socket.room).emit('changeUsersProfilePicture', userId, profilePicture)
+
+        let userArrId = getUserID(socket),
+            roomId = getRoomID(socket);
+
+        idArr[roomId].customProfilePictureSet[userArrId] = true;
+        //console.log(profilePicture)
+        console.log(userId);
+        //getData(socket, userId); FOR WHEN USER JOINS
+        // let result = getOtherUsersProfilePictureFromDatabase(socket);
+        // console.log(result);
+        // io.to(socket.room).emit('changeUsersProfilePicture', (socket.id, result));
+    });
+
+    socket.on('receiveUsersProfilePicture', userId => {
+        getUsersProfilePicture(socket, userId);
     });
 
     //Handles 'Never have I ever' logic
@@ -752,11 +784,11 @@ io.on('connection', (socket) => {
     });
 
     // remove if we wont upload profile pictures to the database
-    socket.on('insertProfilePictureQuery', picture => {
+    socket.on('insertProfilePictureQuery', profilePictureAsBase64 => {
         con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
             socket.id,
             getRoomID(socket),
-            picture
+            profilePictureAsBase64
         ], function(err, result) {
             console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
         });
@@ -778,6 +810,16 @@ function getRoomID(socket) {
     return -1;
 }
 
+function getUserID(socket) {
+    let roomId = getRoomID(socket);
+    for(let i = 0; i < idArr[roomId].userIdArr.length; i++) {
+        if (idArr[roomId].userIdArr[i] == socket.id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 function mixCustomAndWrittenPrompts(id) {
     for(let i = 0; i < idArr[id].customPrompts.length; i++) {
         idArr[id].neverHaveIEverPrompts.push(idArr[id].customPrompts[i])
@@ -785,13 +827,68 @@ function mixCustomAndWrittenPrompts(id) {
     console.log(idArr[id].neverHaveIEverPrompts);
 }
 
-function getHighestPromptID() {
-    con.query("SELECT * FROM NeverHaveIEverPrompts ORDER BY promptID DESC LIMIT 1", function(err, result) {
-        if(result === undefined) return 0;
-        return result;
+var test = "";
+
+function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
+    con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
+        socket.id,
+        getRoomID(socket),
+        profilePictureAsBase64
+    ], function(err, result) {
+        console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
+        let pfp = "sadasd";
+        //pfp = getOtherUsersProfilePictureFromDatabase(socket.id);
+        //console.log(pfp);
+        // const result = await getOtherUsersProfilePictureFromDatabase(socket);
+        // getOtherUsersProfilePictureFromDatabase(socket)
+        // .then(function(result) {
+        //     test = result;
+        // }).catch(function(err) {
+        //     console.log("Promise rejection error: " + err);
+        // });
+        //getOtherUsersProfilePictureFromDatabase(socket);
     });
-    return 0;
 }
+
+function getOtherUsersProfilePictureFromDatabase(userId) {
+    console.log("->>>>>>>>>>>>>>>>>>" + userId);
+    return new Promise(function(resolve, reject) {
+        con.query('SELECT pfp FROM ProfilePictures WHERE userId = ?', [userId], function(err, result) {
+            if(result === undefined) {
+                reject(new Error("Error: result is undefined"));
+            } else {
+                console.log("promise resolved")
+                //console.log(result[0].pfp)
+                try {
+                    let test = result[0].pfp;
+                    resolve(test);
+                } catch {
+                    console.log("Error retrieving profile picture from the database.")
+                }
+
+            }
+        }); 
+    });
+}
+
+async function getUsersProfilePicture(socket, userId) {
+    const data = await getOtherUsersProfilePictureFromDatabase(userId)
+    console.log("current id: " + socket.id + " other ID: " + userId)
+    if(data !== undefined) {
+        io.to(socket.room).emit('saveUsersProfilePicture', data);
+    }
+}
+
+// getOtherUsersProfilePictureFromDatabase(socket) {
+//     try { 
+//         const result = await getOtherUsersProfilePictureFromDatabase(socket);
+//         return result;
+//     } catch(e) {
+//         console.log(e);
+//         return "";
+//     }
+
+// }
 
 //Changes the idArr and removes a room object, if it has no user in it
 function disconnectHandler (socket) {

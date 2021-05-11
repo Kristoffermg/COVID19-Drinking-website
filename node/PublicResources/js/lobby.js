@@ -70,6 +70,7 @@ uploadPfp.addEventListener("submit", e => {
 
 socket.on('saveProfilePictureInLocalStorageAsBase64', (userId, profilePictureBase64) => {
     localStorage.setItem(userId, profilePictureBase64);
+    socket.emit('insertProfilePictureQuery', profilePictureBase64)
 });
 
 //Adds the lobby URL to the clipboard

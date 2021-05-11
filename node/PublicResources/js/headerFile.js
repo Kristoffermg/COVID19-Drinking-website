@@ -14,6 +14,7 @@ let roundtimeValue;
 let nextPromptCountdown;
 let voteCount_;
 let votingRight_;
+let profilePictureBase64;
 
 let lobbyUrl;
 
