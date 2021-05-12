@@ -21,7 +21,7 @@ let customPromptsList = document.getElementById('customPromptList');
 let useCustomPromptsExclusively= document.getElementById('useCustomPromptsExclusively');
 let usernameInput = document.getElementById('username');
 const uploadPfp = document.getElementById('uploadPfp');
-const inpFile = document.getElementById('inpFile');
+const profilePictureInput = document.getElementById('profile_picture');
 
 // newDebugMeme = document.getElementById("newDebugMeme");
 
@@ -49,16 +49,30 @@ startGame.addEventListener("click", () => {
 uploadPfp.addEventListener("submit", e => {
     // prevents the page from refreshing
     e.preventDefault(); 
+    // const reader = new FileReader();
 
+    // reader.addEventListener("load", () => {
+    //     localStorage.setItem(clientSocketId, reader.result); // replace pictureName with user id?
+    // });
+    
+    // reader.readAsDataURL(profilePictureInput.files[0]);
+    
+    // changePfp(clientSocketId);
 
-    const formData = new FormData();
+    let profilePictureBase64 = "";
+    const reader = new FileReader();
 
-    // appends the first file in inpFile (the selected file)
-    formData.append("inpFile", inpFile.files[0]);
+    reader.addEventListener("load", () => {
+        profilePictureBase64 = reader.result;
+        socket.emit("userChangedProfilePicture", clientSocketId, profilePictureBase64);
+    });
 
-    console.log(formData);
-    console.log(inpFile.files[0]);
-    socket.emit('insertProfilePictureQuery', inpFile.files[0]);
+    reader.readAsDataURL(profilePictureInput.files[0]);
+});
+
+socket.on('saveProfilePictureInLocalStorageAsBase64', (userId, profilePictureBase64) => {
+    localStorage.setItem(userId, profilePictureBase64);
+    socket.emit('insertProfilePictureQuery', profilePictureBase64)
 });
 
 //Adds the lobby URL to the clipboard
