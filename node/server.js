@@ -926,7 +926,6 @@ function cmpRoll(arrNew, arrAgainst, id) {
 }
 
 function nextTurn(id) {
-    console.log(idArr[id].currTurn);
     if (idArr[id].currTurn < idArr[id].mejerLives.length - 1) {
         idArr[id].currTurn++;
     } else {
