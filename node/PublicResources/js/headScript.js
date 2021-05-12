@@ -12,12 +12,12 @@ const videoGrid = document.getElementById('video-grid');
 
 socket.on('user-connected', userId => {
     console.log('Enter user-connected');
-    connectToNewUser(userId, true, false);
+    connectToNewUser(userId, true);
 });
 
-socket.on('ringring', (answerID, otherUsersProfilePictureSet) => {
+socket.on('ringring', answerID => {
     console.log('Enter ringring');
-    connectToNewUser(answerID, false, otherUsersProfilePictureSet);
+    connectToNewUser(answerID, false);
 });
 
 socket.on('debugGoBrrrr', () => {
@@ -79,8 +79,66 @@ socket.on('setTurnOrder', (mejerLives) => {
 
 });
 
+//Setup for the videochat
+// const videoGrid = document.getElementById('video-grid');
+// const myPeer = new Peer({
+//     pingInterval: 2000,
+//     config: {'iceServers': [
+//       { url: 'stun:stun.l.google.com:19302'},
+//       { url: 'turn:turn.bistri.com:80', credential: 'homeo', username: 'homeo'}
+//     ]} 
+//   });
+// const localVideo = document.createElement('video');
+// localVideo.muted = true; 
+// const peers = {};
+
+//Creates a video and audio stream
+// navigator.mediaDevices.getUserMedia({ // Asks for video and microphone permission on the browser
+//     video: true,
+//     audio: true
+// }).then(stream => { // Sets up the peer to peer connection and video streams
+//     addVideoStream(localVideo, stream, clientSocketId)
+
+//     //Establishes connection between clients, when getting called
+//     myPeer.on('call', call => {
+//         console.log('getting called...');
+//         call.answer(stream);
+//         const video = document.createElement('video');
+//         call.on('stream', userVideoStream => {
+//             console.log("In call, pre add");
+//             addVideoStream(video, userVideoStream, call.peer);
+//         });
+//     });
+
+//     //Connects user to each other
+//     socket.on('user-connected', userId => {
+//         connectToNewUser(userId, stream);
+//     });
+// });
+
+//Disconnects users from each other
+// socket.on('user-disconnected', userId => {
+//     if (peers[userId]) peers[userId].close();
+// });
+
+//Error cather
+// myPeer.on('error', err =>{
+//     console.log('myPeer error: ' + err);
+// });
+
+//Connects players to the right lobby
+// myPeer.on('open', id => {
+//     console.log('ja det er scuffed');
+//     clientPeerId = id;
+//     console.log("client id: " + id);
+//     // let clientDiv = document.getElementById("idclient");
+//     // console.log(clientDiv);
+//     // clientDiv.setAttribute("id", "id" + id);
+//     
+// });
+
 //The helper function for connecting to new users
-function connectToNewUser(userId, flag, othersProfilePictureSet) {
+function connectToNewUser(userId, flag) {
     let name;
     console.log('calling. ring ring ring');
     let check = document.querySelector("div.videoDiv#id" + clientSocketId);
@@ -93,14 +151,14 @@ function connectToNewUser(userId, flag, othersProfilePictureSet) {
     }
     console.log('post myPeer.call!!!!!');
     const video = document.createElement('img');
-    addVideoStream(video, userId, othersProfilePictureSet);
+    addVideoStream(video, userId);
+
+
     // peers[userId] = call;
 }
 
-let profilePictureBase64;
-
 //Creates videostream html element
-function addVideoStream(video, userId, othersProfilePictureSet) {
+function addVideoStream(video, userId) {
     let scuffedFix = document.getElementById("id" + userId);
     console.log("Scuffed Fix: " + scuffedFix);
     if (scuffedFix != dontTouch) {
@@ -111,7 +169,8 @@ function addVideoStream(video, userId, othersProfilePictureSet) {
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
 
-    video.src = othersProfilePictureSet === true ? profilePictureBase64 : '../img/Dummy.png'; // skal være billede
+    video.src = '../img/avatar.png'; // skal være billede
+    
 
     video.setAttribute("id", "id" + userId);
     video.classList.add('avatar');
@@ -124,21 +183,6 @@ function addVideoStream(video, userId, othersProfilePictureSet) {
     videoGrid.append(videoDiv);
     console.log("DONESO");
 }
-
-socket.on('saveUsersProfilePicture', profilePictureAsBase64 => {
-    profilePictureBase64 = profilePictureAsBase64;
-});
-
-socket.on('changeUsersProfilePicture', (userId, profilePicture1) => {
-    // profilePicturePlaceholder is a div that contains the username and profile picture for the individual user
-    profilePictureBase64 = profilePicture1;
-    let profilePicturePlaceholder = document.getElementById("id" + userId);
-    console.log("no shot>Z>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userId);
-    console.log(profilePicture1)
-    if(profilePicture1 && profilePicturePlaceholder) {
-        profilePicturePlaceholder.firstChild.setAttribute("src", profilePicture1);
-    }
-});
 
 //Gets own socket id from backend
 socket.on('getId', id => {
@@ -192,8 +236,20 @@ socket.on('changeName', (name, userId, userSocketId) =>{
         console.log("userplace should be non-client: " + userPlace);
     }
     console.log("Check: " + check);
+    
+    if (check != dontTouch) {
+        check.remove();
+    }
+    console.log("User " + userId + "changed name to " + name);
 
-    check.innerText = name;
+    console.log("userplace should be whatever: " + userPlace);
+    console.log(userPlace);
+    if (userPlace != dontTouch) {
+        let displayName = document.createElement("p");
+        displayName.setAttribute("id", "userNamePara");
+        displayName.innerText = name;
+        userPlace.append(displayName);
+    }
 });
 
 //Changes the html page dynamically
