@@ -31,7 +31,7 @@ const con = mysql.createConnection({
     database: "sw2b2_3",
     user: "sw2b2-3",
     password: "wFGUZekJjvX7CVYn"
-});
+}); 
 
 con.connect(function(err) {
     if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
