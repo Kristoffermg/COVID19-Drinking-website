@@ -97,7 +97,7 @@ function connectToNewUser(userId, flag, othersProfilePictureSet) {
     // peers[userId] = call;
 }
 
-let profilePictureBase64;
+// let profilePictureBase64;
 
 //Creates videostream html element
 function addVideoStream(video, userId, othersProfilePictureSet) {
