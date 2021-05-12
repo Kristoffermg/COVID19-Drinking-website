@@ -183,7 +183,7 @@ socket.on('ded', (id, screenName) => {
 socket.on('gameOver', () => {
     window.alert('Game Over smile');
     console.log("lmao");
-    window.location.href = '/';
+    window.location.href = '/node0/';
 });
 
 socket.on('updateGameLog', str => {
