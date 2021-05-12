@@ -1,4 +1,4 @@
-console.log("lobby executed");
+
 
 socket.emit('insertPromptQuery', "done this right first try");
 
@@ -49,15 +49,6 @@ startGame.addEventListener("click", () => {
 uploadPfp.addEventListener("submit", e => {
     // prevents the page from refreshing
     e.preventDefault(); 
-    // const reader = new FileReader();
-
-    // reader.addEventListener("load", () => {
-    //     localStorage.setItem(clientSocketId, reader.result); // replace pictureName with user id?
-    // });
-    
-    // reader.readAsDataURL(profilePictureInput.files[0]);
-    
-    // changePfp(clientSocketId);
 
     let profilePictureBase64 = "";
     const reader = new FileReader();
@@ -98,7 +89,6 @@ usernameInput.addEventListener("keyup", function(event) {
 //Changes the username
 usernameButton.addEventListener("click", () => {
     let newUserName = sanitize(document.getElementById("username").value);
-    console.log("name: " + newUserName);
     socket.emit("changeName", newUserName);
     newUserName.value = "";
 
@@ -150,7 +140,6 @@ addPrompt.addEventListener("click", () => {
     deletebutton.classList.add("deleteBtn");
     newPrompt.appendChild(deletebutton);
 
-    console.log("LEN: " + promptInput.value.length);
     socket.emit('storeCustomPrompt', promptInput.value);
 
     deletebutton.addEventListener("click", () => {
@@ -165,13 +154,9 @@ addPrompt.addEventListener("click", () => {
 //PAAAAAAAAAAAAAAAAAAAAAAAAUSE!
 
 socket.on('noAdminPerm', () => {
-    console.log("No admin permission :)");
     window.alert("Only the lobby admin (lobby creater by default) has permission to start the game");
 });
 
-socket.on('checkAdminStatus', status => {
-    console.log("Status: " + status);
-});
 
 socket.on('makeAdmin', () => {
     settingsTab.hidden = false;
@@ -180,9 +165,6 @@ socket.on('makeAdmin', () => {
     socket.emit('makeAdmin');
 });
 
-socket.on('meme', () => {
-    console.log("it werk smile");
-});
 
 socket.on('yeetAdminStuff', () => {
     isAdmin = false;
@@ -194,17 +176,3 @@ socket.on('yeetAdminStuff', () => {
 function sanitize(input) {
     return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-
-
-// The code below serves the purpose of making a push of the enter button, set one's username so a click
-// by mouse on "Set Username" won't be required. It should have sockets integrated into it, 
-/*
-var input = document.getElementById("username");
-input.addEventListener("keyup", function(event) {
-  if (event.keyCode === 13) {
-   event.preventDefault();
-   document.getElementById("setUsername").click();
-   socket.emit("changeName", newUserName, clientPeerId); //Not sure if this line works
-  }
-});
-*/

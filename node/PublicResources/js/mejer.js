@@ -36,7 +36,6 @@ lieBtn.addEventListener("click", () => {
 deroverBtn.addEventListener("click", () => {
     if(deroverEnabled){
         socket.emit('mejerDerover');
-        console.log('deroverBtn');
     }
 });
 
@@ -64,7 +63,6 @@ rollBtn.addEventListener("click", () => {
 liftBtn.addEventListener("click", () => {
     if(liftEnabled){
         socket.emit('mejerLift');
-        console.log('Lift Pressed');
     }
 });0
 
@@ -86,7 +84,6 @@ textMsg.addEventListener("keyup", function(event) {
 
 // SOCKET CALLS
 socket.on('firstTurn', () => {
-    console.log("smile");
     rollBtn.hidden = false;
     rollEnabled = true;
 });
@@ -100,9 +97,6 @@ socket.on('startOfNewRound', () => {
     socket.emit('turnIndicator', true);
 });
 
-socket.on('smile', () => {
-    socket.emit('dontMindMe');
-});
 
 socket.on('mejerRoll', (lastRoll) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
@@ -120,7 +114,6 @@ socket.on('trueError', () => {
 
 socket.on('clientTurn', () => {
     //------------WIP--------------
-    console.log("HER SKAL ALLE TURN BUTTONS OSV. BLIVE ACTIVE!");
     rollBtn.hidden = false;
     liftBtn.hidden = false;
 
@@ -131,7 +124,6 @@ socket.on('clientTurn', () => {
 
 socket.on('notTurn', () => {
     //------------WIP--------------
-    console.log("HER SKAL ALLE TURN BUTTONS OSV. FUCKING YEEEETUZ!");
     rollBtn.hidden = true;
     liftBtn.hidden = true;
     trueBtn.hidden = true;
@@ -149,14 +141,12 @@ socket.on('notTurn', () => {
 });
 
 socket.on('incomingRoll', (roll) => {
-    console.log(roll);
     testFelt.innerText = roll;
     if(roll[0] == 1 && roll[1] == 2) testFelt.innerText = "Meyer (12)";
     if(roll[0] == 1 && roll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
 });
 
 socket.on('looseLife', (id, text) => {
-    console.log("LOOOOOOOOOOOOOOOOSE LIIIIIIIIIIIIIIIIIFE");
     let memeArr = [];
     let lives;
     let counter;
@@ -173,16 +163,14 @@ socket.on('looseLife', (id, text) => {
 });
 
 socket.on('ded', (id, screenName) => {
-    console.log("---------------------------------DED---------------------------------");
-    testFelt.innerText = `${screenName}, is ded smile`;
+    testFelt.innerText = `${screenName} us out`;
     let dedEl = document.querySelector("div.videoDiv#id" + id);
     dedEl.childNodes[0].style.outlineColor = 'red';
     //socket.emit('updateGameLog', `${id}, is ded smile`);
 });
 
 socket.on('gameOver', () => {
-    window.alert('Game Over smile');
-    console.log("lmao");
+    window.alert('Game Over');
     window.location.href = '/node0/';
 });
 
@@ -201,11 +189,6 @@ socket.on('updateGameLog', str => {
 
 socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
     let turnEl;
-    console.log('ENTERED TURN INDICATOR!');
-    console.log('turnId: ' + turnId);
-    console.log('mejerLives: ');
-    console.log(mejerLives);
-    console.log('turnStart: ' + turnStart);
 
     for (let i = 0; i < mejerLives.length; i++) {
         if (turnId == mejerLives[i][0]) {
@@ -271,7 +254,6 @@ socket.on('newMessage', (chatMessage, userId) => {
 
 function sendMessage() {
     let textMessage = sanitize(textMsg.value);
-    console.log("Message" + textMessage);
     if(textMessage.length > 0) {
         socket.emit("chatMessage", textMessage, clientSocketId);
     }
@@ -280,23 +262,3 @@ function sendMessage() {
 function sanitize(input) {
     return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
-
-/*
-
------TODO-----
-
------DONE-----
---Skriv lillemejer eller storemejer istedet for 13 eller 12
---FIx det eller derover
---Roll efter det eller derover skal ikke cmps med den
---Mejer mister man 2 liv
---Giv tal OG navn
---fællesskål fix knapper smile
---Den logger ikke fællestår
---vis grunden til at miste liv
---vis det eller derover resultat på løft
---Custom rules: life amount
---implement noget der siger hvornår man skal get fucked up i meyer
---Death turn
-
-*/

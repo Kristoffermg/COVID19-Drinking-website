@@ -102,7 +102,6 @@ socket.on('nextPrompt', prompt => {
         allVideoDiv[i].childNodes[0].style.outlineColor = 'white';
     }
 
-    console.log("nextPromptTriggger");
     neverText.innerHTML = "Never have I ever " + prompt;
 
     roundtimeBar.style.display = "block";

@@ -43,11 +43,6 @@ app.get('/', function(req, res) {
 });
 
 app.get('/Lobby', function(req, res) {
-    // fs.readFile(__dirname + '/PublicResources/html/createlobby.html', 'utf8', function(err, data) {
-    //     if (err) throw err;
-    //     //console.log(data);
-    //     res.send(data);
-    // });
     res.sendFile(__dirname + '/PublicResources/html/createlobby.html');
 });
 
@@ -56,7 +51,6 @@ app.get('/Lobby/:lobbyId', function(req, res) {
     let fileSent = false;
     console.log(lobbyId);
     if (idArr.length <= 0) {
-        // res.redirect('/');      //Changed from /node0/
         console.log("No rooms exist");
         res.sendFile(pathApi.join(__dirname + '/PublicResources/html/error.html'));
     }
@@ -74,7 +68,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
                     break;
 
                 case 'dice':
-                    htmlPath = '/PublicResources/html/dummyMejer.html';  //Midlertidig
+                    htmlPath = '/PublicResources/html/dummyMejer.html'; 
                     break;
 
                 default:
@@ -82,16 +76,9 @@ app.get('/Lobby/:lobbyId', function(req, res) {
                     break;
             }
 
-            // fs.readFile(__dirname + htmlPath, 'utf8', function(err, data) {
-            //     if (err) throw err;
-            //     //console.log(data);
-            //     res.send(data);
-            // });
             res.sendFile(__dirname + htmlPath);
             fileSent = true;
 
-        } else {
-            // res.redirect('/');  //Changed from /node0/
         }
     }
 
@@ -104,14 +91,13 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 app.get('/GamesAndRules', function(req, res) {
     fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
         if (err) throw err;
-        //console.log(data);
         res.send(data);
     });
 });
     
 io.on('connect_error', (err) => {
+    console.log('Socket connection error: ');
     console.log(err);
-    console.log('brr');
 });
 
 //Constructer function for room objects
@@ -160,7 +146,6 @@ let idArr = [];
 //All the socket functions
 io.on('connection', (socket) => {
     console.log(socket.userName + " has connected.");
-    //idArr[i].neverGame(neverHaveIEverPrompts);
 
     //Leaves own id-room
     console.log(socket.rooms);
@@ -182,35 +167,10 @@ io.on('connection', (socket) => {
         socket.emit('getId', socket.id);
     });
 
-    socket.on('DUMMYchangeName', (name, userId) => {
-        // console.log("name: " + name + " id: " + userId);
-        // let oldName = socket.userName;
-        // socket.userName = name;
-        
-        io.to(socket.room).emit('changeName', socket.userName, userId, "This is a dummy string");
-        
-        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
-        // console.log("succesfully changed to the name " + socket.userName);
-    });
-
     //Changes the username of the user who requested it
     socket.on('changeName', (name) => {
-        console.log("-------------------> name: " + name + " id: " + socket.id);
-        let oldName = socket.userName;
         socket.userName = name;
-        
         io.to(socket.room).emit('changeName', socket.userName, socket.id);
-        
-        //io.emit('message', `'${oldName}' has changed name to '${socket.userName}'`);
-        console.log("succesfully changed to the name " + socket.userName);
-    });
-
-    //haha debug go brr
-    socket.on('debugMeme', () => {
-        fs.readFile(__dirname + '/PublicResources/html/createlobbyMeme.html', 'utf8', function(err, data) {
-            if (err) throw err;
-            io.to(socket.room).emit('debugMeme', data);
-        });
     });
 
     //Chat function
@@ -243,8 +203,6 @@ io.on('connection', (socket) => {
                 Id = i;
                 idArr[i].amountConnected++;
                 idArr[i].userIdArr.push(socket.id);
-                console.log("room: " + idArr[i].roomId);
-                console.log("amount: " + idArr[i].amountConnected);
                 if (idArr[i].amountConnected == 1) {
                     socket.admin = true;
                     socket.emit('makeAdmin');
@@ -259,11 +217,7 @@ io.on('connection', (socket) => {
                 getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
             }
         }
-        // if(idArr[Id].amountConnected > 1) { // if theres other users in the room then it should retrieve the other users profile pictures
-        //     for(let j = 0; j < idArr[Id].userIdArr.length - 1; j++) {
-        //         getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
-        //     }
-        // }
+        
         socket.on('disconnect', () => {
             deleteUsersProfilePicture(socket.id);
             socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
@@ -282,7 +236,6 @@ io.on('connection', (socket) => {
             socket.emit('noAdminPerm');
         } else {
             let htmlPath;
-            console.log(gameType);
             switch (gameType) {
                 case 'prompt':
                     console.log("Prompt game chosen");
@@ -296,7 +249,6 @@ io.on('connection', (socket) => {
                             fs.readFile(__dirname + "/MiscFiles/NeverPrompts.txt", "utf8", function(err, data) {
                                 if (err) throw err;
                                 //https://stackoverflow.com/questions/8125709/javascript-how-to-split-newline/8125757 <-- Stjal regex expression herfra
-
                                 let neverHaveIEverPrompts = data.split(/\r?\n/);
                                 idArr[i].neverGame(neverHaveIEverPrompts);
 
@@ -307,7 +259,6 @@ io.on('connection', (socket) => {
                                     mixCustomAndWrittenPrompts(id);
                                 }
                             });
-                            console.log("pog");
                         }
                     }
 
@@ -353,29 +304,17 @@ io.on('connection', (socket) => {
                                     mejerRanks[i] = mejerRanks[i].split(',');
                                 }
                                 idArr[i].mejer(mejerRanks);
-                                console.log("RANKS!!!!!!!!!!!");
-                                console.log(idArr[i].mejerRanks);
                                 if(meyerLifeAmount < 1){
                                     meyerLifeAmount = 1;
                                 } else if(meyerLifeAmount > 99){
                                     meyerLifeAmount = 99;
                                 }
-                                console.log('Meyer life amount::::: ' + meyerLifeAmount);
                                 mejerLivesSetup(i, meyerLifeAmount);
                                 
                                 //console.log(idArr[i]);
                             });
-                            console.log("pog");
                         }
                     }
-                    break;
-                
-                case 'test1':
-                    htmlPath = '/PublicResources/html/createlobbyMeme.html';
-                    break;
-                
-                case 'test2':
-                    htmlPath = '/PublicResources/html/createlobby.html';
                     break;
     
                 default:
@@ -384,16 +323,11 @@ io.on('connection', (socket) => {
                     break;
             }
 
-
-            //io.to(socket.room).emit('setRoundtime', 3);
             //Reads the relevent html file, and sends it to the frontend
             fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
                 io.to(socket.room).emit('changeHTML', data);
             });
         }
-
-        //console.log("Room " + idArr[id].roomId + " has started a game of the type " + idArr[id].startedGame);
-
     });
 
     socket.on('quitToLobby', () => {
@@ -404,7 +338,6 @@ io.on('connection', (socket) => {
     });
 
     socket.on('userChangedProfilePicture', (userId, profilePicture) => {
-        //io.to(socket.room).emit('saveProfilePictureInLocalStorageAsBase64', userId, profilePicture);
         insertProfilePictureIntoDatabase(socket, profilePicture);
         io.to(socket.room).emit('changeUsersProfilePicture', userId, profilePicture)
 
@@ -412,12 +345,6 @@ io.on('connection', (socket) => {
             roomId = getRoomID(socket);
 
         idArr[roomId].customProfilePictureSet[userArrId] = true;
-        //console.log(profilePicture)
-        console.log(userId);
-        //getData(socket, userId); FOR WHEN USER JOINS
-        // let result = getOtherUsersProfilePictureFromDatabase(socket);
-        // console.log(result);
-        // io.to(socket.room).emit('changeUsersProfilePicture', (socket.id, result));
     });
 
     socket.on('receiveUsersProfilePicture', userId => {
@@ -433,12 +360,9 @@ io.on('connection', (socket) => {
             }
         }
         io.to(socket.room).emit("setRoundtime", idArr[id].roundtimeValue);
-        console.log("SIPS ->>>>>>>>>>>>>>>>>>>>" + idArr[id].amountOfSipsRule)
         io.to(socket.room).emit('setSipText', idArr[id].amountOfSipsRule);
         idArr[id].voteCount++;
-        console.log("votes: " + idArr[id].voteCount);
         idArr[id].votingRight = idArr[id].amountConnected;
-        console.log("People with voting right: " + idArr[id].votingRight);
         io.to(socket.room).emit('voting', idArr[id].voteCount, idArr[id].votingRight, firstTurn);
 
         if ((idArr[id].voteCount >= (idArr[id].votingRight / 2)) || firstTurn) {
@@ -451,21 +375,17 @@ io.on('connection', (socket) => {
                 } else {
                     prompt = idArr[id].customPrompts[randomPromptIndex];
                 }
-                console.log("Prompt to send: '" + prompt + "'");
                 io.to(socket.room).emit("nextPrompt", prompt);
                 countdown(idArr[id].nextPromptCountdown, socket, id);
                 idArr[id].voteCount = 0;
-                console.log("votes reset to: " + idArr[id].voteCount);
             } else {
                 io.to(socket.room).emit("gameOver"); 
             }
         }
-        
     });
 
     socket.on('neverAnswer', (answer) => {
         let tempArray = [];
-        console.log('neverAnswer: ' + answer);
 
         tempArray[0] = socket.id;
         tempArray[1] = answer;
@@ -473,8 +393,6 @@ io.on('connection', (socket) => {
         for(i = 0; i < idArr.length; i++){
             if(idArr[i].roomId == socket.room){
                 idArr[i].answerArr.push(tempArray);
-                console.log('-------------------------------------')
-                console.log(idArr[i].answerArr);
             }
         }
     });
@@ -484,26 +402,14 @@ io.on('connection', (socket) => {
         let id = findID(socket.room);
         io.to(idArr[id].mejerLives[0][0]).emit('firstTurn');
 
-        console.log("MEJER FIRST TURN SMILE!!!!!!!!!!!");
         io.to(idArr[id].roomId).emit("debugGoBrrrr");
 
         io.to(idArr[id].roomId).emit('getUserName');
         io.to(idArr[id].roomId).emit('setTurnOrder', idArr[id].mejerLives);
-        //socket.emit('smile');
-    });
-
-    socket.on('dontMindMe', () => {
-        console.log("DONT MIND ME !!!!!!!");
-        let id = findID(socket.room);
-
-        io.to(idArr[id].roomId).emit('getUserName');
     });
 
     socket.on('turnIndicator',(turnStart) => {
         let id = findID(socket.room);
-        console.log(socket.id);
-        console.log(turnStart);
-        console.log("-------");
         if (turnStart) {
             io.to(idArr[id].roomId).emit('turnIndicator', idArr[id].mejerLives[idArr[id].currTurn][0], idArr[id].mejerLives, turnStart);
         } else {
@@ -517,8 +423,6 @@ io.on('connection', (socket) => {
         let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
         let id = findID(socket.room);
 
-        console.log(idArr[id]);
-
         if(idArr[id].wasLastLie){
             idArr[id].rollToBeat = idArr[id].lieRoll;
         }else{
@@ -528,7 +432,7 @@ io.on('connection', (socket) => {
         }
 
         idArr[id].lastRoll = diceSort(dice1, dice2);
-        console.log(idArr[id].lastRoll);
+        
         if(checkDrink(idArr[id].lastRoll)){
             io.to(socket.room).emit('everyoneDrink');
             io.to(socket.room).emit('updateGameLog', `32! Everyone drink!`);
@@ -565,8 +469,6 @@ io.on('connection', (socket) => {
             socket.emit('trueError');
         }else{
             nextTurn(id);
-            console.log("_-----------------------------------------------");
-            console.log('SocketID: ' + socket.id);
             socket.emit('notTurn');
 
             let result = (String(idArr[id].lastRoll[0]) + String(idArr[id].lastRoll[1]));
@@ -593,13 +495,10 @@ io.on('connection', (socket) => {
         }
         
         idArr[id].lieRoll = diceSort(dice1, dice2);
-        console.log(idArr[id].lieRoll);
 
         if(!cmpRoll(idArr[id].lieRoll, idArr[id].rollToBeat, id)){
             socket.emit('lieError');
         }else{
-
-            console.log('mejerLie else triggered');
             nextTurn(id);
             socket.emit('notTurn');
 
@@ -632,8 +531,6 @@ io.on('connection', (socket) => {
         idArr[id].lastRoll = diceSort(dice1, dice2);
         idArr[id].wasLastLie = false;
         idArr[id].wasLastDerOver = true;
-        console.log('Det eller derover roll');
-        console.log(idArr[id].lastRoll);
 
         nextTurn(id);
         socket.emit('notTurn');
@@ -646,8 +543,6 @@ io.on('connection', (socket) => {
     socket.on('mejerLift', () => {
         let id = findID(socket.room);
         let loser;
-
-        console.log('mejerLift');
 
         if(idArr[id].wasLastLie){
             //ham der løftede vandt
@@ -674,15 +569,9 @@ io.on('connection', (socket) => {
                     socket.emit('notTurn');
                     nextTurn(id);
                     io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
-                    console.log('-------------');
-                    console.log("currTurn");
-                    console.log(idArr[id].currTurn);
-                    console.log(idArr[id].mejerLives);
-                    console.log('-------------');
                     break;
                 }
             }
-            console.log('mejerLift true');
         }else{
             if (checkDrink(idArr[id].lastRoll)) {
                 io.to(socket.room).emit('everyoneDrink');
@@ -728,11 +617,6 @@ io.on('connection', (socket) => {
                             }
                         }
                         socket.emit('notTurn');
-                        console.log('-------------');
-                        console.log("currTurn");
-                        console.log(idArr[id].currTurn);
-                        console.log(idArr[id].mejerLives);
-                        console.log('-------------');
                         nextTurn(id);
                         io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('startOfNewRound');
                         break;
@@ -746,7 +630,6 @@ io.on('connection', (socket) => {
                 if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
                     mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                 }
-                console.log('mejerLift false');
     
                 if(idArr[id].currTurn == 0){
                     idArr[id].currTurn = idArr[id].mejerLives.length-1;
@@ -771,9 +654,6 @@ io.on('connection', (socket) => {
                 }
             }
         }
-        console.log('looseLife emit ---------------------------------------------');
-        console.log(idArr[id].lastRoll);
-        console.log(idArr[id].rollToBeat);
         io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
 
         idArr[id].rollToBeat = [0,0];
@@ -789,40 +669,17 @@ io.on('connection', (socket) => {
 
     socket.on('getUserName', (userName) => {
         let id = findID(socket.room);
-        console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        console.log('userNames');
 
-        console.log('Socket ID: ');
-        console.log(socket.id);
         for(let i = 0; i < idArr[id].mejerLives.length; i++){
             if(socket.id == idArr[id].mejerLives[i][0]){
                 idArr[id].mejerLives[i][2] = userName;
-                console.log(idArr[id].mejerLives[i][2]);
             }
         }
     });
-    
-    /*
-
-    fællesskål?
-
-    */
-
 
     //-------------------------DICE SHIT END----------------------------
     socket.on('chatMessage', (message, userid) => {
-        console.log("User: " + userid + ", send:" + message);
         io.to(socket.room).emit('newMessage', message, userid);
-    });
-
-    //Actually does nothing, but i am too scared to deletus this fetus
-    socket.on('randomRoom', () => {
-
-    });
-
-    //Hihi debug go brr
-    socket.on('debug', () => {
-        console.log(socket.rooms);
     });
 
     socket.on('checkAdminStatus', () => {
@@ -832,7 +689,6 @@ io.on('connection', (socket) => {
 
     socket.on('makeAdmin', () => {
         socket.admin = true;
-        console.log("post make admin true");
     });
 
     //Runs when socket disconnects from a room
@@ -853,7 +709,6 @@ io.on('connection', (socket) => {
         let id = getRoomID(socket);
         // Ternary operator in case the customPrompts array has no values (undefined)
         idArr[id].customPrompts.push(prompt);
-        console.log(idArr[id].customPrompts);
     });
 
     socket.on('deleteCustomPrompt', prompt => {
@@ -862,8 +717,6 @@ io.on('connection', (socket) => {
         if(index > -1) {
             idArr[id].customPrompts.splice(index, 1);
         }
-        console.log(idArr[id].customPrompts)
-
     });
 
     // remove if we wont upload profile pictures to the database
@@ -907,10 +760,7 @@ function mixCustomAndWrittenPrompts(id) {
     for(let i = 0; i < idArr[id].customPrompts.length; i++) {
         idArr[id].neverHaveIEverPrompts.push(idArr[id].customPrompts[i])
     }
-    console.log(idArr[id].neverHaveIEverPrompts);
 }
-
-var test = "";
 
 function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
     con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
@@ -923,13 +773,11 @@ function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
 }
 
 function getOtherUsersProfilePictureFromDatabase(userId) {
-    console.log("->>>>>>>>>>>>>>>>>>" + userId);
     return new Promise(function(resolve, reject) {
         con.query('SELECT pfp FROM ProfilePictures WHERE userId = ?', [userId], function(err, result) {
             if(result === undefined) {
                 reject(new Error("Error: result is undefined"));
             } else {
-                console.log("promise resolved")
                 //console.log(result[0].pfp)
                 try {
                     let test = result[0].pfp;
@@ -937,7 +785,6 @@ function getOtherUsersProfilePictureFromDatabase(userId) {
                 } catch {
                     console.log("Error retrieving profile picture from the database.")
                 }
-
             }
         }); 
     });
@@ -945,7 +792,6 @@ function getOtherUsersProfilePictureFromDatabase(userId) {
 
 async function getUsersProfilePicture(socket, userId) {
     const data = await getOtherUsersProfilePictureFromDatabase(userId)
-    console.log("current id: " + socket.id + " other ID: " + userId)
     if(data !== undefined) {
         io.to(socket.room).emit('saveUsersProfilePicture', data);
     }
@@ -959,17 +805,6 @@ function deleteUsersProfilePicture(userId) {
     });
 }
 
-// getOtherUsersProfilePictureFromDatabase(socket) {
-//     try { 
-//         const result = await getOtherUsersProfilePictureFromDatabase(socket);
-//         return result;
-//     } catch(e) {
-//         console.log(e);
-//         return "";
-//     }
-
-// }
-
 //Changes the idArr and removes a room object, if it has no user in it
 function disconnectHandler (socket) {
     if(socket.rooms !== dontTouchTwo){
@@ -980,15 +815,11 @@ function disconnectHandler (socket) {
                     delete idArr[i].userIdArr[j];
                     pushArray(idArr[i].userIdArr, j);
                     idArr[i].userIdArr.pop();
-                    console.log("Fetus has been deletus");
-                    console.log(idArr[i].userIdArr);
-                    console.log("status: " + socket.admin);
                     if (socket.admin) {
                         console.log("UserIdArr:");
                         console.log(idArr[i].userIdArr);
                         let newAdmin = Math.floor(Math.random() * (idArr[0].userIdArr.length));
                         io.to(idArr[i].userIdArr[newAdmin]).emit("makeAdmin");
-                        console.log("Print i slutning af if");
                     }
                     break;
                 }
@@ -1013,11 +844,9 @@ function findID(roomId){
 }
 
 function countdown(time, socket, id) {
-    console.log(`counter for room ${id} is at ` + time);
     if(time > 0) {
         setTimeout(function() { countdown(--time, socket, id) }, 1000);
     } else {    
-        console.log(`counter for room ${id} ended`);
         io.to(socket.room).emit("activateNextRoundBtn");
         // Prevents server crash when refreshing the page and starting games over and over (answerArr undefined)
         try {
@@ -1032,7 +861,6 @@ function countdown(time, socket, id) {
 
 function unusedPromptsLeft(id) {
     let promptArrLength = idArr[id].useCustomPromptsExclusively === false ? idArr[id].neverHaveIEverPrompts.length : idArr[id].customPrompts.length;
-    console.log(idArr[id].usedPrompts.length + " != " + promptArrLength);
     if(idArr[id].usedPrompts.length !== promptArrLength) {
         return true;
     }
@@ -1042,7 +870,6 @@ function unusedPromptsLeft(id) {
 function randomPrompt(id) {
     let randomPromptIndex;
     let promptArrLength = idArr[id].useCustomPromptsExclusively === false ? idArr[id].neverHaveIEverPrompts.length : idArr[id].customPrompts.length;
-    console.log("Custom prompts: " + idArr[id].useCustomPromptsExclusively + " length: " + promptArrLength);
     do {
         randomPromptIndex = Math.floor(Math.random() * promptArrLength);
     } while(promptHasBeenUsed(randomPromptIndex, id));
@@ -1078,38 +905,27 @@ function cmpRoll(arrNew, arrAgainst, id) {
     let i;
     let j;
 
-    console.log('enter compare');
-    console.log(arrNew);
-    console.log(arrAgainst);
-
     for(i = 0; i < idArr[id].mejerRanks.length; i++){
         if(arrNew[0] == idArr[id].mejerRanks[i][0] && arrNew[1] == idArr[id].mejerRanks[i][1]) {
-            console.log("It werk i");
-            console.log(i);
             break;
         }
     }
 
     for(j = 0; j < idArr[id].mejerRanks.length; j++){
         if(arrAgainst[0] == idArr[id].mejerRanks[j][0] && arrAgainst[1] == idArr[id].mejerRanks[j][1]) {
-            console.log("It werk j");
-            console.log(j);
             break;
         }
     }
 
     if(i >= j){
-        console.log('true');
         return true;
     }else{
-        console.log('false');
         return false;
     }
 
 }
 
 function nextTurn(id) {
-    console.log('currTurn');
     console.log(idArr[id].currTurn);
     if (idArr[id].currTurn < idArr[id].mejerLives.length - 1) {
         idArr[id].currTurn++;
@@ -1129,8 +945,6 @@ function mejerLivesSetup(id, lifeAmount){
 
         idArr[id].mejerLives[i] = tempArray;
     }
-    console.log('mejerLivesSetup');
-    console.log(idArr[id].mejerLives);
 }
 
 function mejerLivesDecrement(playerID, roomID){
@@ -1143,7 +957,6 @@ function mejerLivesDecrement(playerID, roomID){
             io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} lost a life, and now has ${idArr[roomID].mejerLives[i][1]} left`);
             io.to(playerID).emit('drink');
             if(idArr[roomID].mejerLives[i][1] == 0){
-                console.log('he die');
                 //here people die
                 io.to(playerID).emit('notTurn');
                 io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0], screenName);
@@ -1152,16 +965,11 @@ function mejerLivesDecrement(playerID, roomID){
                 pushArray(idArr[roomID].mejerLives, i);
                 idArr[roomID].mejerLives.pop();
                 if(idArr[roomID].mejerLives.length == 1) {
-                    console.log("GAME OVER SMILE");
                     io.to(idArr[roomID].roomId).emit('gameOver');
                 }
             }
         }
     }
-
-    console.log('mejerLivesDecrement');
-    console.log(idArr[roomID].mejerLives);
-
 }
 
 function checkDrink(diceArr) {
@@ -1185,25 +993,12 @@ function findScreenName(roomID, playerID){
 
 //Creates a new random room
 function randomRoom(socket, id) {
-    //let id;
-    /*
-    do {
-        let i = Math.random();
-        id = Buffer.from(`${i}`).toString('base64');
-    } while (idArr.includes(id));
-    */
-
     let room = new idObj(id, 0);
 
     idArr.push(room);
     socket.join(room.roomId);
     socket.room = room.roomId;
-    console.log("Det her burde være roomId: " + socket.room);
     //socket.emit('roomId', room.roomId);
-
-    console.log("roomId: " + room.roomId);
-    console.log("Amount of users in room: " + room.amountConnected);
-    console.log("Connected users: " + room.userIdArr);
 
     console.log("User " + socket.userName + " joined room " + id);
 }
@@ -1219,8 +1014,6 @@ function pushArray (arr, index) {
         }
         index++;
     }
-    
-    console.log("Post push: " + arr);
 }
 
 //starts the server

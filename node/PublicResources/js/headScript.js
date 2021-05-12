@@ -1,8 +1,7 @@
 //Establishes socket connection, using the Socket.IO API
 const socket = io({path:'/node0/socket.io', transports: ["polling"], autoConnect: false});  
-console.log("socket connected" + socket.connected);
+// console.log("socket connected" + socket.connected);
 if (!socket.connected) {
-    console.log("Entered weirdass if statement");
     socket.connect();
 }
 
@@ -11,17 +10,11 @@ socket.emit('getId');
 const videoGrid = document.getElementById('video-grid');
 
 socket.on('user-connected', userId => {
-    console.log('Enter user-connected');
     connectToNewUser(userId, true, false);
 });
 
 socket.on('ringring', (answerID, otherUsersProfilePictureSet) => {
-    console.log('Enter ringring');
     connectToNewUser(answerID, false, otherUsersProfilePictureSet);
-});
-
-socket.on('debugGoBrrrr', () => {
-    console.log("DEBUG GO BRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
 });
 
 socket.on('user-disconnected', (disconnectID) => {
@@ -31,10 +24,7 @@ socket.on('user-disconnected', (disconnectID) => {
 
 socket.on('getUserName', () => {
     let userName = [];
-    console.log('getUserName');
     userName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p").innerText;
-    //userName = document.getElementById('userNamePara');
-    console.log(userName);
     socket.emit('getUserName', (userName));
 });
 
@@ -44,13 +34,10 @@ socket.on('setTurnOrder', (mejerLives) => {
     let livesPara;
     let tempAva;
     let vidGrid = document.getElementById('video-grid');
-    console.log('TURN ORDER START!!!!!!!');
-    console.log(avatarArr);
 
     for (let i = 0; i < mejerLives.length; i++) {
         for (let j = 0; j < avatarArr.length; j++) {
             if ('id' + mejerLives[i][0] == avatarArr[j].getAttribute('id')) {
-                //console.log('Player: ' + avatarArr[j].getAttribute('id'));
                 tempAva = document.createElement('div');
                 tempAva = avatarArr[j];
                 newArr.push(tempAva);
@@ -71,40 +58,25 @@ socket.on('setTurnOrder', (mejerLives) => {
         vidGrid.append(newArr[i]);
     }
     newArr[0].childNodes[0].style.outlineColor = 'green';
-    console.log(newArr);
-    console.log('TURN ORDER END!!!!!!!');
-
-
-    // socket.emit('dontMindMe');
-
 });
 
 //The helper function for connecting to new users
 function connectToNewUser(userId, flag, othersProfilePictureSet) {
     let name;
-    console.log('calling. ring ring ring');
     let check = document.querySelector("div.videoDiv#id" + clientSocketId);
-    console.log('flagSmile: ' + flag);
     if (check == dontTouch || flag) {
         socket.emit('answerCall', userId);
         name = document.querySelector("div.videoDiv#id" + clientSocketId + " > p");
-        console.log("name: " + name.innerText);
         socket.emit('changeName', name.innerText, clientSocketId);
     }
-    console.log('post myPeer.call!!!!!');
     const video = document.createElement('img');
     addVideoStream(video, userId, othersProfilePictureSet);
-    // peers[userId] = call;
 }
-
-// let profilePictureBase64;
 
 //Creates videostream html element
 function addVideoStream(video, userId, othersProfilePictureSet) {
     let scuffedFix = document.getElementById("id" + userId);
-    console.log("Scuffed Fix: " + scuffedFix);
     if (scuffedFix != dontTouch) {
-        console.log("Removing element");
         scuffedFix.remove();
     }
     let videoDiv = document.createElement("div");
@@ -120,9 +92,7 @@ function addVideoStream(video, userId, othersProfilePictureSet) {
     userPara.setAttribute("id", 'userNamePara');
     userPara.innerText = 'Guest';
     videoDiv.append(userPara);
-    //console.log(videoGrid);
     videoGrid.append(videoDiv);
-    console.log("DONESO");
 }
 
 socket.on('saveUsersProfilePicture', profilePictureAsBase64 => {
@@ -133,8 +103,6 @@ socket.on('changeUsersProfilePicture', (userId, profilePicture1) => {
     // profilePicturePlaceholder is a div that contains the username and profile picture for the individual user
     profilePictureBase64 = profilePicture1;
     let profilePicturePlaceholder = document.getElementById("id" + userId);
-    console.log("no shot>Z>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>" + userId);
-    console.log(profilePicture1)
     if(profilePicture1 && profilePicturePlaceholder) {
         profilePicturePlaceholder.firstChild.setAttribute("src", profilePicture1);
     }
@@ -143,7 +111,6 @@ socket.on('changeUsersProfilePicture', (userId, profilePicture1) => {
 //Gets own socket id from backend
 socket.on('getId', id => {
     clientSocketId = id;
-    console.log('clientSocketId: ' + clientSocketId);
     const videoLOCAL = document.createElement('img');
     addVideoStream(videoLOCAL, clientSocketId);
 });
@@ -151,12 +118,7 @@ socket.on('getId', id => {
 //Gets the roomID from the backend
 socket.on('roomId', (roomId) => {
     idxd = document.URL.split("/Lobby/")[1];
-    console.log("TEEEEEEEST: " + idxd);
-    console.log("Enter RoomID Socket!");
     let lobbyUrl = document.getElementById("lobbyurl");
-    
-    console.log('backend roomid ' + roomId);
-    console.log('idxd ' + idxd);
 
     if(idxd == "" || idxd == dontTouch){
         ROOM_ID = roomId;
@@ -170,28 +132,19 @@ socket.on('roomId', (roomId) => {
     }
 
     socket.emit('joinRoom', ROOM_ID, idFlag);
-    console.log('ROOOOOOOM ' + ROOM_ID);
-
-    //ROOM_ID = roomId
 });
 
 //Get's username from backend, so it can be updated on the site
 socket.on('changeName', (name, userId, userSocketId) =>{
     let userPlace = document.getElementById("id"+userId);
-    console.log("userId");
-    console.log(userId);
-    console.log(userPlace);
     let check;
     
     if (userPlace == dontTouch) {
         userPlace = document.getElementById("id" + userSocketId);
-        console.log("userplace should be clien: " + userPlace);
         check = document.querySelector("div.videoDiv#id" + userSocketId + " > p");
     } else {
         check = document.querySelector("div.videoDiv#id" + userId + " > p");
-        console.log("userplace should be non-client: " + userPlace);
     }
-    console.log("Check: " + check);
 
     check.innerText = name;
 });
@@ -231,8 +184,3 @@ socket.on('changeHTML', meme=> {
     scriptPlaceholder.remove();
     document.body.appendChild(pageScript);
 });
-
-// socket.on('disconnect', (reason) => {
-//     console.log('YOU HAS DISCONNECTED!!!!!');
-//     console.log(reason);
-// });
