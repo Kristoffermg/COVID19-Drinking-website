@@ -64,7 +64,7 @@ socket.on('setTurnOrder', (mejerLives) => {
 
     for (let i = 0; i < newArr.length; i++) {
         livesPara = document.createElement('p');
-        livesPara.innerText = '6';
+        livesPara.innerText = 'lives: ' + mejerLives[0][1];
         livesPara.setAttribute('id', 'userNamePara');
         newArr[i].childNodes[0].style.outlineColor = 'grey';
         newArr[i].append(livesPara);
