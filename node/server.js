@@ -7,6 +7,7 @@ const app = express();
 const server = http.createServer(app);
 const pathApi = require('path');
 const fs = require('fs');
+const mysql = require('mysql');
 
 const io = require('socket.io')(server, {
     pingInterval: 1000,
@@ -25,17 +26,17 @@ console.log(path);
 
 app.use(express.static(path));
 
-// const con = mysql.createConnection({
-//     host: "localhost",
-//     database: "sw2b2_3",
-//     user: "sw2b2-3",
-//     password: "wFGUZekJjvX7CVYn"
-// });
+const con = mysql.createConnection({
+    host: "localhost",
+    database: "sw2b2_3",
+    user: "sw2b2-3",
+    password: "wFGUZekJjvX7CVYn"
+});
 
-// con.connect(function(err) {
-//     if(err) console.log(err);
-//     else console.log("Connected to database established");
-// });
+con.connect(function(err) {
+    if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
+    else console.log("Connected to database established.");
+});
 
 app.get('/', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/htmlLocal/index.html'));
@@ -118,6 +119,7 @@ function idObj(roomId, amountConnected) {
     this.roomId = roomId;
     this.amountConnected = amountConnected;
     this.userIdArr = [];
+    this.customProfilePictureSet = [];
     this.startedGame = 'none';
     this.customPrompts = [];
     this.roundtimeValue = 0;
@@ -234,8 +236,11 @@ io.on('connection', (socket) => {
             console.log("User joined room " + socket.room);
         }
 
+
+        let Id = 0;
         for (let i = 0; i < idArr.length; i++) {
             if (idArr[i].roomId == socket.room) {
+                Id = i;
                 idArr[i].amountConnected++;
                 idArr[i].userIdArr.push(socket.id);
                 console.log("room: " + idArr[i].roomId);
@@ -248,13 +253,26 @@ io.on('connection', (socket) => {
         }
 
         socket.to(roomId).broadcast.emit("user-connected", socket.id);
+
+        for(let j = 0; j < idArr[Id].userIdArr.length - 1; j++) {
+            if(idArr[Id].customProfilePictureSet[j]) { // other user has set their profile picture
+                getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
+            }
+        }
+        // if(idArr[Id].amountConnected > 1) { // if theres other users in the room then it should retrieve the other users profile pictures
+        //     for(let j = 0; j < idArr[Id].userIdArr.length - 1; j++) {
+        //         getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
+        //     }
+        // }
         socket.on('disconnect', () => {
+            deleteUsersProfilePicture(socket.id);
             socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
         });
     });
 
     socket.on('answerCall', (callerID) => {
-        io.to(callerID).emit('ringring', socket.id);
+        let roomId = getRoomID(socket), userId = getUserID(socket);
+        io.to(callerID).emit('ringring', socket.id, idArr[roomId].customProfilePictureSet[userId]);
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
@@ -370,7 +388,6 @@ io.on('connection', (socket) => {
             //io.to(socket.room).emit('setRoundtime', 3);
             //Reads the relevent html file, and sends it to the frontend
             fs.readFile(__dirname + `${htmlPath}`, 'utf8', function(err, data) {
-                if (err) throw err;
                 io.to(socket.room).emit('changeHTML', data);
             });
         }
@@ -384,6 +401,27 @@ io.on('connection', (socket) => {
             if (err) throw err;
             io.to(socket.room).emit('changeHTML', data);
         });
+    });
+
+    socket.on('userChangedProfilePicture', (userId, profilePicture) => {
+        //io.to(socket.room).emit('saveProfilePictureInLocalStorageAsBase64', userId, profilePicture);
+        insertProfilePictureIntoDatabase(socket, profilePicture);
+        io.to(socket.room).emit('changeUsersProfilePicture', userId, profilePicture)
+
+        let userArrId = getUserID(socket),
+            roomId = getRoomID(socket);
+
+        idArr[roomId].customProfilePictureSet[userArrId] = true;
+        //console.log(profilePicture)
+        console.log(userId);
+        //getData(socket, userId); FOR WHEN USER JOINS
+        // let result = getOtherUsersProfilePictureFromDatabase(socket);
+        // console.log(result);
+        // io.to(socket.room).emit('changeUsersProfilePicture', (socket.id, result));
+    });
+
+    socket.on('receiveUsersProfilePicture', userId => {
+        getUsersProfilePicture(socket, userId);
     });
 
     //Handles 'Never have I ever' logic
@@ -829,11 +867,11 @@ io.on('connection', (socket) => {
     });
 
     // remove if we wont upload profile pictures to the database
-    socket.on('insertProfilePictureQuery', picture => {
+    socket.on('insertProfilePictureQuery', profilePictureAsBase64 => {
         con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
             socket.id,
             getRoomID(socket),
-            picture
+            profilePictureAsBase64
         ], function(err, result) {
             console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
         });
@@ -855,6 +893,16 @@ function getRoomID(socket) {
     return -1;
 }
 
+function getUserID(socket) {
+    let roomId = getRoomID(socket);
+    for(let i = 0; i < idArr[roomId].userIdArr.length; i++) {
+        if (idArr[roomId].userIdArr[i] == socket.id) {
+            return i;
+        }
+    }
+    return -1;
+}
+
 function mixCustomAndWrittenPrompts(id) {
     for(let i = 0; i < idArr[id].customPrompts.length; i++) {
         idArr[id].neverHaveIEverPrompts.push(idArr[id].customPrompts[i])
@@ -862,13 +910,65 @@ function mixCustomAndWrittenPrompts(id) {
     console.log(idArr[id].neverHaveIEverPrompts);
 }
 
-function getHighestPromptID() {
-    con.query("SELECT * FROM NeverHaveIEverPrompts ORDER BY promptID DESC LIMIT 1", function(err, result) {
-        if(result === undefined) return 0;
-        return result;
+var test = "";
+
+function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
+    con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
+        socket.id,
+        getRoomID(socket),
+        profilePictureAsBase64
+    ], function(err, result) {
+        console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
     });
-    return 0;
 }
+
+function getOtherUsersProfilePictureFromDatabase(userId) {
+    console.log("->>>>>>>>>>>>>>>>>>" + userId);
+    return new Promise(function(resolve, reject) {
+        con.query('SELECT pfp FROM ProfilePictures WHERE userId = ?', [userId], function(err, result) {
+            if(result === undefined) {
+                reject(new Error("Error: result is undefined"));
+            } else {
+                console.log("promise resolved")
+                //console.log(result[0].pfp)
+                try {
+                    let test = result[0].pfp;
+                    resolve(test);
+                } catch {
+                    console.log("Error retrieving profile picture from the database.")
+                }
+
+            }
+        }); 
+    });
+}
+
+async function getUsersProfilePicture(socket, userId) {
+    const data = await getOtherUsersProfilePictureFromDatabase(userId)
+    console.log("current id: " + socket.id + " other ID: " + userId)
+    if(data !== undefined) {
+        io.to(socket.room).emit('saveUsersProfilePicture', data);
+    }
+}
+
+function deleteUsersProfilePicture(userId) {
+    con.query("DELETE FROM ProfilePictures WHERE userId = ?", [
+        userId,
+    ], function(err, result) {
+        console.log(`${userId} profile picture deleted`);
+    });
+}
+
+// getOtherUsersProfilePictureFromDatabase(socket) {
+//     try { 
+//         const result = await getOtherUsersProfilePictureFromDatabase(socket);
+//         return result;
+//     } catch(e) {
+//         console.log(e);
+//         return "";
+//     }
+
+// }
 
 //Changes the idArr and removes a room object, if it has no user in it
 function disconnectHandler (socket) {
