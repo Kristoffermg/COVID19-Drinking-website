@@ -264,6 +264,7 @@ io.on('connection', (socket) => {
         //     }
         // }
         socket.on('disconnect', () => {
+            deleteUsersProfilePicture(socket.id);
             socket.to(roomId).broadcast.emit('user-disconnected', socket.id);
         });
     });
@@ -836,17 +837,6 @@ function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
         profilePictureAsBase64
     ], function(err, result) {
         console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
-        let pfp = "sadasd";
-        //pfp = getOtherUsersProfilePictureFromDatabase(socket.id);
-        //console.log(pfp);
-        // const result = await getOtherUsersProfilePictureFromDatabase(socket);
-        // getOtherUsersProfilePictureFromDatabase(socket)
-        // .then(function(result) {
-        //     test = result;
-        // }).catch(function(err) {
-        //     console.log("Promise rejection error: " + err);
-        // });
-        //getOtherUsersProfilePictureFromDatabase(socket);
     });
 }
 
@@ -877,6 +867,14 @@ async function getUsersProfilePicture(socket, userId) {
     if(data !== undefined) {
         io.to(socket.room).emit('saveUsersProfilePicture', data);
     }
+}
+
+function deleteUsersProfilePicture(userId) {
+    con.query("DELETE FROM ProfilePictures WHERE userId = ?", [
+        userId,
+    ], function(err, result) {
+        console.log(`${userId} profile picture deleted`);
+    });
 }
 
 // getOtherUsersProfilePictureFromDatabase(socket) {
