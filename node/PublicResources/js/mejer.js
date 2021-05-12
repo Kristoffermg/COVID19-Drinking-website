@@ -8,11 +8,16 @@ const dice1 = document.getElementById('dice1');
 const dice2 = document.getElementById('dice2');
 const errorMes = document.getElementById('error');
 const gameLog = document.getElementById('gameLog');
+const sipText = document.getElementById('sipText');
 let rollEnabled = false;
 let trueEnabled = false;
 let lieEnabled = false;
 let deroverEnabled = false;
 let liftEnabled = false;
+
+let sendBTN = document.getElementById("sendBTN");
+let textMsg = document.getElementById("textMessage");
+let messageBox = document.getElementById("message");
 
 if (isAdmin) socket.emit('mejerFirstTurn');
 
@@ -31,12 +36,13 @@ lieBtn.addEventListener("click", () => {
 deroverBtn.addEventListener("click", () => {
     if(deroverEnabled){
         socket.emit('mejerDerover');
-        console.log('deroverBtn');
     }
 });
 
 rollBtn.addEventListener("click", () => {
     if(rollEnabled){
+        sipText.style.opacity = 0;
+
         socket.emit('mejerRoll');
         rollBtn.hidden = true;
         liftBtn.hidden = true;
@@ -57,13 +63,27 @@ rollBtn.addEventListener("click", () => {
 liftBtn.addEventListener("click", () => {
     if(liftEnabled){
         socket.emit('mejerLift');
-        console.log('Lift Pressed');
+    }
+});0
+
+sendBTN.addEventListener("click", () => {
+    sendMessage();
+    textMsg.value = "";
+});
+
+// Execute a function when the user releases a key on the keyboard
+textMsg.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      sendBTN.click();
     }
 });
 
 // SOCKET CALLS
 socket.on('firstTurn', () => {
-    console.log("smile");
     rollBtn.hidden = false;
     rollEnabled = true;
 });
@@ -77,45 +97,11 @@ socket.on('startOfNewRound', () => {
     socket.emit('turnIndicator', true);
 });
 
-socket.on('setTurnOrder', (mejerLives) => {
-    let avatarArr = document.querySelectorAll('.videoDiv');
-    let newArr = [];
-    let livesPara;
-    let tempAva;
-    let vidGrid = document.getElementById('video-grid');
-    console.log(avatarArr);
-
-    for (let i = 0; i < mejerLives.length; i++) {
-        for (let j = 0; j < avatarArr.length; j++) {
-            if ('id' + mejerLives[i][0] == avatarArr[j].getAttribute('id')) {
-                //console.log('Player: ' + avatarArr[j].getAttribute('id'));
-                tempAva = document.createElement('div');
-                tempAva = avatarArr[j];
-                newArr.push(tempAva);
-            }
-        }
-    }
-
-    for (let i = 0; i < avatarArr.length; i++) {
-        avatarArr[i].remove();
-    }
-
-    for (let i = 0; i < newArr.length; i++) {
-        livesPara = document.createElement('p');
-        livesPara.innerText = '6';
-        livesPara.setAttribute('id', 'userNamePara');
-        newArr[i].childNodes[0].style.outlineColor = 'grey';
-        newArr[i].append(livesPara);
-        vidGrid.append(newArr[i]);
-    }
-    newArr[0].childNodes[0].style.outlineColor = 'green';
-    console.log(newArr);
-
-
-});
 
 socket.on('mejerRoll', (lastRoll) => {
     testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
+    if(lastRoll[0] == 1 && lastRoll[1] == 2) testFelt.innerText = "Meyer (12)";
+    if(lastRoll[0] == 1 && lastRoll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
 });
 
 socket.on('lieError', () => {
@@ -128,7 +114,6 @@ socket.on('trueError', () => {
 
 socket.on('clientTurn', () => {
     //------------WIP--------------
-    console.log("HER SKAL ALLE TURN BUTTONS OSV. BLIVE ACTIVE!");
     rollBtn.hidden = false;
     liftBtn.hidden = false;
 
@@ -139,7 +124,6 @@ socket.on('clientTurn', () => {
 
 socket.on('notTurn', () => {
     //------------WIP--------------
-    console.log("HER SKAL ALLE TURN BUTTONS OSV. FUCKING YEEEETUZ!");
     rollBtn.hidden = true;
     liftBtn.hidden = true;
     trueBtn.hidden = true;
@@ -157,37 +141,37 @@ socket.on('notTurn', () => {
 });
 
 socket.on('incomingRoll', (roll) => {
-    console.log(roll);
     testFelt.innerText = roll;
+    if(roll[0] == 1 && roll[1] == 2) testFelt.innerText = "Meyer (12)";
+    if(roll[0] == 1 && roll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
 });
 
-socket.on('looseLife', (id, screenName) => {
+socket.on('looseLife', (id, text) => {
     let memeArr = [];
     let lives;
     let counter;
-    testFelt.innerText = `${screenName}, lost a life`;
+    testFelt.innerText = text;
 
     memeArr = document.querySelectorAll('div.videoDiv#id' + id + ' > p');
     lives = memeArr[1];
 
-    counter = Number(lives.innerText);
+    counter = Number(lives.innerText.split(" ")[1]);
     counter--;
-    lives.innerText = counter;
+    lives.innerText = `Lives: ${counter}`;
 
     //socket.emit('updateGameLog', `${id}, lost a life`);
 });
 
 socket.on('ded', (id, screenName) => {
-    testFelt.innerText = `${screenName}, is ded smile`;
+    testFelt.innerText = `${screenName} us out`;
     let dedEl = document.querySelector("div.videoDiv#id" + id);
     dedEl.childNodes[0].style.outlineColor = 'red';
     //socket.emit('updateGameLog', `${id}, is ded smile`);
 });
 
 socket.on('gameOver', () => {
-    window.alert('Game Over smile');
-    console.log("lmao");
-    window.location.href = '/';
+    window.alert('Game Over');
+    window.location.href = '/node0/';
 });
 
 socket.on('updateGameLog', str => {
@@ -203,22 +187,8 @@ socket.on('updateGameLog', str => {
     }
 });
 
-socket.on('getUserName', () => {
-    let userName = [];
-    console.log('getUserName');
-    userName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p").innerText;
-    //userName = document.getElementById('userNamePara');
-    console.log(userName);
-    socket.emit('getUserName', (userName));
-});
-
 socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
     let turnEl;
-    console.log('ENTERED TURN INDICATOR!');
-    console.log('turnId: ' + turnId);
-    console.log('mejerLives: ');
-    console.log(mejerLives);
-    console.log('turnStart: ' + turnStart);
 
     for (let i = 0; i < mejerLives.length; i++) {
         if (turnId == mejerLives[i][0]) {
@@ -233,11 +203,62 @@ socket.on('turnIndicator', (turnId, mejerLives, turnStart) => {
 });
 
 socket.on('everyoneDrink', () => {
+    rollBtn.hidden = true;
+    liftBtn.hidden = true;
+    trueBtn.hidden = true;
+    lieBtn.hidden = true;
+    dice1.hidden = true;
+    dice2.hidden = true;
+    deroverBtn.hidden = true;
+
+    rollEnabled = false;
+    liftEnabled = false;
+    trueEnabled = false;
+    lieEnabled = false;
+    deroverEnabled = false;
+
     testFelt.innerText = '32! Everyone drink!'
 });
 
-/*
+socket.on('drink', () => {
+    sipText.style.opacity = 1;
+});
 
-html/css <-- kaster vi til Jeppe
+socket.on('newMessage', (chatMessage, userId) => {
+    let userNameDiv = document.getElementById("id" + userId);
+    let userNamePara = userNameDiv.childNodes[1];
+    let username = userNamePara.innerText;
 
-*/
+    if (userId == clientSocketId) {
+        let newMessageDiv = document.createElement("div");
+        newMessageDiv.classList.add("newMessageDiv")
+        let newMessage = document.createElement("P");
+        newMessage.classList.add("newMessage");
+        newMessage.innerText = `${chatMessage}`;
+        message.appendChild(newMessageDiv)
+        newMessageDiv.appendChild(newMessage);
+        newMessageDiv.style.justifyContent = "flex-end";
+        newMessage.style.background = "linear-gradient(to bottom, rgb(29, 109, 214), rgb(29, 150, 214)";
+    } else {
+        let newMessage = document.createElement("P");
+        newMessage.classList.add("newMessage");
+        newMessage.innerText = `${username}: ${chatMessage}`;
+        message.appendChild(newMessage);
+        newMessage.style.backgroundColor = "white";
+        newMessage.style.color = "black";
+    }
+
+    // Automatically scrolls down to the bottom in the message box
+    messageBox.scrollTop = messageBox.scrollHeight;
+})
+
+function sendMessage() {
+    let textMessage = sanitize(textMsg.value);
+    if(textMessage.length > 0) {
+        socket.emit("chatMessage", textMessage, clientSocketId);
+    }
+}
+
+function sanitize(input) {
+    return input.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+}
