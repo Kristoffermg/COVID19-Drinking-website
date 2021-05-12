@@ -980,7 +980,7 @@ let pushArray = function(arr, index, testBool) {
 }
 
 //starts the server
-server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
+// server.listen(port, hostname, () => console.log('listening on ' + hostname + ':' + port) );
 
 var d = new Date();
 console.log(d.toLocaleTimeString() + '  ' + d.toLocaleDateString());
