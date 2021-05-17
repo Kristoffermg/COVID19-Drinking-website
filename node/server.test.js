@@ -14,6 +14,109 @@ const {
     pushArray
 } = require('./server');
 
+//----------------------Test enviroment for the 'Never Have I Ever' game----------------------
+describe('NHIE Tests', () => {    
+    //Make a mock-up of global variables
+    let idArr = [{
+        roomId: "testRoomId1",
+        amountConnected: 2,
+        userIdArr: ['user1Id', 'user2Id'],
+        customProfilePictureSet: [],
+        startedGame: 'prompt',
+        customPrompts: [],
+        roundtimeValue: 10,
+        nextPromptCountdown: 10,
+
+        amountOfSipsRule: "1 sip",
+        useCustomPromptsExclusively: false,
+        neverHaveIEverPrompts: ['Test prompt 1', 'Test prompt 2', 'Test prompt 3',
+                                'Test prompt 4', 'Test prompt 5', 'Test prompt 6',
+                                'Test prompt 7', 'Test prompt 8', 'Test prompt 9'],
+        usedPrompts: [0, 4, 8],
+        counter: 3,
+        voteCount: 0,
+        votingRight: 2,
+        answerArr: []
+    },
+    {
+        roomId: "testRoomId2",
+        amountConnected: 4,
+        userIdArr: ['user1Id', 'user2Id', 'user3Id', 'user4Id'],
+        customProfilePictureSet: [],
+        startedGame: 'prompt',
+        customPrompts: [],
+        roundtimeValue: 10,
+        nextPromptCountdown: 10,
+
+        amountOfSipsRule: "1 sip",
+        useCustomPromptsExclusively: false,
+        neverHaveIEverPrompts: ['Test prompt 1', 'Test prompt 2', 'Test prompt 3',
+                                'Test prompt 4', 'Test prompt 5', 'Test prompt 6',
+                                'Test prompt 7', 'Test prompt 8', 'Test prompt 9'],
+        usedPrompts: [0, 4, 8, 3, 5],
+        counter: 5,
+        voteCount: 2,
+        votingRight: 4,
+        answerArr: [['user1Id', true], ['user4Id', false], ['user3Id', true], ['user2Id', true]]
+    },
+    {
+        roomId: "testRoomId3",
+        amountConnected: 4,
+        userIdArr: ['user1Id', 'user2Id', 'user3Id', 'user4Id'],
+        customProfilePictureSet: [],
+        startedGame: 'prompt',
+        customPrompts: [],
+        roundtimeValue: 10,
+        nextPromptCountdown: 10,
+
+        amountOfSipsRule: "1 sip",
+        useCustomPromptsExclusively: false,
+        neverHaveIEverPrompts: ['Test prompt 1', 'Test prompt 2', 'Test prompt 3',
+                                'Test prompt 4', 'Test prompt 5', 'Test prompt 6',
+                                'Test prompt 7', 'Test prompt 8', 'Test prompt 9'],
+        usedPrompts: [0, 1, 2, 3, 4, 5, 6, 7, 8],
+        counter: 9,
+        voteCount: 3,
+        votingRight: 4,
+        answerArr: [['user1Id', true], ['user4Id', false], ['user3Id', true], ['user2Id', true]]
+    }];
+
+    //unusedPromptsLeft Test
+    test('Should return boolean depending on if all prompts has been used', () => {
+        const unusedTest1 = unusedPromptsLeft(0, idArr);
+        expect(unusedTest1).toBe(true);
+        const unusedTest2 = unusedPromptsLeft(1, idArr);
+        expect(unusedTest2).toBe(true);
+        const unusedTest3 = unusedPromptsLeft(2, idArr);
+        expect(unusedTest3).toBe(false);
+    });
+
+    //promptHasBeenUsed Test
+    test('Should return a boolean, based on if the prompt on the given index has been used', () => {
+        const hasBeenUsed1 = promptHasBeenUsed(2, 0, idArr);
+        expect(hasBeenUsed1).toBe(false);
+        const hasBeenUsed2 = promptHasBeenUsed(2, 2, idArr);
+        expect(hasBeenUsed2).toBe(true);
+    });
+
+    //randomPrompt Test
+    test('Should return the index to a random prompt, that has not yet been in use', () => {
+        //Manipulate randomness to make it predictable
+        const mockMath = Object.create(global.Math);
+        mockMath.random = () => 0.3;
+        global.Math = mockMath;
+
+        const randomTest1 = randomPrompt(0, idArr);
+        expect(randomTest1).toBe(2);
+
+        mockMath.random = () => 0.7;
+        global.Math = mockMath;
+
+        const randomTest2 = randomPrompt(1, idArr);
+        expect(randomTest2).toBe(6);
+    });
+});
+
 //----------------------Test enviroment for the 'Meyer' game----------------------
 describe('Meyer Tests', () => {
     //Make a mock-up of global variables
@@ -145,9 +248,9 @@ describe('Meyer Tests', () => {
 
     //mejerLivesSetup Test
     test('Should return a correctly made array in mejerLives', () => {
-        const setupTest1 = mejerLivesSetup(2, idArr);
+        const setupTest1 = mejerLivesSetup(2, 6, idArr);
         expect(setupTest1).toStrictEqual([['user1Id', 6], ['user2Id', 6], ['user3Id', 6]])
-        const setupTest2 = mejerLivesSetup(0, idArr);
+        const setupTest2 = mejerLivesSetup(0, 6, idArr);
         expect(setupTest2).toStrictEqual([['user1Id', 6], ['user2Id', 6]]);
     });
 
@@ -157,91 +260,6 @@ describe('Meyer Tests', () => {
         expect(decrement1).toStrictEqual([['user1Id', 5], ['user2Id', 6]]);
         const decrement2 = mejerLivesDecrement('user3Id', 1, idArr);
         expect(decrement2).toStrictEqual([['user1Id', 6, 'user1Name'], ['user2Id', 4, 'user2Name'], ['user4Id', 5, 'user4Name']])
-    });
-});
-
-//----------------------Test enviroment for the 'Never Have I Ever' game----------------------
-describe('NHIE Tests', () => {    
-    //Make a mock-up of global variables
-    let idArr = [{
-        roomId: "testRoomId1",
-        amountConnected: 2,
-        userIdArr: ['user1Id', 'user2Id'],
-        startedGame: 'prompt',
-
-        neverHaveIEverPrompts: ['Test prompt 1', 'Test prompt 2', 'Test prompt 3',
-                                'Test prompt 4', 'Test prompt 5', 'Test prompt 6',
-                                'Test prompt 7', 'Test prompt 8', 'Test prompt 9'],
-        usedPrompts: [0, 4, 8],
-        counter: 3,
-        voteCount: 0,
-        votingRight: 2,
-        answerArr: []
-    },
-    {
-        roomId: "testRoomId2",
-        amountConnected: 4,
-        userIdArr: ['user1Id', 'user2Id', 'user3Id', 'user4Id'],
-        startedGame: 'prompt',
-
-        neverHaveIEverPrompts: ['Test prompt 1', 'Test prompt 2', 'Test prompt 3',
-                                'Test prompt 4', 'Test prompt 5', 'Test prompt 6',
-                                'Test prompt 7', 'Test prompt 8', 'Test prompt 9'],
-        usedPrompts: [0, 4, 8, 3, 5],
-        counter: 5,
-        voteCount: 2,
-        votingRight: 4,
-        answerArr: [['user1Id', true], ['user4Id', false], ['user3Id', true], ['user2Id', true]]
-    },
-    {
-        roomId: "testRoomId3",
-        amountConnected: 4,
-        userIdArr: ['user1Id', 'user2Id', 'user3Id', 'user4Id'],
-        startedGame: 'prompt',
-
-        neverHaveIEverPrompts: ['Test prompt 1', 'Test prompt 2', 'Test prompt 3',
-                                'Test prompt 4', 'Test prompt 5', 'Test prompt 6',
-                                'Test prompt 7', 'Test prompt 8', 'Test prompt 9'],
-        usedPrompts: [0, 1, 2, 3, 4, 5, 6, 7, 8],
-        counter: 9,
-        voteCount: 3,
-        votingRight: 4,
-        answerArr: [['user1Id', true], ['user4Id', false], ['user3Id', true], ['user2Id', true]]
-    }];
-
-    //unusedPromptsLeft Test
-    test('Should return boolean depending on if all prompts has been used', () => {
-        const unusedTest1 = unusedPromptsLeft(0, idArr);
-        expect(unusedTest1).toBe(true);
-        const unusedTest2 = unusedPromptsLeft(1, idArr);
-        expect(unusedTest2).toBe(true);
-        const unusedTest3 = unusedPromptsLeft(2, idArr);
-        expect(unusedTest3).toBe(false);
-    });
-
-    //promptHasBeenUsed Test
-    test('Should return a boolean, based on if the prompt on the given index has been used', () => {
-        const hasBeenUsed1 = promptHasBeenUsed(2, 0, idArr);
-        expect(hasBeenUsed1).toBe(false);
-        const hasBeenUsed2 = promptHasBeenUsed(2, 2, idArr);
-        expect(hasBeenUsed2).toBe(true);
-    });
-
-    //randomPrompt Test
-    test('Should return the index to a random prompt, that has not yet been in use', () => {
-        //Manipulate randomness to make it predictable
-        const mockMath = Object.create(global.Math);
-        mockMath.random = () => 0.3;
-        global.Math = mockMath;
-
-        const randomTest1 = randomPrompt(0, idArr);
-        expect(randomTest1).toBe(2);
-
-        mockMath.random = () => 0.7;
-        global.Math = mockMath;
-
-        const randomTest2 = randomPrompt(1, idArr);
-        expect(randomTest2).toBe(6);
     });
 });
 

@@ -26,17 +26,17 @@ console.log(path);
 
 app.use(express.static(path));
 
-const con = mysql.createConnection({
-    host: "localhost",
-    database: "sw2b2_3",
-    user: "sw2b2-3",
-    password: "wFGUZekJjvX7CVYn"
-}); 
+// const con = mysql.createConnection({
+//     host: "localhost",
+//     database: "sw2b2_3",
+//     user: "sw2b2-3",
+//     password: "wFGUZekJjvX7CVYn"
+// }); 
 
-con.connect(function(err) {
-    if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
-    else console.log("Connected to database established.");
-});
+// con.connect(function(err) {
+//     if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
+//     else console.log("Connected to database established.");
+// });
 
 app.get('/', function(req, res) {
     res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
@@ -867,7 +867,12 @@ function countdown(time, socket, id) {
     }
 }
 
-function unusedPromptsLeft(id) {
+let unusedPromptsLeft = function(id, testObject) {
+    if(testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
+
     let promptArrLength = idArr[id].useCustomPromptsExclusively === false ? idArr[id].neverHaveIEverPrompts.length : idArr[id].customPrompts.length;
     if(idArr[id].usedPrompts.length !== promptArrLength) {
         return true;
@@ -965,15 +970,24 @@ let nextTurn = function(id, testObject) {
     io.to(idArr[id].mejerLives[idArr[id].currTurn][0]).emit('clientTurn');
 }
 
-function mejerLivesSetup(id, lifeAmount){
-    let tempArray = [];    
+let mejerLivesSetup = function(id, lifeAmount, testObject){
+    let tempArray = [];
+
+    if (testObject != dontTouch) {
+        idArr = testObject;
+        console.log("TEST OBJECT DETECTED!");
+    }
 
     for(let i = 0; i < idArr[id].userIdArr.length; i++){
 
         tempArray = [idArr[id].userIdArr[i], lifeAmount];
 
         idArr[id].mejerLives[i] = tempArray;
+
     }
+
+    if (testObject != dontTouch) return idArr[id].mejerLives;
+
 }
 
 let mejerLivesDecrement = function(playerID, roomID, testObject){
@@ -1004,6 +1018,7 @@ let mejerLivesDecrement = function(playerID, roomID, testObject){
             }
         }
     }
+    if (testObject != dontTouch) return idArr[roomID].mejerLives;
 }
 
 let checkDrink = function (diceArr) {
