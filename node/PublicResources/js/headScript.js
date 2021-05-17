@@ -83,7 +83,7 @@ function addVideoStream(video, userId, othersProfilePictureSet) {
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
 
-    video.src = othersProfilePictureSet === true ? profilePictureBase64 : '../img/Dummy.png'; // skal være billede
+    video.src = othersProfilePictureSet === true ? profilePictureBase64 : '../img/avatar.png'; // skal være billede
 
     video.setAttribute("id", "id" + userId);
     video.classList.add('avatar');
