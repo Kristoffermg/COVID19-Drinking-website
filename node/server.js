@@ -39,7 +39,7 @@ con.connect(function(err) {
 });
 
 app.get('/', function(req, res) {
-    res.sendFile(pathApi.join(__dirname + '/PublicResources/html/index.html'));
+    res.sendFile(__dirname + '/PublicResources/html/index.html');
 });
 
 app.get('/Lobby', function(req, res) {
@@ -89,10 +89,7 @@ app.get('/Lobby/:lobbyId', function(req, res) {
 });
 
 app.get('/GamesAndRules', function(req, res) {
-    fs.readFile(__dirname + '/PublicResources/html/gamesAndRules.html', 'utf8', function(err, data) {
-        if (err) throw err;
-        res.send(data);
-    });
+    res.sendFile(__dirname + '/PublicResources/html/gamesAndRules.html');
 });
     
 io.on('connect_error', (err) => {
