@@ -13,7 +13,8 @@ socket.on('user-connected', userId => {
     connectToNewUser(userId, true, false);
 });
 
-socket.on('ringring', (answerID, otherUsersProfilePictureSet) => {
+socket.on('ringring', (answerID, otherUsersProfilePictureSet, profilePictureAsBase64) => {
+    profilePictureBase64 = profilePictureAsBase64;
     connectToNewUser(answerID, false, otherUsersProfilePictureSet);
 });
 
@@ -65,11 +66,13 @@ function connectToNewUser(userId, flag, othersProfilePictureSet) {
     let name;
     let check = document.querySelector("div.videoDiv#id" + clientSocketId);
     if (check == dontTouch || flag) {
+        console.log(userId);
         socket.emit('answerCall', userId);
         name = document.querySelector("div.videoDiv#id" + clientSocketId + " > p");
         socket.emit('changeName', name.innerText, clientSocketId);
     }
     const video = document.createElement('img');
+    
     addVideoStream(video, userId, othersProfilePictureSet);
 }
 
@@ -82,7 +85,10 @@ function addVideoStream(video, userId, othersProfilePictureSet) {
     let videoDiv = document.createElement("div");
     videoDiv.setAttribute("id", "id" + userId);
     videoDiv.classList.add("videoDiv");
-
+    // if(othersProfilePictureSet) {
+    //     socket.emit('setProfilePictureVariable', userId);
+    //     console.log("YOOOOOOOOOOOO" + profilePictureBase64.length)
+    // }
     video.src = othersProfilePictureSet === true ? profilePictureBase64 : '../img/avatar.png'; // skal være billede
 
     video.setAttribute("id", "id" + userId);
@@ -95,8 +101,17 @@ function addVideoStream(video, userId, othersProfilePictureSet) {
     videoGrid.append(videoDiv);
 }
 
+socket.on('setProfilePicture', (userId, profilePictureAsBase64) => {
+    //profilePictureBase64 = profilePictureAsBase64;
+    //connectToNewUser(userId, false, true);
+    // let profilePicturePlaceholder = document.getElementById("id" + userId);
+    // profilePicturePlaceholder.firstChild.setAttribute("src", profilePictureAsBase64);
+    // console.log("setting profile picture for " + userId)
+});
+
 socket.on('saveUsersProfilePicture', profilePictureAsBase64 => {
     profilePictureBase64 = profilePictureAsBase64;
+
 });
 
 socket.on('changeUsersProfilePicture', (userId, profilePicture1) => {
@@ -112,7 +127,7 @@ socket.on('changeUsersProfilePicture', (userId, profilePicture1) => {
 socket.on('getId', id => {
     clientSocketId = id;
     const videoLOCAL = document.createElement('img');
-    addVideoStream(videoLOCAL, clientSocketId);
+    addVideoStream(videoLOCAL, clientSocketId, false);
 });
 
 //Gets the roomID from the backend

@@ -194,6 +194,7 @@ io.on('connection', (socket) => {
         }
 
 
+
         let Id = 0;
         for (let i = 0; i < idArr.length; i++) {
             if (idArr[i].roomId == socket.room) {
@@ -208,12 +209,6 @@ io.on('connection', (socket) => {
         }
 
         socket.to(roomId).broadcast.emit("user-connected", socket.id);
-
-        for(let j = 0; j < idArr[Id].userIdArr.length - 1; j++) {
-            if(idArr[Id].customProfilePictureSet[j]) { // other user has set their profile picture
-                getUsersProfilePicture(socket, idArr[Id].userIdArr[j]);
-            }
-        }
         
         socket.on('disconnect', () => {
             deleteUsersProfilePicture(socket.id);
@@ -222,8 +217,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('answerCall', (callerID) => {
-        let roomId = getRoomID(socket), userId = getUserID(socket);
-        io.to(callerID).emit('ringring', socket.id, idArr[roomId].customProfilePictureSet[userId]);
+        let roomId = getRoomID(socket), 
+            userId = getUserID(socket);
+        if(idArr[roomId].customProfilePictureSet[userId]) {
+            getUsersProfilePicture(socket.id, callerID, roomId, userId);
+        } else {
+            io.to(callerID).emit('ringring', socket.id, idArr[roomId].customProfilePictureSet[userId], "");
+        }
     });
 
     //Decides what html page the send to dynamically send to the frontend, based on user input 
@@ -342,10 +342,6 @@ io.on('connection', (socket) => {
             roomId = getRoomID(socket);
 
         idArr[roomId].customProfilePictureSet[userArrId] = true;
-    });
-
-    socket.on('receiveUsersProfilePicture', userId => {
-        getUsersProfilePicture(socket, userId);
     });
 
     //Handles 'Never have I ever' logic
@@ -726,12 +722,6 @@ io.on('connection', (socket) => {
             console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
         });
     });
-
-    socket.on('selectQuery', query => {
-        con.query(query, function(err, result, fields) {
-            console.log(result);
-        });
-    });
 });
 
 function getRoomID(socket) {
@@ -760,6 +750,9 @@ function mixCustomAndWrittenPrompts(id) {
 }
 
 function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
+    console.log("SOCKETID " + socket.id)
+    console.log("ROOMID " + getRoomID(socket))
+    console.log("length: " + profilePictureAsBase64.length)
     con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
         socket.id,
         getRoomID(socket),
@@ -787,10 +780,10 @@ function getOtherUsersProfilePictureFromDatabase(userId) {
     });
 }
 
-async function getUsersProfilePicture(socket, userId) {
-    const data = await getOtherUsersProfilePictureFromDatabase(userId)
-    if(data !== undefined) {
-        io.to(socket.room).emit('saveUsersProfilePicture', data);
+async function getUsersProfilePicture(socketId, callerID, roomId, userId) {
+    const profilePictureBase64 = await getOtherUsersProfilePictureFromDatabase(socketId);
+    if(profilePictureBase64  !== undefined) {
+        io.to(callerID).emit('ringring', socketId, idArr[roomId].customProfilePictureSet[userId], profilePictureBase64);
     }
 }
 
