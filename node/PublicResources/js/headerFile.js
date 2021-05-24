@@ -1,12 +1,11 @@
 //This file litterally just has a metric shitton of variable declerations (This is because stuff sometimes fucks up when declaring shit dynamically)
-let dontTouch;
+let dontTouch; // emptyVariable
 let ROOM_ID;
-let idFlag;
+let shouldCreateRoom;
 
-let idxd;
+let lobbyId;
 let logo;
 let usernameButton;
-let debugMeme;
 let copyUrl;
 let startGame;
 let settingsTab;

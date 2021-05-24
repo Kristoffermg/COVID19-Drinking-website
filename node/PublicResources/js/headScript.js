@@ -1,47 +1,48 @@
-//Establishes socket connection, using the Socket.IO API
+// Establishes socket connection, using the Socket.IO API
 const socket = io({path:'/node0/socket.io', transports: ["polling"], autoConnect: false});  
-// console.log("socket connected" + socket.connected);
+
 if (!socket.connected) {
     socket.connect();
 }
 
-//Requests backend socket id
+// Requests backend socket id
 socket.emit('getId');
-const videoGrid = document.getElementById('video-grid');
+const profilePictureGrid = document.getElementById('profile-picture-grid');
 
 socket.on('user-connected', userId => {
     connectToNewUser(userId, true, false);
 });
 
-socket.on('ringring', (answerID, otherUsersProfilePictureSet, profilePictureAsBase64) => {
+socket.on('callOtherUsers', (answerID, otherUsersProfilePictureSet, profilePictureAsBase64) => {
     profilePictureBase64 = profilePictureAsBase64;
     connectToNewUser(answerID, false, otherUsersProfilePictureSet);
 });
 
-socket.on('user-disconnected', (disconnectID) => {
-    let meme = document.querySelector("div.videoDiv#id" + disconnectID);
-        meme.remove();
+socket.on('user-disconnected', disconnectID => {
+    // userBox is the front-end display of the user (profile picture and username)
+    let userBox = document.querySelector("div.profilePictureGrid#id" + disconnectID);
+    userBox.remove();
 });
 
 socket.on('getUserName', () => {
     let userName = [];
-    userName = document.querySelector("div.videoDiv#id" + clientSocketId + " > p").innerText;
-    socket.emit('getUserName', (userName));
+    userName = document.querySelector("div.profilePictureGrid#id" + clientSocketId + " > p").innerText;
+    socket.emit('getUserName', userName);
 });
 
 socket.on('setTurnOrder', (mejerLives) => {
-    let avatarArr = document.querySelectorAll('.videoDiv');
+    let avatarArr = document.querySelectorAll('.profilePictureGrid');
     let newArr = [];
-    let livesPara;
-    let tempAva;
-    let vidGrid = document.getElementById('video-grid');
+    let LivesParagraph;
+    let tempAvatar;
+    let profilePictureGrid = document.getElementById('profile-picture-grid');
 
     for (let i = 0; i < mejerLives.length; i++) {
         for (let j = 0; j < avatarArr.length; j++) {
             if ('id' + mejerLives[i][0] == avatarArr[j].getAttribute('id')) {
-                tempAva = document.createElement('div');
-                tempAva = avatarArr[j];
-                newArr.push(tempAva);
+                tempAvatar = document.createElement('div');
+                tempAvatar = avatarArr[j];
+                newArr.push(tempAvatar);
             }
         }
     }
@@ -51,148 +52,136 @@ socket.on('setTurnOrder', (mejerLives) => {
     }
 
     for (let i = 0; i < newArr.length; i++) {
-        livesPara = document.createElement('p');
-        livesPara.innerText = 'lives: ' + mejerLives[0][1];
-        livesPara.setAttribute('id', 'userNamePara');
+        LivesParagraph = document.createElement('p');
+        LivesParagraph.innerText = 'lives: ' + mejerLives[0][1];
+        LivesParagraph.setAttribute('id', 'userNamePara');
         newArr[i].childNodes[0].style.outlineColor = 'grey';
-        newArr[i].append(livesPara);
-        vidGrid.append(newArr[i]);
+        newArr[i].append(LivesParagraph);
+        profilePictureGrid.append(newArr[i]);
     }
     newArr[0].childNodes[0].style.outlineColor = 'green';
 });
 
-//The helper function for connecting to new users
+// The helper function for connecting to new users
 function connectToNewUser(userId, flag, othersProfilePictureSet) {
     let name;
-    let check = document.querySelector("div.videoDiv#id" + clientSocketId);
+    let check = document.querySelector("div.profilePictureGrid#id" + clientSocketId);
     if (check == dontTouch || flag) {
         console.log(userId);
         socket.emit('answerCall', userId);
-        name = document.querySelector("div.videoDiv#id" + clientSocketId + " > p");
+        name = document.querySelector("div.profilePictureGrid#id" + clientSocketId + " > p");
         socket.emit('changeName', name.innerText, clientSocketId);
     }
-    const video = document.createElement('img');
+    const profilePicture = document.createElement('img');
     
-    addVideoStream(video, userId, othersProfilePictureSet);
+    addVideoStream(profilePicture, userId, othersProfilePictureSet);
 }
 
-//Creates videostream html element
-function addVideoStream(video, userId, othersProfilePictureSet) {
+// Creates videostream html element
+function addVideoStream(profilePicture, userId, othersProfilePictureSet) {
     let scuffedFix = document.getElementById("id" + userId);
     if (scuffedFix != dontTouch) {
         scuffedFix.remove();
     }
-    let videoDiv = document.createElement("div");
-    videoDiv.setAttribute("id", "id" + userId);
-    videoDiv.classList.add("videoDiv");
-    // if(othersProfilePictureSet) {
-    //     socket.emit('setProfilePictureVariable', userId);
-    //     console.log("YOOOOOOOOOOOO" + profilePictureBase64.length)
-    // }
-    video.src = othersProfilePictureSet === true ? profilePictureBase64 : '../img/avatar.png'; // skal være billede
+    let profilePictureGrid = document.createElement("div");
+    profilePictureGrid.setAttribute("id", "id" + userId);
+    profilePictureGrid.classList.add("profilePictureGrid");
 
-    video.setAttribute("id", "id" + userId);
-    video.classList.add('avatar');
-    videoDiv.append(video);
-    let userPara = document.createElement("p");
-    userPara.setAttribute("id", 'userNamePara');
-    userPara.innerText = 'Guest';
-    videoDiv.append(userPara);
-    videoGrid.append(videoDiv);
+    profilePicture.src = othersProfilePictureSet === true ? profilePictureBase64 : '../img/avatar.png'; // skal være billede
+
+    profilePicture.setAttribute("id", "id" + userId);
+    profilePicture.classList.add('avatar');
+    profilePictureGrid.append(video);
+
+    let userParagraph = document.createElement("p");
+    userParagrah.setAttribute("id", 'userNamePara');
+    userParagraph.innerText = 'Guest';
+
+    profilePictureGrid.append(userParagraph);
+    profilePictureGrid.append(profilePictureGrid);
 }
 
-socket.on('setProfilePicture', (userId, profilePictureAsBase64) => {
-    //profilePictureBase64 = profilePictureAsBase64;
-    //connectToNewUser(userId, false, true);
-    // let profilePicturePlaceholder = document.getElementById("id" + userId);
-    // profilePicturePlaceholder.firstChild.setAttribute("src", profilePictureAsBase64);
-    // console.log("setting profile picture for " + userId)
-});
-
-socket.on('saveUsersProfilePicture', profilePictureAsBase64 => {
-    profilePictureBase64 = profilePictureAsBase64;
-
-});
-
-socket.on('changeUsersProfilePicture', (userId, profilePicture1) => {
+socket.on('changeUsersProfilePicture', (userId, profilePicture) => {
     // profilePicturePlaceholder is a div that contains the username and profile picture for the individual user
-    profilePictureBase64 = profilePicture1;
+    profilePictureBase64 = profilePicture;
     let profilePicturePlaceholder = document.getElementById("id" + userId);
-    if(profilePicture1 && profilePicturePlaceholder) {
-        profilePicturePlaceholder.firstChild.setAttribute("src", profilePicture1);
+    if(profilePicture && profilePicturePlaceholder) {
+        profilePicturePlaceholder.firstChild.setAttribute("src", profilePicture);
     }
 });
 
-//Gets own socket id from backend
+// Gets own socket id from backend
 socket.on('getId', id => {
     clientSocketId = id;
-    const videoLOCAL = document.createElement('img');
-    addVideoStream(videoLOCAL, clientSocketId, false);
+    const profilePictureLOCAL = document.createElement('img');
+    addVideoStream(profilePictureLOCAL, clientSocketId, false);
 });
 
-//Gets the roomID from the backend
+// Gets the roomID from the backend
 socket.on('roomId', (roomId) => {
     idxd = document.URL.split("/Lobby/")[1];
     let lobbyUrl = document.getElementById("lobbyurl");
 
     if(idxd == "" || idxd == dontTouch){
         ROOM_ID = roomId;
-        idFlag = true;
+        shouldCreateRoom = true;
         if (lobbyUrl != dontTouch) lobbyUrl.value = document.URL + ROOM_ID;            
                 
     }else{
         ROOM_ID = idxd;
-        idFlag = false;
+        shouldCreateRoom = false;
         if (lobbyUrl != dontTouch) lobbyUrl.value = document.URL;            
     }
 
-    socket.emit('joinRoom', ROOM_ID, idFlag);
+    socket.emit('joinRoom', ROOM_ID, shouldCreateRoom);
 });
 
-//Get's username from backend, so it can be updated on the site
+// Gets username from backend, so it can be updated on the site
 socket.on('changeName', (name, userId, userSocketId) =>{
-    let userPlace = document.getElementById("id"+userId);
-    let check;
+    let userBox = document.getElementById("id" + userId);
+    let usernameElement;
     
-    if (userPlace == dontTouch) {
-        userPlace = document.getElementById("id" + userSocketId);
-        check = document.querySelector("div.videoDiv#id" + userSocketId + " > p");
+    if (userBox == dontTouch) {
+        userBox = document.getElementById("id" + userSocketId);
+        usernameElement = document.querySelector("div.profilePictureGrid#id" + userSocketId + " > p");
     } else {
-        check = document.querySelector("div.videoDiv#id" + userId + " > p");
+        usernameElement = document.querySelector("div.profilePictureGrid#id" + userId + " > p");
     }
 
-    check.innerText = name;
+    usernameElement.innerText = name;
 });
 
-//Changes the html page dynamically
-socket.on('changeHTML', meme=> {
-    //Getting body and head elements
+// Changes the html page dynamically
+socket.on('changeHTML', htmlData => {
+    // Getting body and head elements
     let body = document.body;
     let head = document.getElementById("head");
-    //Converts incomming data to a string, and splits it up, so it only has the contents of the body tag
-    newMeme = String(meme);
-    let splitMeme = newMeme.split('<body>')[1];
-    splitMeme = splitMeme.split("</body>")[0];
+    // Converts incomming data to a string, and splits it up, so it only has the contents of the body tag
+    htmlText = String(htmlData);
+    let bodyHTML = htmlText.split('<body>')[1];
+    bodyHTML = bodyHTML.split("</body>")[0];
     
-    //Creates a copy of the video feed, so it isn't lost
-    let videos = document.createElement("div");
-    videos = document.getElementById("videos");
-    //Removes the body
-    body.remove();
-    //Constructs new body based on the incomming data
-    let newBody = document.createElement("body");
-    newBody.innerHTML = splitMeme;
-    head.after(newBody);
-    //Inserts the videofeed
-    let videoPlacement = document.getElementById("videoPlacement");
-    videoPlacement.after(videos);
+    // Creates a copy of the video feed, so it isn't lost
+    let profilePictures = document.createElement("div");
+    profilePictures = document.getElementById("videos");
 
-    //Gets the src of the script in the body tag
+    body.remove();
+
+    // Constructs new body based on the incomming data
+    let newBody = document.createElement("body");
+    newBody.innerHTML = bodyHTML;
+    head.after(newBody);
+
+    // Inserts the videofeed
+    let videoPlacement = document.getElementById("videoPlacement");
+    videoPlacement.after(profilePictures);
+
+    // Gets the src of the script in the body tag
     let scriptPlaceholder = document.getElementById("pageScript");
     let src = scriptPlaceholder.getAttribute("src");
     
-    //Creates a new script identical to the one in the body tag, and removes the old one
-    //This is done because else the script won't be executed
+    // Creates a new script identical to the one in the body tag, and removes the old one
+    // This is done because else the script won't be executed
     let pageScript = document.createElement("script");
     pageScript.src = src;
     pageScript.defer = true;

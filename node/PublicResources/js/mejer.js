@@ -3,7 +3,7 @@ const trueBtn = document.getElementById('trueBtn');
 const lieBtn = document.getElementById('lieBtn');
 const deroverBtn = document.getElementById('deroverBtn');
 const liftBtn = document.getElementById('liftBtn');
-const testFelt = document.getElementById('diceRoll');
+const textField = document.getElementById('diceRoll');
 const dice1 = document.getElementById('dice1');
 const dice2 = document.getElementById('dice2');
 const errorMes = document.getElementById('error');
@@ -99,17 +99,17 @@ socket.on('startOfNewRound', () => {
 
 
 socket.on('mejerRoll', (lastRoll) => {
-    testFelt.innerText = String(lastRoll[0]) + String(lastRoll[1]);
-    if(lastRoll[0] == 1 && lastRoll[1] == 2) testFelt.innerText = "Meyer (12)";
-    if(lastRoll[0] == 1 && lastRoll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
+    textField.innerText = String(lastRoll[0]) + String(lastRoll[1]);
+    if(lastRoll[0] == 1 && lastRoll[1] == 2) textField.innerText = "Meyer (12)";
+    if(lastRoll[0] == 1 && lastRoll[1] == 3) textField.innerText = "Lil' Meyer (13)";
 });
 
 socket.on('lieError', () => {
-    error.innerText = "Your lie is lower than what you have to beat"
+    error.innerText = "Your lie is lower than what you have to beat";
 });
 
 socket.on('trueError', () => {
-    error.innerText = "Your roll is lower than what you have to beat"
+    error.innerText = "Your roll is lower than what you have to beat";
 });
 
 socket.on('clientTurn', () => {
@@ -122,7 +122,7 @@ socket.on('clientTurn', () => {
     socket.emit('turnIndicator', true);
 });
 
-socket.on('notTurn', () => {
+socket.on('notYourTurn', () => {
     //------------WIP--------------
     rollBtn.hidden = true;
     liftBtn.hidden = true;
@@ -141,32 +141,30 @@ socket.on('notTurn', () => {
 });
 
 socket.on('incomingRoll', (roll) => {
-    testFelt.innerText = roll;
-    if(roll[0] == 1 && roll[1] == 2) testFelt.innerText = "Meyer (12)";
-    if(roll[0] == 1 && roll[1] == 3) testFelt.innerText = "Lil' Meyer (13)";
+    textField.innerText = roll;
+    if(roll[0] == 1 && roll[1] == 2) textField.innerText = "Meyer (12)";
+    if(roll[0] == 1 && roll[1] == 3) textField.innerText = "Lil' Meyer (13)";
 });
 
-socket.on('looseLife', (id, text) => {
-    let memeArr = [];
+socket.on('loseLife', (id, text) => {
+    let userArr = [];
     let lives;
     let counter;
-    testFelt.innerText = text;
+    textField.innerText = text;
 
-    memeArr = document.querySelectorAll('div.videoDiv#id' + id + ' > p');
-    lives = memeArr[1];
+    userArr = document.querySelectorAll('div.videoDiv#id' + id + ' > p');
+    // userArr[1] is the child that contains the amount of lives that the user has
+    lives = userArr[1];
 
     counter = Number(lives.innerText.split(" ")[1]);
     counter--;
     lives.innerText = `Lives: ${counter}`;
-
-    //socket.emit('updateGameLog', `${id}, lost a life`);
 });
 
-socket.on('ded', (id, screenName) => {
-    testFelt.innerText = `${screenName} us out`;
-    let dedEl = document.querySelector("div.videoDiv#id" + id);
-    dedEl.childNodes[0].style.outlineColor = 'red';
-    //socket.emit('updateGameLog', `${id}, is ded smile`);
+socket.on('userDied', (id, screenName) => {
+    textField.innerText = `${screenName} us out`;
+    let deadUserElement = document.querySelector("div.videoDiv#id" + id);
+    deadUserElement.childNodes[0].style.outlineColor = 'red';
 });
 
 socket.on('gameOver', () => {
@@ -217,7 +215,7 @@ socket.on('everyoneDrink', () => {
     lieEnabled = false;
     deroverEnabled = false;
 
-    testFelt.innerText = '32! Everyone drink!'
+    textField.innerText = '32! Everyone drink!'
 });
 
 socket.on('drink', () => {
