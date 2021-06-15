@@ -26,17 +26,17 @@ console.log(path);
 
 app.use(express.static(path));
 
-const con = mysql.createConnection({
+const pool = mysql.createPool({
     host: "localhost",
     database: "sw2b2_3",
     user: "sw2b2-3",
     password: "wFGUZekJjvX7CVYn"
-}); 
+})
 
-con.connect(function(err) {
-    if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
-    else console.log("Connected to database established.");
-});
+// con.connect(function(err) {
+//     if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
+//     else console.log("Connected to database established.");
+// });
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/PublicResources/html/index.html');
@@ -714,7 +714,7 @@ io.on('connection', (socket) => {
 
     // remove if we wont upload profile pictures to the database
     socket.on('insertProfilePictureQuery', profilePictureAsBase64 => {
-        con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
+        pool.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
             socket.id,
             getRoomID(socket),
             profilePictureAsBase64
@@ -753,7 +753,7 @@ function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
     console.log("SOCKETID " + socket.id)
     console.log("ROOMID " + getRoomID(socket))
     console.log("length: " + profilePictureAsBase64.length)
-    con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
+    pool.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
         socket.id,
         getRoomID(socket),
         profilePictureAsBase64
@@ -764,7 +764,7 @@ function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
 
 function getOtherUsersProfilePictureFromDatabase(userId) {
     return new Promise(function(resolve, reject) {
-        con.query('SELECT pfp FROM ProfilePictures WHERE userId = ?', [userId], function(err, result) {
+        pool.query('SELECT pfp FROM ProfilePictures WHERE userId = ?', [userId], function(err, result) {
             if(result === undefined) {
                 reject(new Error("Error: result is undefined"));
             } else {
@@ -788,7 +788,7 @@ async function getUsersProfilePicture(socketId, callerID, roomId, userId) {
 }
 
 function deleteUsersProfilePicture(userId) {
-    con.query("DELETE FROM ProfilePictures WHERE userId = ?", [
+    pool.query("DELETE FROM ProfilePictures WHERE userId = ?", [
         userId,
     ], function(err, result) {
         console.log(`${userId} profile picture deleted`);
