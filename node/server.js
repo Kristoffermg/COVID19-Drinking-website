@@ -26,17 +26,17 @@ console.log(path);
 
 app.use(express.static(path));
 
-const con = mysql.createConnection({
-    host: "localhost",
-    database: "sw2b2_3",
-    user: "sw2b2-3",
-    password: "wFGUZekJjvX7CVYn"
-}); 
+// const con = mysql.createConnection({
+//     host: "localhost",
+//     database: "sw2b2_3",
+//     user: "sw2b2-3",
+//     password: "wFGUZekJjvX7CVYn"
+// }); 
 
-con.connect(function(err) {
-    if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
-    else console.log("Connected to database established.");
-});
+// con.connect(function(err) {
+//     if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
+//     else console.log("Connected to database established.");
+// });
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/PublicResources/html/index.html');
@@ -714,6 +714,7 @@ io.on('connection', (socket) => {
 
     // remove if we wont upload profile pictures to the database
     socket.on('insertProfilePictureQuery', profilePictureAsBase64 => {
+        let con = mySQLConnect();
         con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
             socket.id,
             getRoomID(socket),
@@ -721,6 +722,7 @@ io.on('connection', (socket) => {
         ], function(err, result) {
             console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
         });
+        mySQLDisconnect(con);
     });
 });
 
@@ -753,6 +755,8 @@ function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
     console.log("SOCKETID " + socket.id)
     console.log("ROOMID " + getRoomID(socket))
     console.log("length: " + profilePictureAsBase64.length)
+
+    let con = mySQLConnect();
     con.query("INSERT INTO ProfilePictures(userID, roomID, pfp) VALUES(?, ?, ?)", [
         socket.id,
         getRoomID(socket),
@@ -760,10 +764,12 @@ function insertProfilePictureIntoDatabase(socket, profilePictureAsBase64) {
     ], function(err, result) {
         console.log(`${socket.id} profile picture inserted in room ${getRoomID(socket)}`);
     });
+    mySQLDisconnect(con);
 }
 
 function getOtherUsersProfilePictureFromDatabase(userId) {
     return new Promise(function(resolve, reject) {
+        let con = mySQLConnect();
         con.query('SELECT pfp FROM ProfilePictures WHERE userId = ?', [userId], function(err, result) {
             if(result === undefined) {
                 reject(new Error("Error: result is undefined"));
@@ -777,6 +783,7 @@ function getOtherUsersProfilePictureFromDatabase(userId) {
                 }
             }
         }); 
+        mySQLDisconnect(con);
     });
 }
 
@@ -788,12 +795,41 @@ async function getUsersProfilePicture(socketId, callerID, roomId, userId) {
 }
 
 function deleteUsersProfilePicture(userId) {
+    let con = mySQLConnect();
     con.query("DELETE FROM ProfilePictures WHERE userId = ?", [
         userId,
     ], function(err, result) {
         console.log(`${userId} profile picture deleted`);
     });
+    mySQLDisconnect(con);
 }
+
+function mySQLConnect () {
+    let con = mysql.createConnection({
+        host: "localhost",
+        database: "sw2b2_3",
+        user: "sw2b2-3",
+        password: "wFGUZekJjvX7CVYn"
+    }); 
+
+    con.connect(function(err) {
+        if(err) console.log("Error connecting to database: Either the database is down or it's hosted on localhost.");
+        else console.log("Connected to database established.");
+    });
+
+    return con;
+}
+
+function mySQLDisconnect (con) {
+    con.end(function(err) {
+        if (err) {
+            return console.log('error:' + err.message);
+        }
+        console.log('Close the database connection.');
+    });
+}
+
+
 
 //Changes the idArr and removes a room object, if it has no user in it
 function disconnectHandler (socket) {
