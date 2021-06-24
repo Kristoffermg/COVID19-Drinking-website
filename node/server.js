@@ -596,8 +596,8 @@ io.on('connection', (socket) => {
                         }
 
                         mejerCheck = idArr[id].mejerLives[i][1];
-                        mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                         loser = idArr[id].mejerLives[i][0];
+                        mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                         if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
                             if(mejerCheck != 1) {
                                 mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
