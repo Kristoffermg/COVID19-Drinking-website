@@ -623,9 +623,13 @@ io.on('connection', (socket) => {
 
             } else {
 
-                for (let j = 0; j < idArr[id].length ;j++) {
+                for (let j = 0; j < idArr[id].length; j++) {
                     if (idArr[id].mejerLives[j][0] == socket.id) {
                         mejerCheck = idArr[id].mejerLives[j][1];
+                        console.log(socket.id);
+                        console.log(idArr[id].mejerLives[j][0]);
+                        console.log(mejerCheck);
+                        console.log("--");
                     }
                 }
 
