@@ -555,6 +555,17 @@ io.on('connection', (socket) => {
                     }
 
                     loser = idArr[id].mejerLives[i][0];
+
+                    for(let k = 0; k < idArr[id].mejerLives.length; k++){
+                        if(idArr[id].mejerLives[k][0] == socket.id){
+                            if (k == 0) {
+                                screenNameTwo = findScreenName(id, idArr[id].mejerLives[idArr[id].mejerLives.length-1][0]);
+                            } else {
+                                screenNameTwo = findScreenName(id, idArr[id].mejerLives[k-1][0]);                                
+                            }
+                        }
+                    }
+
                     mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                     for(let j = 0; j < 2; j++){
 
@@ -601,6 +612,17 @@ io.on('connection', (socket) => {
 
                         mejerCheck = idArr[id].mejerLives[i][1];
                         loser = idArr[id].mejerLives[i][0];
+
+                        for(let k = 0; k < idArr[id].mejerLives.length; k++){
+                            if(idArr[id].mejerLives[k][0] == socket.id){
+                                if (k == 0) {
+                                    screenNameTwo = findScreenName(id, idArr[id].mejerLives[idArr[id].mejerLives.length-1][0]);
+                                } else {
+                                    screenNameTwo = findScreenName(id, idArr[id].mejerLives[k-1][0]);                                
+                                }
+                            }
+                        }
+
                         mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                         if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
                             if(mejerCheck != 1) {
