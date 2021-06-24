@@ -687,21 +687,10 @@ io.on('connection', (socket) => {
             }
         }
 
-        // let screenName = findScreenName(id, socket.id);
-        // let screenNameTwo
-
-        // for(let k = 0; k < idArr[id].mejerLives.length; k++){
-        //     if(idArr[id].mejerLives[k][0] == socket.id){
-        //         if (k == 0) {
-        //             screenNameTwo = findScreenName(id, idArr[id].mejerLives[idArr[id].mejerLives.length-1][0]);
-        //         } else {
-        //             screenNameTwo = findScreenName(id, idArr[id].mejerLives[k-1][0]);                                
-        //         }
-        //     }
-        // }
-        console.log("ScreenName " + screenName);
-        console.log("ScreenName2 " + screenNameTwo);
         io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
+        if (idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2) {
+            io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
+        }
 
         idArr[id].rollToBeat = [0,0];
         idArr[id].lastRoll = [0,0];
