@@ -655,8 +655,6 @@ io.on('connection', (socket) => {
                     }
                 }
 
-                console.log("mejerLives");
-                console.log(idArr[id].mejerLives);
                 loser = socket.id;
         
                 for(let k = 0; k < idArr[id].mejerLives.length; k++){
@@ -688,6 +686,8 @@ io.on('connection', (socket) => {
         }
 
         io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
+        
+        //Decrements the frontend lives an extra time, if the person lost 2 lives
         if (idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2 && !idArr[id].wasLastLie) {
             io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
         }
