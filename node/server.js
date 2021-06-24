@@ -688,7 +688,7 @@ io.on('connection', (socket) => {
         }
 
         io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
-        if (idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2) {
+        if (idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2 && idArr[id].wasLastLie) {
             io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
         }
 
