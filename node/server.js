@@ -622,20 +622,13 @@ io.on('connection', (socket) => {
 
 
             } else {
-                console.log("TEST");
                 console.log(idArr[id].mejerLives.length);
                 for (let j = 0; j < idArr[id].mejerLives.length; j++) {
                     if (idArr[id].mejerLives[j][0] == socket.id) {
                         mejerCheck = idArr[id].mejerLives[j][1];
                     }
-                    console.log(socket.id);
-                    console.log(idArr[id].mejerLives[j][0]);
-                    console.log(mejerCheck);
-                    console.log("--");
                 }
-                console.log("TEST_2");
 
-                console.log(mejerCheck);
                 loser = socket.id;
                 mejerLivesDecrement(socket.id, id);
                 if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
