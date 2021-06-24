@@ -412,8 +412,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('mejerRoll', () => {
-        let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
-        let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        // let dice1 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        // let dice2 = Math.floor(Math.random() * (6 - 1 + 1)) + 1;
+        let dice1 = 1;
+        let dice2 = 2;
         let id = findID(socket.room);
 
         if(idArr[id].wasLastLie){
