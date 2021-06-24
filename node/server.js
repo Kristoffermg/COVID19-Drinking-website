@@ -628,7 +628,8 @@ io.on('connection', (socket) => {
                         mejerCheck = idArr[id].mejerLives[j][1];
                     }
                 }
-            
+
+                console.log(mejerCheck);
                 loser = socket.id;
                 mejerLivesDecrement(socket.id, id);
                 if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
