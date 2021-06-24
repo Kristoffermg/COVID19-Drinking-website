@@ -622,7 +622,7 @@ io.on('connection', (socket) => {
 
 
             } else {
-
+                console.log("TEST");
                 for (let j = 0; j < idArr[id].length; j++) {
                     if (idArr[id].mejerLives[j][0] == socket.id) {
                         mejerCheck = idArr[id].mejerLives[j][1];
@@ -632,6 +632,7 @@ io.on('connection', (socket) => {
                     console.log(mejerCheck);
                     console.log("--");
                 }
+                console.log("TEST_2");
 
                 console.log(mejerCheck);
                 loser = socket.id;
