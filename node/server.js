@@ -550,8 +550,8 @@ io.on('connection', (socket) => {
                         i--;
                     }
 
-                    mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                     loser = idArr[id].mejerLives[i][0];
+                    mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                     for(let j = 0; j < 2; j++){
 
                         if(idArr[id].currTurn == 0){
@@ -595,7 +595,6 @@ io.on('connection', (socket) => {
                             i--;
                         }
 
-                        console.log(idArr[id].mejerLives);
                         mejerCheck = idArr[id].mejerLives[i][1];
                         loser = idArr[id].mejerLives[i][0];
                         mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
@@ -624,10 +623,18 @@ io.on('connection', (socket) => {
 
             } else {
 
-                mejerLivesDecrement(socket.id, id);
+                for (let j = 0; j < idArr[id].length ;j++) {
+                    if (idArr[id].mejerLives[j][0] == socket.id) {
+                        mejerCheck = idArr[id].mejerLives[j][1];
+                    }
+                }
+            
                 loser = socket.id;
+                mejerLivesDecrement(socket.id, id);
                 if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
-                    mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                    if (mejerCheck != 1) {
+                        mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                    }
                 }
     
                 if(idArr[id].currTurn == 0){
