@@ -981,7 +981,7 @@ function mejerLivesDecrement(playerID, roomID){
             idArr[roomID].mejerLives[i][1]--;
             io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} lost a life, and now has ${idArr[roomID].mejerLives[i][1]} left`);
             io.to(playerID).emit('drink');
-            if(idArr[roomID].mejerLives[i][1] == 0){
+            if(idArr[roomID].mejerLives[i][1] <= 0){
                 //here people die
                 io.to(playerID).emit('notTurn');
                 io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0], screenName);
