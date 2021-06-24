@@ -536,6 +536,7 @@ io.on('connection', (socket) => {
     socket.on('mejerLift', () => {
         let id = findID(socket.room);
         let loser;
+        let mejerCheck;
 
         if(idArr[id].wasLastLie){
             //ham der løftede vandt
@@ -593,11 +594,14 @@ io.on('connection', (socket) => {
                         }else{
                             i--;
                         }
-    
+
+                        mejerCheck = idArr[id].mejerLives[i][1];
                         mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
                         loser = idArr[id].mejerLives[i][0];
                         if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
-                            mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                            if(mejerCheck != 1) {
+                                mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
+                            }
                         }
 
     
@@ -618,6 +622,7 @@ io.on('connection', (socket) => {
 
 
             } else {
+
                 mejerLivesDecrement(socket.id, id);
                 loser = socket.id;
                 if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
@@ -981,7 +986,7 @@ function mejerLivesDecrement(playerID, roomID){
             idArr[roomID].mejerLives[i][1]--;
             io.to(idArr[roomID].roomId).emit('updateGameLog', `${screenName} lost a life, and now has ${idArr[roomID].mejerLives[i][1]} left`);
             io.to(playerID).emit('drink');
-            if(idArr[roomID].mejerLives[i][1] <= 0){
+            if(idArr[roomID].mejerLives[i][1] == 0){
                 //here people die
                 io.to(playerID).emit('notTurn');
                 io.to(idArr[roomID].roomId).emit('ded', idArr[roomID].mejerLives[i][0], screenName);
