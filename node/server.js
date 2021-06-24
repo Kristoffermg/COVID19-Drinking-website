@@ -539,6 +539,8 @@ io.on('connection', (socket) => {
         let id = findID(socket.room);
         let loser;
         let mejerCheck;
+        let screenName = findScreenName(id, socket.id);
+        let screenNameTwo
 
         if(idArr[id].wasLastLie){
             //ham der løftede vandt
@@ -634,9 +636,6 @@ io.on('connection', (socket) => {
                 console.log("mejerLives");
                 console.log(idArr[id].mejerLives);
                 loser = socket.id;
-
-                let screenName = findScreenName(id, socket.id);
-                let screenNameTwo
         
                 for(let k = 0; k < idArr[id].mejerLives.length; k++){
                     if(idArr[id].mejerLives[k][0] == socket.id){
@@ -647,7 +646,7 @@ io.on('connection', (socket) => {
                         }
                     }
                 }
-                
+
                 mejerLivesDecrement(socket.id, id);
                 if(idArr[id].lastRoll[0] == 1 && idArr[id].lastRoll[1] == 2){
                     if (mejerCheck != 1) {
