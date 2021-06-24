@@ -623,8 +623,8 @@ io.on('connection', (socket) => {
 
             } else {
                 console.log("TEST");
-                console.log(idArr[id].length);
-                for (let j = 0; j < idArr[id].length; j++) {
+                console.log(idArr[id].mejerLives.length);
+                for (let j = 0; j < idArr[id].mejerLives.length; j++) {
                     if (idArr[id].mejerLives[j][0] == socket.id) {
                         mejerCheck = idArr[id].mejerLives[j][1];
                     }
