@@ -163,7 +163,7 @@ socket.on('looseLife', (id, text) => {
 });
 
 socket.on('ded', (id, screenName) => {
-    testFelt.innerText = `${screenName} us out`;
+    testFelt.innerText = `${screenName} is out`;
     let dedEl = document.querySelector("div.videoDiv#id" + id);
     dedEl.childNodes[0].style.outlineColor = 'red';
     //socket.emit('updateGameLog', `${id}, is ded smile`);
