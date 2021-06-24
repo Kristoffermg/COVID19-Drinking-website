@@ -595,6 +595,7 @@ io.on('connection', (socket) => {
                             i--;
                         }
 
+                        console.log(idArr[id].mejerLives);
                         mejerCheck = idArr[id].mejerLives[i][1];
                         loser = idArr[id].mejerLives[i][0];
                         mejerLivesDecrement(idArr[id].mejerLives[i][0], id);
