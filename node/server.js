@@ -664,6 +664,8 @@ io.on('connection', (socket) => {
                 }
             }
         }
+        console.log("ScreenName " + screenName);
+        console.log("ScreenName2 " + screenNameTwo);
         io.to(idArr[id].roomId).emit('looseLife', loser, `${screenNameTwo} rolled ${idArr[id].lastRoll[0]}${idArr[id].lastRoll[1]} and ${screenName} lifted`);
 
         idArr[id].rollToBeat = [0,0];
